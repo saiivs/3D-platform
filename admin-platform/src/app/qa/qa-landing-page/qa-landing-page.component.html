@@ -1,0 +1,117 @@
+
+<div class="hp-main-layout-content">
+  <div class="row mb-32 gy-32">
+    <!-- <div class="col-12">
+      <div
+        class="hp-bg-black-bg py-32 py-sm-64 px-24 px-sm-48 px-md-80 position-relative overflow-hidden hp-page-content"
+        style="border-radius: 32px">
+        <svg width="358" height="336" fill="none" xmlns="http://www.w3.org/2000/svg"
+          class="position-absolute hp-rtl-scale-x-n1" style="bottom: 0px; right: 0px">
+          <path
+            d="M730.404 135.471 369.675-6.641l88.802 164.001-243.179-98.8 246.364 263.281-329.128-126.619 114.698 166.726-241.68-62.446"
+            stroke="url(#a)" stroke-width="40" stroke-linejoin="bevel"></path>
+          <defs>
+            <linearGradient id="a" x1="315.467" y1="6.875" x2="397.957" y2="337.724" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fff"></stop>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div class="row">
+          <div class="col-sm-6 col-12">
+            <div class="row">
+              <div class="col-12">
+                <h1 class="mb-0 hp-text-color-black-0">Hey QA!</h1>
+              </div>
+              <div class="col-12">
+                <p class="h5 mb-0 mt-24 hp-text-color-black-0">
+                  Welcome to the client page. Please check the client list and use the 'view here' button in the table to view the list of products on which you have been assigned to do QA
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row justify-content-between">
+            <div class="col pe-md-32 pe-md-120" >
+              <h4>Client Details</h4>
+
+              <p class="hp-p1-body" >
+                This table lists the clients whose products have been assigned to you for further development
+              </p>
+            </div>
+            <ng-template #emptyTable style="margin: auto;">
+              <p class="hp-p1-body emptyTable">
+                No data to view. Try adding new client.
+              </p>
+              <div class="emptyImg">
+                <img  src="assets/myImg/empty-folder.png" alt="" />
+              </div>
+
+            </ng-template>
+
+
+            <div class="table-responsive col-12 mt-16">
+              <table   class="table table-bordered text-center">
+                <thead>
+                  <tr>
+                    <th scope="col">Sl No</th>
+                    <th scope="col">Client Name</th>
+                    <th scope="col">Product Count</th>
+                    <th scope="col">Product List</th>
+                    <th scope="col">Modeler</th>
+                    <th scope="col">Product Status</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor=" let client of clientsArr
+                  | paginate
+                    : {
+                        id: 'listing_pagination',
+                        itemsPerPage: 6,
+                        currentPage: page,
+                        totalItems: totalRecords
+                      };
+                let i = index
+              ">
+                    <td scope="row">{{ i + 1 }}</td>
+                    <td>{{ client.ClientData[0].ClientName }}</td>
+                    <td>{{ client.assignedPro.length }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary myhover">
+                        <a class="myhover" (click)="modalerName(client.modalerName,client.ClientData[0].ClientName)"  [routerLink]="['Qa-products',client._id]"
+                          >View Here</a>
+                      </button>
+                    </td>
+                    <td>{{client.modalerName}}</td>
+                    <td *ngIf="client.approvedClient;else notApproved" style="font-size: 1rem;color: green;font-weight: 600;">Completed</td>
+                    <ng-template #notApproved>
+                      <td class="text-danger" style="font-size: 1rem;font-weight: 600;">Incomplete</td>
+                    </ng-template>
+                  </tr>
+                </tbody>
+              </table>
+              <div>
+                <pagination-controls *ngIf="clientsArr.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                  (pageChange)="page = $event"></pagination-controls>
+              </div>
+            </div>
+
+            <div class="col-12 mt-24 hljs-container">
+              <pre>
+        <code class="html" data-component='table' data-code='overview'></code>
+    </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

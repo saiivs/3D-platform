@@ -1,0 +1,18 @@
+label {
+  background-color: #0d6efd;
+  color: white;
+  padding: 0.5rem;
+  font-family: sans-serif;
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.closeBtn{
+  margin-left: 0.5rem;
+  color: red;
+  cursor: pointer;
+}
+
+.myhover:hover{
+  color: white;
+}

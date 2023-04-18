@@ -1,0 +1,35 @@
+.myCheckBox{
+    display: flex;
+    justify-content: center;
+    column-gap: 0.5rem;
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+}
+
+.assignBtn{
+  display: flex;
+  column-gap: 2rem;
+}
+
+.myhover{
+  cursor: pointer;
+  
+}
+.myhover:hover{
+  color: white;
+}
+@media only screen and (max-width: 913px){
+  .mobDev{
+    row-gap: 1rem;
+  }
+}
+
+
+
+
+
+

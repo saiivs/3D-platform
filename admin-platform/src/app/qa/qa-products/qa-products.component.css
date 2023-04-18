@@ -1,0 +1,7 @@
+.myhover{
+  cursor: pointer;
+}
+
+.myhover:hover{
+  color: white;
+}

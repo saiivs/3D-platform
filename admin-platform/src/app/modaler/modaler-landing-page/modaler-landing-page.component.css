@@ -1,0 +1,11 @@
+.emptyTable{
+  text-align: center;
+}
+.emptyImg{
+  margin: auto;
+  width: 5rem;
+}
+
+.myhover:hover{
+  color: white;
+}

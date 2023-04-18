@@ -1,0 +1,126 @@
+
+<div class="hp-main-layout-content">
+  <div class="row mb-32 gy-32">
+    <!-- <div class="col-12">
+      <div
+        class="hp-bg-black-bg py-32 py-sm-64 px-24 px-sm-48 px-md-80 position-relative overflow-hidden hp-page-content"
+        style="border-radius: 32px">
+        <svg width="358" height="336" fill="none" xmlns="http://www.w3.org/2000/svg"
+          class="position-absolute hp-rtl-scale-x-n1" style="bottom: 0px; right: 0px">
+          <path
+            d="M730.404 135.471 369.675-6.641l88.802 164.001-243.179-98.8 246.364 263.281-329.128-126.619 114.698 166.726-241.68-62.446"
+            stroke="url(#a)" stroke-width="40" stroke-linejoin="bevel"></path>
+          <defs>
+            <linearGradient id="a" x1="315.467" y1="6.875" x2="397.957" y2="337.724" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fff"></stop>
+              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div class="row">
+          <div class="col-sm-6 col-12">
+            <div class="row">
+              <div class="col-12">
+                <h1 class="mb-0 hp-text-color-black-0">Products</h1>
+                <h4 class="mt-2" style="color: white;"></h4>
+              </div>
+              <div class="col-12">
+                <p class="h5 mb-0 mt-24 hp-text-color-black-0">
+                  You can view the list of products and assign them to 3D modelers by using the checkboxes provided in the table.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ -->
+
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row justify-content-between">
+            <div class="col pe-md-32 pe-md-120" >
+              <h4>Products</h4>
+
+
+            </div>
+            <ng-template #emptyTable>
+              <p class="hp-p1-body emptyTable">
+                No data to view. Try adding new client.
+              </p>
+              <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
+            </ng-template>
+            <div class="table-responsive col-12 mt-16">
+              <table  class="table table-bordered text-center">
+                <thead>
+                  <tr>
+                    <th scope="col">Sl No</th>
+                    <th scope="col">Article Id</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Product Link</th>
+                    <th scope="col">Product Status</th>
+                    <th scope="col">Upload Model</th>
+                    <th scope="col">Preview</th>
+                    <th scope="col">Admin Status</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr  *ngFor="let pro of products | paginate
+                  : {
+                      id: 'listing_pagination',
+                      itemsPerPage: 6,
+                      currentPage: page,
+                      totalItems: totalRecords
+                    };let i = index">
+                    <td scope="row">{{i+1}}</td>
+                    <td>{{pro.articleID}}</td>
+                    <td>{{pro.productName}}</td>
+                    <td><a href="" style="cursor: pointer;">{{pro.productLink}}</a></td>
+                    <td *ngIf="pro.productStatus == 'Not Uploaded' ;else pending" style="color: rgb(252, 11, 51);font-weight: 600;">{{pro.productStatus}}</td>
+                    <ng-template #pending><td style="font-weight: bold;" [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)' }">{{pro.productStatus}}</td></ng-template>
+                    <td *ngIf="!pro?.modalFile;else uploadBtn"><input type="file" id="actual-btn" #fileInput (change)="acceptFile($event)" hidden/><label for="actual-btn" (click)="getIndex(i)">Choose File</label></td>
+                    <ng-template #uploadBtn>
+                      <td>
+                        <button class="btn btn-sm btn-primary" (click)="onUpload(pro.articleID,i)">Upload Model</button><span class="closeBtn" (click)="resetFile(i)">X &nbsp;Close</span>
+                      </td>
+                    </ng-template>
+                    <td *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
+                      <button class="btn btn-sm btn-outline-primary">
+                        <a (click)="proNameLoad(pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleID,clientId]"
+                          >View Model</a>
+                      </button>
+                    </td>
+                    <ng-template #NoData>
+                      <td>
+                        <p class="NoData" style="font-weight: 600;color: red;">
+                          No Data
+                       </p>
+                      </td>
+                    </ng-template>
+                    <td [ngStyle]="{color : pro.adminStatus == 'Approved' ? 'green':'red','font-weight':'600'}" >
+                      {{pro.adminStatus}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div>
+                <pagination-controls *ngIf="products.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                (pageChange)="page = $event"></pagination-controls>
+              </div>
+            </div>
+
+            <div class="col-12 mt-24 hljs-container">
+              <pre>
+        <code class="html" data-component='table' data-code='overview'></code>
+    </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+.mylogo{
+  width: 9rem;
+  height: 2rem;
+}
+
+.myLogOut{
+  cursor: pointer;
+}
+
+.hp-sidebar {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 270px;
+          flex: 0 0 270px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 20px 42px 42px 32px;
+}
