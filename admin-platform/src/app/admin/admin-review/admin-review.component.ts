@@ -46,7 +46,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
       if(data){
         this.polygonCount = data.polygonCount
         this.QaCommentArr = [...data.Arr]
-        this.srcFile = `http://localhost:3000/modals/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.srcFile = `https://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
         console.log(this.QaCommentArr);
         
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
@@ -157,7 +157,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `http://localhost:3000/modals/${articleId}&&${this.clientId}.glb`;
+    link.href = `https://localhost:3001/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }

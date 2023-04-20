@@ -9,7 +9,7 @@ import { AdminLandingPageComponent } from './admin-landing-page/admin-landing-pa
 import { ProductsComponent } from './products/products.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
-import { HeaderComponent } from './header/header.component';
+
 import { AdminReviewComponent } from './admin-review/admin-review.component';
 
 
@@ -19,7 +19,7 @@ import { AdminReviewComponent } from './admin-review/admin-review.component';
     AdminComponent,
     AdminLandingPageComponent,
     ProductsComponent,
-    HeaderComponent,
+   
     AdminReviewComponent
   ],
   imports: [

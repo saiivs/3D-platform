@@ -57,7 +57,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
         if(data){
           this.polygonCount = data.polygonCount
           this.QaCommentArr = [...data.Arr]
-          this.srcFile = `http://localhost:3000/modals/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+          this.srcFile = `https://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
           this.QaCommentArr[0]?.comments.forEach((message: any) => {
             const conDate = new Date(message.date)
             const date = new Date(conDate).toLocaleDateString('en-GB');

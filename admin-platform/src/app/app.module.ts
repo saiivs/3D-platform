@@ -11,7 +11,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { TokenInterceptor } from './token.interceptor';
-import { QAPortComponent } from './qa-port/qa-port.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
 import { ToastrModule } from 'ngx-toastr';
 
@@ -21,7 +20,6 @@ import { ToastrModule } from 'ngx-toastr';
   declarations: [
     AppComponent,
     LoginComponent,
-    QAPortComponent,
     ErrorPageComponent,
 
   ],
