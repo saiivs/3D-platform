@@ -242,7 +242,7 @@ module.exports = {
             let status = "Uploaded"
             let data = await database.dbupdateProductStatus(req.body,status);
             if(data){
-                file.mv(`./public/modals/${req.body.id}&&${req.body.clientId}.glb`,(err,data)=>{
+                file.mv(`./public/models/${req.body.id}&&${req.body.clientId}.glb`,(err,data)=>{
                     if(err){
                         throw new Error
                     }else{

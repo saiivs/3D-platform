@@ -36,7 +36,7 @@ export class BackendService {
   emitProNameDetailsAdmin$ = new BehaviorSubject<string>(localStorage.getItem('adminPro')||'default value');
   adminCurrProName = this.emitProNameDetailsAdmin$.asObservable()
   
-//error handling function which redirects the user to the error page "**"
+//error handling function which redirects the user to the error page "*"
   erroHandler = (error: HttpErrorResponse)=> {
     let message;
     switch (error.status) {
