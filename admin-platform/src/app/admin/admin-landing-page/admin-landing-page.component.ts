@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { client } from 'src/app/models/interface';
 import { csvData , clientData} from '../../csvRecord';
 import { BackendService } from '../../services/backend.service';
-
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-admin-landing-page',
@@ -14,7 +14,7 @@ import { BackendService } from '../../services/backend.service';
 })
 export class AdminLandingPageComponent implements OnInit,OnDestroy {
 
-  constructor(private titleService : Title,private toastr: ToastrService,private backEndService:BackendService){
+  constructor(private titleService : Title,private toastr: ToastrService,private backEndService:BackendService,private searchService:NotificationService){
 
   }
 
@@ -29,14 +29,37 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
   totalRecords!:number
   page:number = 1
   nonPagination:Boolean = true;
+  AddBtn:Boolean = true;
+  Acc_Manager:string =""
+  budget:number = 0;
   subscription!:Subscription;
   
-
-
   ngOnInit(){
     this.titleService.setTitle(this.title)
-    this.subscription = this.backEndService.getClient().subscribe((data)=>{
-        this.clientTableData = [...data]
+    this.searchService.checkUrlForSearchBtn(false);
+    this.subscription = this.backEndService.getClient().subscribe((data)=>{  
+        this.clientTableData = data.data
+        data.productDetails.forEach(()=>{
+          for(let model of data.productDetails){
+            let clientId = model._id;
+
+            let modelDetailIndex = data.data.findIndex(obj => obj._id == clientId);
+            let modelDetail = this.clientTableData[modelDetailIndex];
+
+            if(modelDetail){
+              let proCount = parseInt(modelDetail.productCount);
+              let approvedcount = model.count;
+              if(approvedcount == 0){
+                this.clientTableData[modelDetailIndex].per = 0;
+              }else{
+                let percentage = (proCount / approvedcount) * 100;
+                this.clientTableData[modelDetailIndex].per = percentage;
+              }
+              
+            } 
+          }
+        })
+        this.budget += data.budgetData
         this.totalRecords = this.clientTableData.length; 
     })
   }
@@ -103,9 +126,7 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
 
   uploadCsv(){
     if(this.csvFileName !=""){
-
     this.toastr.success('success','File successfully uploaded')
-
     let clientInfo:clientData = new clientData();
         clientInfo.ClientName = this.csvFileName;
         clientInfo.productCount = this.csvArr.length;
@@ -119,18 +140,49 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
           this.newClientTableData = []
           this.csvFileName = ""
         if(this.clientTableData.length > 6){
-                  this.nonPagination = false;
-                }
+            this.nonPagination = false;
+          }
         })
 
     }else{
       this.toastr.error('Error', 'Please select a file');
     }
+  }
 
+  AddManager(name:string,clientId:any,index:number){
+    let i = (this.page - 1) * 6 + index;
+    this.backEndService.addClientManager(name,clientId).subscribe((res)=>{
+      if(res){
+        this.AddBtn = false;
+        this.clientTableData[i].account_Manager = name;
+      }
+    })
+  }
+
+  setInternalDeadline(event:any,clientId:any){
+    let date = event.target.value;
+    this.backEndService.setDeadLine(date,clientId,'Internal').subscribe((res)=>{
+
+    })
+  }
+
+  setProjectDeadline(event:any,clientId:any){
+    let date = event.target.value;
+    this.backEndService.setDeadLine(date,clientId,'Project').subscribe((res)=>{
+      
+    })
   }
 
   sendClientName(name:string){
     this.backEndService.getClientName(name)
+  }
+
+  @ViewChild('budgetPrice') budgetPrice!: ElementRef;
+  addBudget(){
+    this.budget = this.budgetPrice.nativeElement.value;
+    this.backEndService.createBudget(this.budget).subscribe((res)=>{
+      console.log(res);  
+    })
   }
 
   ngOnDestroy(){

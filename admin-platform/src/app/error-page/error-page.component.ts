@@ -21,7 +21,10 @@ export class ErrorPageComponent implements OnInit{
     this.titleService.setTitle(this.title)
     this.route.queryParams.subscribe((params)=>{
       this.errorMessage = params['message'];
+      console.log(this.errorMessage);
+      
       this.status = params['statusCode']
+      console.log(this.status);
     })
   }
 

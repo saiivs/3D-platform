@@ -1,0 +1,317 @@
+
+<div class="card-body" style="padding-top: 0;">
+    <div class="row">
+        <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
+            <div class="swiper hp-ecommerce-app-detail-slider-1">
+              <span><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <model-viewer
+                          camera-controls
+                          camera-orbit="45deg 55deg 115%"
+                          [src]="srcFile"
+                          alt="A 3D model of an astronaut"
+                          data-js-focus-visible=""
+                          ar-status="not-presenting"
+                          >
+                          </model-viewer>
+                          <div class="mywarning" *ngIf="warningMsg != ''">
+                            <div class="col-12 col-md-6 col-xl-6" style="margin-left: auto;">
+                              <div class="card" style="border: 1px solid #ffc212;border-radius: 6px;background-color: #ffc21269;">
+                                  <div class="card-body" style="padding: 11px 11px;">
+                                      <div class="row g-16">
+                                          <div class="col-6 hp-flex-none w-auto">
+                                              <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg hp-bg-color-dark-primary rounded-circle" style="background-color: #ffc21200;">
+                                                <i class="text-danger ri-2x ri-error-warning-line"></i>
+                                              </div>
+                                          </div>
+                                          <div class="col">
+                                              <h3 class="mb-4"><span class="hp-badge-text text-primary hp-text-color-dark-primary-2">Warning</span></h3>
+                                              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">{{warningMsg}}</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+   
+   
+        </div>
+  
+        <div class="col-12 col-lg-6">
+            <h2 class="mb-8">{{modelDetails.productName}}</h2>
+  
+            <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
+                By
+                <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientDetails[0]?.ClientName}}</span>
+            </span>
+            <ul class="proDetails">
+              <li>Product Status : <span [ngStyle]="{color : QaCommentArr[0]?.modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0]?.modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
+                margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
+              <li>Polygon Count : <span>{{polygonCount}}</span></li>
+              <li>Admin Status : <span [ngStyle]="{color : QaCommentArr[0]?.adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0]?.adminStatus}}</span><span *ngIf="QaCommentArr[0]?.adminStatus == 'Approved'"><i style="font-size: 0.9rem;
+                margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
+            </ul>
+            <div class="row align-items-center justify-content-between mt-24 pe-42">
+                <!-- <div class="col-12 col-md-4">
+                    <div class="row mx-0 align-items-center">
+                      
+                    </div>
+                    <div class="dropdown">
+                      <a class="btn btn-primary dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        Action
+                      </a>
+                    
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li><a class="dropdown-item" href="javascript:;" (click)="updateModalStatus(QaCommentArr[0]?.articleId,'Approved')">Approve</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" data-bs-toggle="modal" data-bs-target="#exampleModal">Need Updates</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" (click)="downloadFile(QaCommentArr[0]?.articleId)">Download</a></li>
+                      </ul>
+                    </div>
+                    
+                </div> -->
+  
+                <!-- modal -->
+                <div class="modal fade" #myModal id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Submit the correction</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="mb-3">
+                            
+                            <label for="message-text" class="col-form-label">Correction:</label>
+                            <textarea #correctionInput [(ngModel)]="correctionValue" name="correction" (input)="checkInPut($event)" class="form-control" id="message-text"></textarea>
+                            <p class="text-danger" *ngIf="correctionInvalid != ''" >{{correctionInvalid}}</p>
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" (click)="getCorrection('Correction',myModal)" [attr.data-bs-dismiss]="canCloseModal ? 'modal' : null" class="btn sub btn-primary">Submit</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col hp-flex-none w-auto mt-24 mt-sm-0">
+                    <div class="row align-items-center mb-4">
+                        <div class="w-auto pe-0">
+                            <ul class="row g-6">
+                                <li class="col hp-flex-none w-auto">
+                                    3D Artist
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+  
+                    <span class="d-block text-start hp-caption text-black-80 hp-text-color-dark-30">{{modelDetails.assigned}}</span>
+                </div>
+            </div>
+  
+            <div class="divider"></div>
+            <div class="chatHead">
+              
+              <h2>QA-Modeler Exchange</h2>
+            </div>
+            <div class="container bootstrap snippets bootdeys mybg">
+              <div class="col-md-12 col-xs-12 col-md-offset-2">
+                <!-- Panel Chat -->
+                <div class="panel" id="chat">
+                  
+                  <div  class="panel-body" #chatBody>
+                    
+                    <div  class="chats myChatbody" >
+                      <div class="chat">
+                        <!-- <div class="chat-avatar">
+                          <a class="avatar avatar-online" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="June Lane">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="...">
+                            <i></i>
+                          </a>
+                        </div> -->
+                        <ng-container *ngIf="flag;else noChat">
+                           <div class="chat-body" *ngFor="let date of getGroupedMessageKeys()" >
+                          <!-- <div style="text-align: center;padding: 0.5rem;">
+                            <p>Today</p>
+                          </div>  -->
+                          <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" *ngIf="date != currentDate;else today"><time >{{date}}</time></p>
+                          <ng-template #today>
+                            <p class="meta" style="margin-bottom: 1.5rem;text-align: center;"><time >Today</time></p>
+                          </ng-template>
+                          <ng-container *ngFor="let message of groupedMessages[date]">
+                            <div class="chat-content" *ngIf="message.user == userEmail" style="margin-bottom: 8px;background-color: #0010f78c;" >
+                                <p *ngIf="message.user == userEmail" style="margin-bottom: 0em;">{{message.cmnt}}</p>
+                                <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>
+                            </div>
+                            
+                            <div *ngIf="message.user != userEmail" class="chat-content" style="margin-bottom: 8px;float: left;min-width: 8rem;" [ngStyle]="{background : message.roll == 'QA' ?  '#62a8ea' : '#526D82'}">
+                                <p *ngIf="message.user != userEmail" style="margin-bottom: 0em;">{{message.cmnt}}</p>
+                                <div class="timeRoll">
+                                    <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}  </time>
+                                    <small class="roll">{{message.roll}}</small>
+                                </div>      
+                            </div> 
+                          </ng-container>
+                          <!-- <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" ><time >Today</time></p> -->
+                            
+                        </div> 
+                        </ng-container>
+                        <ng-template #noChat>
+                          <div class="chat-body">
+                            <p class="meta" style="margin-bottom: 1.5rem;text-align: center;"><time >No Chats</time></p>
+                          </div>
+                        </ng-template>
+                       
+                        
+                        <!-- <div style="text-align: center;padding: 0.5rem;">
+                          <p>Today</p>
+                        </div>  -->
+                      </div>
+                      <!-- <div class="chat chat-left">
+                        <div class="chat-avatar">
+                          <a class="avatar avatar-online" data-toggle="tooltip" href="#" data-placement="left" title="" data-original-title="Edward Fletcher">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="...">
+                            <i></i>
+                          </a>
+                        </div>
+                        <div class="chat-body">
+                          <div class="chat-content">
+                            <p></p>
+                            <time class="chat-time" datetime="2015-07-01T11:39">11:39:57 am</time>
+                          </div>
+                        </div>
+                      </div> -->
+                      <!-- <div class="chat">
+                        <div class="chat-avatar">
+                          <a class="avatar avatar-online" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="June Lane">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="...">
+                            <i></i>
+                          </a>
+                        </div>
+                        <div class="chat-body">
+                          <div class="chat-content">
+                            <p>
+                              If necessary, please ask me.
+                            </p>
+                            <time class="chat-time" datetime="2015-07-01T11:40">11:40:10 am</time>
+                          </div>
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+                  <div class="panel-footer">
+                    <form>
+                      <div class="input-group" style="gap: 0.5rem;">
+                        <input type="text" #comntRef class="form-control" (input)="getComment($event)" placeholder="Say something">
+                        <span class="input-group-btn">
+                          <button class="btn btn-primary" (click)="pushComnts()" type="button">Send</button>
+                        </span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- End Panel Chat -->
+              </div>
+              </div>
+            
+  
+            <!-- <div class="row g-24">
+                <div class="col-12">
+                    <div class="row g-8">
+                        <div class="col hp-flex-none w-auto">
+                            <div class="input-number">
+                                <div class="input-number-handler-wrap">
+                                    <span class="input-number-handler input-number-handler-up">
+                                        <span class="input-number-handler-up-inner">
+                                            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
+                                                <path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path>
+                                            </svg>
+                                        </span>
+                                    </span>
+  
+                                    <span class="input-number-handler input-number-handler-down input-number-handler-down-disabled">
+                                        <span class="input-number-handler-down-inner">
+                                            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
+                                                <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
+                                            </svg>
+                                        </span>
+                                    </span>
+                                </div>
+  
+                                <div class="input-number-input-wrap">
+                                    <input class="input-number-input" type="number" min="1" max="10" value="1">
+                                </div>
+                            </div>
+                        </div>
+  
+                        <div class="col hp-flex-none w-auto">
+                            <a href="app-ecommerce-checkout.html">
+                                <button class="btn btn-primary">
+                                    <i class="ri-shopping-bag-line remix-icon"></i>
+                                    <span>Go to Cart</span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+  
+                <div class="col-12">
+                    <div class="row g-8">
+                        <div class="col-12 d-flex align-items-center">
+                            <i class="ri-truck-line text-primary"></i>
+                            <span class="hp-caption text-black-80 hp-text-color-dark-30 fw-normal text-decoration-underline ms-4">Free Shipping Worldwide</span>
+                        </div>
+  
+                        <div class="col-12 d-flex align-items-center">
+                            <i class="ri-checkbox-circle-line text-primary"></i>
+                            <span class="hp-caption text-black-80 hp-text-color-dark-30 fw-normal text-decoration-underline ms-4">Available in stocks</span>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+  
+            <!-- <div class="divider"></div> -->
+  
+            <!-- <div class="row mx-0 g-24">
+                <div class="col-12 col-md-5">
+                    <div class="row align-items-center">
+                        <div class="col hp-flex-none rounded-circle bg-primary-4 d-flex align-items-center justify-content-center p-0 me-8" style="width: 36px; height: 36px;">
+                            <i class="ri-shield-line text-primary h3 mb-0 lh-normal"></i>
+                        </div>
+  
+                        <div class="col px-0">
+                            <span class="d-block hp-p1-body fw-medium text-black-100 hp-text-color-dark-0">1 Year Warranty</span>
+                            <span class="d-block hp-input-description fw-normal text-black-80 hp-text-color-dark-30">Lorem Ipsum Dolor Sıt Amet</span>
+                        </div>
+                    </div>
+                </div>
+  
+                <div class="col-12 col-md-5">
+                    <div class="row align-items-center">
+                        <div class="col hp-flex-none rounded-circle bg-primary-4 d-flex align-items-center justify-content-center p-0 me-8" style="width: 36px; height: 36px;">
+                            <i class="ri-time-line text-primary h3 mb-0 lh-normal"></i>
+                        </div>
+  
+                        <div class="col px-0">
+                            <span class="d-block hp-p1-body fw-medium text-black-100 hp-text-color-dark-0">14 Days Replacement</span>
+                            <span class="d-block hp-input-description fw-normal text-black-80 hp-text-color-dark-30">Lorem Ipsum Dolor Sıt Amet</span>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+  
+  
+  
+  
+  </div>
+  

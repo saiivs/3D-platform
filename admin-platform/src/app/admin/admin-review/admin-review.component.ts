@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
 import swal from "sweetalert2/dist/sweetalert2.js"
 import "@google/model-viewer"
 import { messageInfo } from 'src/app/models/interface';
 import { Subscription } from 'rxjs';
+import {cmntData} from '../../models/interface'
 
 @Component({
   selector: 'app-admin-review',
@@ -15,11 +16,12 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
 
 
   @ViewChild('comntRef') comntRef:any;
-  constructor(private backEnd : BackendService,private route:ActivatedRoute){
+  @ViewChild('chatBody') chatBodyRef!: ElementRef;
+  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router){
 
   }
 
-  QaCommentArr:Array<any>= []
+  QaCommentArr:cmntData[]= []
   QaComment:string = ""
   clientId:string = "";
   articleId:string = "";
@@ -36,19 +38,46 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   polygonCount!:number;
   srcFile:string = ""
   subscription!:Subscription;
+  warningMsg:string = "";
+
+  validateGlbFile(data:any){
+    let modelData = data.gltfData;
+    function getFileExtension(fileName:string) {
+      const extension = fileName.substring(fileName.lastIndexOf('/') + 1).toLowerCase();
+      return extension;
+    }
+    let polygonWarng;
+    let extnsWrng;
+    let imgHieghtWrng;
+    if(modelData.info.totalTriangleCount > 150000){
+       polygonWarng = `Polygon Count Exceeded`
+    }
+    modelData.info.resources.forEach((obj:any) =>{
+      if(obj.image){
+        let format = getFileExtension(obj.mimeType);
+        if(format == 'png') extnsWrng =`Invalid file extension`
+        if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+      }
+    })
+    if(polygonWarng || extnsWrng || imgHieghtWrng){
+      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng].filter(Boolean).join(', ');
+      localStorage.setItem("ModelWarning",this.warningMsg);
+    }else{
+      localStorage.removeItem("ModelWarning");
+    }
+  }
+
 
   ngOnInit() {
-    
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
     this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
-        this.polygonCount = data.polygonCount
+        this.validateGlbFile(data);
+        this.polygonCount = data.gltfData.info.totalTriangleCount;
         this.QaCommentArr = [...data.Arr]
-        this.srcFile = `https://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
-        console.log(this.QaCommentArr);
-        
+        this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -56,10 +85,10 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
             this.groupedMessages[date] = [];
           }
           this.groupedMessages[date].push(message);
-        });
-        console.log(this.groupedMessages);
-        
-        
+        }); 
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },10)
       }
     })
     this.backEnd.adminCurrProName.subscribe((proName)=>{
@@ -71,6 +100,11 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         this.clientName = clientName
       })
     })
+  }
+
+  scrollToBottom() {
+    const chatBody = this.chatBodyRef.nativeElement;
+    chatBody.scrollTop = chatBody.scrollHeight;
   }
 
   getComment(event:any){
@@ -95,7 +129,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
    
     this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
-
     })
 
     }else{
@@ -111,7 +144,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
       this.comntRef.nativeElement.value = ""
       this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
-
     })
     }
 
@@ -122,7 +154,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   }
 
   
-  updateModalStatus(articleId:string,status:string){
+  updateModalStatus(articleId:string|undefined,status:string){
     swal.fire({
       position: 'center',
       title: 'Confirm',
@@ -141,11 +173,10 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
           })
         }else{
           this.backEnd.rejectModal(this.clientId,articleId).subscribe((res)=>{
-            this.QaCommentArr[0].modalStatus = "Need Updates"
+            this.QaCommentArr[0].modalStatus = "Correction"
             this.QaCommentArr[0].adminStatus = status
           })
-        }
-          
+        }    
       }else{
         if(result.dismiss === swal.DismissReason.cancel){
 
@@ -154,10 +185,14 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     })
   }
 
-  downloadFile(articleId:string){
+  fullScreenMode(){
+    this.router.navigate(['admin/model-FullScreen',this.articleId,this.clientId]);
+  }
+
+  downloadFile(articleId:string|undefined){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `https://localhost:3001/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `http://localhost:3001/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }

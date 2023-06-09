@@ -216,6 +216,7 @@ let optionsBarChart = {
 };
 
 if (document.querySelector("#bar-chart")) {
+    console.log("functin");
     setTimeout(() => {
         let chart = new ApexCharts(document.querySelector("#bar-chart"), optionsBarChart);
         chart.render();

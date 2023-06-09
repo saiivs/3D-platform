@@ -10,7 +10,8 @@ export interface userRes {
   userRole:string,
   userEmail:string,
   password?:Boolean,
-  userExist?:Boolean
+  userExist?:Boolean,
+  rollNo:string
 }
 
 export interface csvRecord{
@@ -24,13 +25,25 @@ export interface client{
   _id :Types.ObjectId,
   ClientName:string,
   productCount: string,
-  status:string
+  status:string,
+  account_Manager:string,
+  project_deadline:string,
+  internal_deadline:string,
+  per?:number
+}
+
+export interface clientandBudget{
+  data:client[],
+  budgetData:number,
+  productDetails:any[]
 }
 
 export interface products{
   _id:Types.ObjectId,
   clientId:Types.ObjectId,
-  productList:productList[]
+  productList:productList[],
+  budgetValue:number,
+  requirement:any[]
 }
 
 export interface productList{
@@ -43,7 +56,12 @@ export interface productList{
   productLink:string,
   productName:string,
   productStatus:string,
-  slNo:string
+  slNo:string,
+  price:string,
+  priceAdded?:Boolean,
+  Reff?:string,
+  tag:string,
+  modRollno:string
 }
 
 export interface team{
@@ -67,6 +85,7 @@ export interface messageInfo{
 
 export interface modelerLanding{
   ClientData:Array<any>,
+  modelerData:Array<any>,
   QATeamName:string,
   approvedClient:Boolean,
   assignedPro:[],
@@ -87,6 +106,41 @@ export interface QaLanding{
   modalerRollNo:string,
   _id:string
   
+}
+
+export interface correctionData {
+  correction:string, 
+}
+
+export interface warning {
+  warningData: {}
+}
+
+export interface cmntData {
+  adminStatus:string,
+  articleId:string,
+  clientId:Types.ObjectId,
+  comments:any[],
+  modalStatus:string,
+  _id:Types.ObjectId
+}
+
+export interface model {
+  QaTeam:string,
+  adminStatus:string,
+  approved:false,
+  articleID:string|Boolean,
+  clientId:Types.ObjectId,
+  date:string,
+  invoice: Boolean,
+  isSelected:Boolean,
+  modRolllno:string,
+  price:number,
+  priceAdded:boolean,
+  productLink:string
+  productName:String,
+  productStatus:string,
+  slNo:string,
 }
 
 

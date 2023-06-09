@@ -80,7 +80,7 @@
               ">
                     <td scope="row">{{ i + 1 }}</td>
                     <td>{{ client.ClientData[0].ClientName }}</td>
-                    <td>{{ client.assignedPro.length }}</td>
+                    <td>{{ productCount }}</td>
                     <td>
                       <button  class="btn btn-sm btn-outline-primary myhover">
                         <a class="myhover" (click)="QaNameLoad(client.QATeamName,client.ClientData[0]?.ClientName)" [routerLink]="['modaler-products',client._id]"
@@ -109,6 +109,15 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="col-12">
+      <p class="hp-p1-body">
+        Please click the "Invoice" button to generate an invoice for all the approved models.</p>
+      <button class="btn btn-sm btn-primary" (click)="Invoice()">Invoice</button>
+      <div>
+        <small class="text-danger">{{noModelsToInvoiceMsg}}</small>
+      </div>
+      
     </div>
   </div>
 </div>

@@ -1,0 +1,170 @@
+<div class="hp-main-layout-content">
+    <div class="row">
+        <div class="col-12 col-xl-3 calenderBox">
+            
+            <label for="date">Select the Month&nbsp;</label>
+            <div>
+                <input class="calender" #datevalue type="date" id="date" name="date" min="1900-01" max="2100-12">
+                <button class="btn btn-sm btn-primary" (click)="dateInputValue(datevalue.value)" id="btnheight">Submit</button>
+            </div>
+            
+            
+        </div>
+    </div>
+    <div class="row mb-32 gy-32">
+       <div class="col-12 col-xl-6">
+    <div class="card myCardHeight" style="border-radius: 7px;">
+        <div class="card-body">
+            <div class="row justify-content-between">
+                <div class="col-8">
+                    <h4 class="me-8">Bar Chart</h4>
+                    <p class="hp-badge-text">Monthly Production of Approved Models by Modelers</p>
+                </div>
+
+                <div class="col-4 hp-flex-none w-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-text btn-icon-only p-0 mt-n8" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="ri-more-fill hp-text-color-dark-0 remix-icon" style="font-size: 24px;"></i>
+                        </button>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li>
+                                <a class="dropdown-item" aria-current="false" href="javascript:;">Last 28 Days</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" aria-current="false" href="javascript:;">Last Month</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" aria-current="false" href="javascript:;">Last Year</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="bar-chart">
+                <div *ngIf="noMonthlyStatus">
+                    <p class="noMonthlyStatus">No Monthly Status Please Check Later</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12 col-xl-6 clientList" >
+    <div class="row">
+        <div *ngFor="let client of clientList;let i = index" class="myScroll hp-cursor-pointer hp-transition hp-hover-bg-dark-100 hp-hover-bg-black-10 rounded py-8 mb-16 col-12 myboxColor">
+            <div (click)="clientModelerList(client._id)" class="row align-items-end justify-content-between myOnHover">
+                <div class="col">
+                    <div class="row align-items-center">
+                        
+                        <div class="hp-flex-none w-auto pe-0 col">
+                            <div class="me-16 border hp-border-color-black-10 hp-bg-black-0 rounded-3 d-flex align-items-center justify-content-center" style="min-width: 48px; height: 48px;">
+                                <img style="width: 3rem;" src="assets/app-assets/img/users/user-8.svg" alt="Zendesk">
+                            </div>
+                        </div>
+
+                        <div class="hp-flex-none w-auto ps-0 col">
+                            <span class="d-block hp-p1-body fw-medium hp-text-color-black-bg hp-text-color-dark-0">{{client.ClientName}}</span>
+                            <span class="d-block hp-caption fw-normal" style="color: #636e72;"><span>Dead Line-</span>{{client.project_deadline | date:'d MMM yyyy'}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hp-flex-none w-auto col">
+                  
+                    <span class="h5 hp-text-color-black-bg hp-text-color-dark-0">Total Expense ${{client.exp}} </span>
+                </div>
+            </div>
+        </div>
+
+       
+        
+
+
+       
+       
+        
+    </div>
+</div>
+
+
+    </div>
+    <div class="col-12">
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="row justify-content-between">
+              <div class="col">
+                <h4>Modelers List</h4>
+                <div class="headSerach">
+                   <p class="hp-p1-body" style="margin-bottom: 0;">
+                  You can view the current status of all the modelers here.
+                </p>
+                <div class="hp-header-search searchContainer col">
+                  <input type="text" style="width: 40%;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
+              </div>
+                </div>
+               
+              </div>
+              <ng-template #emptyTable>
+                <p class="hp-p1-body emptyTable">
+                  No data to view. Try adding new client.
+                </p>
+                <div class="emptyImg">
+                  <img  src="assets/myImg/empty-folder.png" alt="" />
+                </div>
+  
+              </ng-template>
+  
+              <div class="table-responsive col-12 mt-16">
+                <table class="table table-bordered text-center">
+                  <thead>
+                    <tr>
+                      <th scope="col">Sl No</th>
+                      <th scope="col">Modeler Name</th>
+                      <th scope="col">Product Count</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">View Models</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let modeler of allModelers
+                    | paginate
+                      : {
+                          id: 'listing_pagination',
+                          itemsPerPage: 6,
+                          currentPage: page,
+                          totalItems: totalRecords
+                        };
+                  let i = index">
+                  <ng-container *ngIf="serachForModel == ''||modeler.modelerName.includes(serachForModel)||modeler.modelerName.toLowerCase().includes(serachForModel)">
+                     <td scope="row">{{i+1}}</td>
+                      <td>{{modeler.modelerName}}</td>
+                      <td>{{modeler.models.length}}</td>
+                      <td>{{modeler.percentage}}%</td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary">
+                          <a class="myhover" [routerLink]="['../models',modeler._id]" (click)="sendClientName()"
+                            >View Here</a>
+                        </button>
+                      </td>
+                  </ng-container>
+                     
+                    </tr>
+                  </tbody>
+                </table>
+                <div>
+                  <pagination-controls *ngIf="allModelers.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                    (pageChange)="page = $event"></pagination-controls>
+                </div>
+              </div>
+  
+              <div class="col-12 mt-24 hljs-container">
+                <pre>
+          <code class="html" data-component='table' data-code='overview'></code>
+      </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>

@@ -8,6 +8,9 @@ import { QaProductsComponent } from './qa-products/qa-products.component';
 import { QaReviewsComponent } from './qa-reviews/qa-reviews.component';
 import { QaAdminReviewComponent } from './qa-admin-review/qa-admin-review.component';
 import { ScrollDownDirective } from './scroll-down.directive';
+import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 
@@ -27,7 +30,10 @@ import { ScrollDownDirective } from './scroll-down.directive';
   imports: [
     CommonModule,
     QaRoutingModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    FormsModule,
+    MatTooltipModule,
+    MatDialogModule
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

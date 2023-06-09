@@ -1,21 +1,42 @@
 
-<div class="card-body">
+<div class="card-body" style="padding-top: 0;">
     <div class="row">
         <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
             <div class="swiper hp-ecommerce-app-detail-slider-1">
+              
+              <span><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <div class="d-flex align-items-center justify-content-center">
-                          <model-viewer
+                          <model-viewer #modelElement
                           camera-controls
                           camera-orbit="45deg 55deg 115%"
                           [src]="srcFile"
+                          (load)="onModelLoad()"
                           alt="A 3D model of an astronaut"
                           data-js-focus-visible=""
                           ar-status="not-presenting"
                           >
                           </model-viewer>
-  
+                          <div class="mywarning" *ngIf="warningMsg != ''">
+                            <div class="col-12 col-md-6 col-xl-6" style="margin-left: auto;">
+                              <div class="card" style="border: 1px solid #ffc212;border-radius: 6px;background-color: #ffc21269;">
+                                  <div class="card-body" style="padding: 11px 11px;">
+                                      <div class="row g-16">
+                                          <div class="col-6 hp-flex-none w-auto">
+                                              <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg hp-bg-color-dark-primary rounded-circle" style="background-color: #ffc21200;">
+                                                <i class="text-danger ri-2x ri-error-warning-line"></i>
+                                              </div>
+                                          </div>
+                                          <div class="col">
+                                              <h3 class="mb-4"><span class="hp-badge-text text-primary hp-text-color-dark-primary-2">Warning</span></h3>
+                                              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">{{warningMsg}}</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
                         </div>
                     </div>
                 </div>
@@ -25,11 +46,11 @@
         </div>
   
         <div class="col-12 col-lg-6">
-            <h2 class="mb-8">{{productName}}</h2>
+            <h2 class="mb-8">{{modelerDetails.productName}}</h2>
   
             <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
                 By
-                <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientName}}</span>
+                <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientDetails[0]?.ClientName}}</span>
             </span>
             <ul class="proDetails">
               <li>Product Status: <span [ngStyle]="{color : QaCommentArr[0]?.modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0]?.modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
@@ -39,11 +60,11 @@
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
             </ul>
             <div class="row align-items-center justify-content-between mt-24 pe-42">
-                <!-- <div class="col-12 col-md-4">
+                <div class="col-12 col-md-4">
                     <div class="row mx-0 align-items-center">
-                      <button class="btn btn-sm btn-primary">Approve</button>    
+                      <button class="btn btn-sm btn-primary" (click)="helpCall()">HELP?</button>    
                     </div>
-                </div> -->
+                </div>
                 <div class="col hp-flex-none w-auto mt-24 mt-sm-0">
                     <div class="row align-items-center mb-4">
                         <div class="w-auto pe-0">
@@ -55,20 +76,19 @@
                         </div>
                     </div>
   
-                    <span class="d-block text-start hp-caption text-black-80 hp-text-color-dark-30">{{QaName}}</span>
+                    <span class="d-block text-start hp-caption text-black-80 hp-text-color-dark-30">{{modelerDetails.QaTeam}}</span>
                 </div>
             </div>
-  
             <div class="divider"></div>
             <div>
-              <h2>Modeler-QA Exchange</h2>
+              <h2 (click)=onModelLoad()>Modeler-QA Exchange</h2>
             </div>
             <div class="container bootstrap snippets bootdeys mybg">
               <div class="col-md-12 col-xs-12 col-md-offset-2">
                 <!-- Panel Chat -->
                 <div class="panel" id="chat">
                   
-                  <div class="panel-body myChatbody" >
+                  <div class="panel-body myChatbody" #chatBody>
                     
                     <div  class="chats" >
                       <div class="chat">
@@ -78,7 +98,7 @@
                             <i></i>
                           </a>
                         </div> -->
-                        <ng-container *ngIf="QaCommentArr[0]?.comments.length != 0;else noChat">
+                        <ng-container *ngIf="flag;else noChat">
                            <div class="chat-body" *ngFor="let date of getGroupedMessageKeys()" >
                           <!-- <div style="text-align: center;padding: 0.5rem;">
                             <p>Today</p>
@@ -89,12 +109,12 @@
                           </ng-template>
                           <ng-container *ngFor="let message of groupedMessages[date]">
                             <div class="chat-content" *ngIf="message.user == userEmail" style="margin-bottom: 8px;background-color: #0010f78c;" >
-                                <p *ngIf="message.user == userEmail">{{message.cmnt}}</p>
+                                <p *ngIf="message.user == userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
                                 <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>
                             </div>
                             
-                            <div *ngIf="message.user != userEmail" class="chat-content" style="float: left;background-color: #62a8ea;">
-                                <p *ngIf="message.user != userEmail">{{message.cmnt}}</p>
+                            <div *ngIf="message.user != userEmail" class="chat-content" style="float: left;margin-bottom: 8px;" [ngStyle]="{background : message.roll == 'QA' ?  '#62a8ea' : '#526D82'}">
+                                <p *ngIf="message.user != userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
                                 <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>    
                             </div> 
                           </ng-container>
@@ -159,8 +179,6 @@
                 <!-- End Panel Chat -->
               </div>
               </div>
-            <div class="divider"></div>
-  
             <!-- <div class="row g-24">
                 <div class="col-12">
                     <div class="row g-8">
@@ -248,7 +266,7 @@
         </div>
     </div>
   
-    <div class="divider"></div>
+    
   
   
   </div>

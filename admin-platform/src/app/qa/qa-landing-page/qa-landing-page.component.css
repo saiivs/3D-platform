@@ -9,3 +9,12 @@
 .myhover:hover{
   color: white;
 }
+
+.myclass{
+  padding-left: 8px;
+  padding-bottom: 8px;
+}
+
+#count{
+  font-size: 19px;
+}

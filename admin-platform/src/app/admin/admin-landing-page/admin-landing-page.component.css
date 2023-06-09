@@ -34,3 +34,25 @@
 .myhover:hover{
   color: white;
 }
+
+#dropdownMenuLink{
+  background-color: transparent!important;
+  color: blue!important;
+  border-color: transparent!important;
+}
+
+  .calenderClass{
+    border-radius: 5px;
+    padding: 1px 10px;
+    border-color: #0063f7;
+}
+
+.budgetInput{
+  width: 4rem;
+  border-radius: 7px;
+  height: 2.1rem;
+}
+
+.fixedBudget{
+  font-size: large;
+}

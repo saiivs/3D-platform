@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -12,7 +13,12 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { TokenInterceptor } from './token.interceptor';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { CorrectionDilogComponent } from './correction-dilog/correction-dilog.component';
+import { ModelFullscreenComponent } from './model-fullscreen/model-fullscreen.component';
 import { ToastrModule } from 'ngx-toastr';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ModelWarningComponent } from './model-warning/model-warning.component';
+
 
 
 
@@ -21,6 +27,9 @@ import { ToastrModule } from 'ngx-toastr';
     AppComponent,
     LoginComponent,
     ErrorPageComponent,
+    CorrectionDilogComponent,
+    ModelFullscreenComponent,
+    ModelWarningComponent
 
   ],
   imports: [
@@ -30,6 +39,8 @@ import { ToastrModule } from 'ngx-toastr';
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    MatDialogModule,
+    MatTooltipModule, 
     ToastrModule.forRoot(),
     SweetAlert2Module.forRoot()
   ],

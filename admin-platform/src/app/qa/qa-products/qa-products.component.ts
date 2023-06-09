@@ -22,6 +22,7 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   totalRecords!:number
   page:number = 1;
   subscription!:Subscription;
+  
 
   ngOnInit(){
     this.Id = this.route.snapshot.params['id'];
@@ -33,8 +34,10 @@ export class QaProductsComponent implements OnInit,OnDestroy{
     })
   }
 
-  proName(name:string){
-    this.backEnd.getProName(name)
+  proName(name:string,modelerName:string,modRollNo:string){
+    this.backEnd.getModelerName(modelerName)
+    this.backEnd.getProName(name);
+    this.backEnd.getModRollNo(modRollNo)
   }
 
   ngOnDestroy(): void {

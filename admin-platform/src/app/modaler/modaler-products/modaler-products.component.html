@@ -37,6 +37,7 @@
       </div>
     </div>
  -->
+ 
 
     <div class="col-12">
       <div class="card">
@@ -61,10 +62,11 @@
                     <th scope="col">Article Id</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
+                    <th scope="col">QA</th>
                     <th scope="col">Product Status</th>
                     <th scope="col">Upload Model</th>
                     <th scope="col">Preview</th>
-                    <th scope="col">Admin Status</th>
+                    
 
                   </tr>
                 </thead>
@@ -78,8 +80,16 @@
                     };let i = index">
                     <td scope="row">{{i+1}}</td>
                     <td>{{pro.articleID}}</td>
-                    <td>{{pro.productName}}</td>
-                    <td><a href="" style="cursor: pointer;">{{pro.productLink}}</a></td>
+                    <td><div>
+                      <div>{{pro.productName}}</div>
+                      <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" style="font-size: smaller;">Reference</a></div>    
+                  </div></td>
+                    <td *ngIf="pro.productLink;else noLink"><a  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
+                    </td>
+                    <ng-template #noLink>
+                      <td class="text-danger">NO LINK</td>
+                    </ng-template>
+                    <td>{{pro.QaTeam}}</td>
                     <td *ngIf="pro.productStatus == 'Not Uploaded' ;else pending" style="color: rgb(252, 11, 51);font-weight: 600;">{{pro.productStatus}}</td>
                     <ng-template #pending><td style="font-weight: bold;" [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)' }">{{pro.productStatus}}</td></ng-template>
                     <td *ngIf="!pro?.modalFile;else uploadBtn"><input type="file" id="actual-btn" #fileInput (change)="acceptFile($event)" hidden/><label for="actual-btn" (click)="getIndex(i)">Choose File</label></td>
@@ -101,9 +111,7 @@
                        </p>
                       </td>
                     </ng-template>
-                    <td [ngStyle]="{color : pro.adminStatus == 'Approved' ? 'green':'red','font-weight':'600'}" >
-                      {{pro.adminStatus}}
-                    </td>
+                   
                   </tr>
                 </tbody>
               </table>
@@ -122,5 +130,7 @@
         </div>
       </div>
     </div>
+   
+    
   </div>
 </div>

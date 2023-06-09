@@ -3,6 +3,7 @@
     <div class="row">
         <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
             <div class="swiper hp-ecommerce-app-detail-slider-1">
+              <span><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <div class="d-flex align-items-center justify-content-center">
@@ -15,7 +16,25 @@
                           ar-status="not-presenting"
                           >
                           </model-viewer>
-  
+                          <div class="mywarning" *ngIf="warningMsg != ''">
+                            <div class="col-12 col-md-6 col-xl-6" style="margin-left: auto;">
+                              <div class="card" style="border: 1px solid #ffc212;border-radius: 6px;background-color: #ffc21269;">
+                                  <div class="card-body" style="padding: 11px 11px;">
+                                      <div class="row g-16">
+                                          <div class="col-6 hp-flex-none w-auto">
+                                              <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg hp-bg-color-dark-primary rounded-circle" style="background-color: #ffc21200;">
+                                                <i class="text-danger ri-2x ri-error-warning-line"></i>
+                                              </div>
+                                          </div>
+                                          <div class="col">
+                                              <h3 class="mb-4"><span class="hp-badge-text text-primary hp-text-color-dark-primary-2">Warning</span></h3>
+                                              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">{{warningMsg}}</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                          </div>
                         </div>
                     </div>
                 </div>
@@ -32,10 +51,10 @@
                 <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientName}}</span>
             </span>
             <ul class="proDetails">
-              <li>Product Status: <span [ngStyle]="{color : QaCommentArr[0]?.modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0]?.modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
+              <li>Product Status: <span [ngStyle]="{color : QaCommentArr[0].modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0].modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
               <li>Polygon Count: <span>{{polygonCount}}</span></li>
-              <li>Admin Status: <span [ngStyle]="{color : QaCommentArr[0]?.adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0]?.adminStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
+              <li>Admin Status: <span [ngStyle]="{color : QaCommentArr[0].adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0].adminStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
             </ul>
             <div class="row align-items-center justify-content-between mt-24 pe-42">
@@ -49,9 +68,9 @@
                       </a>
                     
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li><a class="dropdown-item" href="javascript:;" (click)="updateModalStatus(QaCommentArr[0]?.articleId,'Approved')">Approve</a></li>
-                        <li><a class="dropdown-item" href="javascript:;" (click)="updateModalStatus(QaCommentArr[0]?.articleId,'Rejected')">Rejected</a></li>
-                        <li><a class="dropdown-item" href="javascript:;" (click)="downloadFile(QaCommentArr[0]?.articleId)">Download</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" (click)="updateModalStatus(QaCommentArr[0].articleId,'Approved')">Approve</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" (click)="updateModalStatus(QaCommentArr[0].articleId,'Rejected')">Rejected</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" (click)="downloadFile(QaCommentArr[0].articleId)">Download</a></li>
                        
                       </ul>
                     </div>
@@ -83,7 +102,7 @@
                 <!-- Panel Chat -->
                 <div class="panel" id="chat">
                   
-                  <div  class="panel-body myChatbody" >
+                  <div  class="panel-body myChatbody" #chatBody>
                     
                     <div  class="chats" >
                       <div class="chat">
@@ -93,7 +112,7 @@
                             <i></i>
                           </a>
                         </div> -->
-                        <ng-container *ngIf="QaCommentArr[0]?.comments.length != 0;else noChat">
+                        <ng-container *ngIf="QaCommentArr[0]?.comments?.length != 0;else noChat">
                            <div  class="chat-body" *ngFor="let date of getGroupedMessageKeys()" >
                           <!-- <div style="text-align: center;padding: 0.5rem;">
                             <p>Today</p>

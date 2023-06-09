@@ -1,0 +1,78 @@
+<div class="hp-main-layout-content">
+    <div class="row mb-32 gy-32">
+        <div class="col-12">
+            <div class="hp-card-6 hp-eCommerceCardOne">
+                
+                <div class="rounded overflow-hidden border border-black-40 hp-border-color-dark-80 bg-black-0 hp-bg-color-dark-100 h-100">
+                    <div class="exitFullScreen">
+                        <span><i (click)="exitFullScreenMode()" matTooltip="Exit Full Screen" matTooltipPosition="below" style="font-size: large;" class="hp-text-color-dark-0 ri-2x ri-fullscreen-exit-fill"></i></span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        
+                        <model-viewer
+                        camera-controls
+                        camera-orbit="45deg 55deg 115%"
+                        [src]="modelSrc"
+                        alt=""
+                        data-js-focus-visible=""
+                        ar-status="not-presenting"
+                        >
+                        </model-viewer>
+                    </div>
+                    <div class="p-24">
+                        <div class="mb-16 mt-8">
+                            <h3 class="mb-4">{{modelName}}<span *ngIf="warning != null" class="hp-input-description text-danger hp-hover-bg-danger-4 hp-hover-bg-dark-danger fw-bold">Warning</span></h3>
+                            <p class="mb-0 me-4 fw-medium hp-badge" style="color:#636e72">Client - {{clientName}}</p>
+                        </div>
+
+                        <div class="mb-8">
+                            <p class="mb-4 text-black-100 hp-text-color-dark-0 hp-p1-body">Model Details</p>
+                        </div>
+
+                        <div class="row pe-32 g-16">
+                            <div class="col-6 col-md-2">
+                                <a >
+                                    <div class="rounded border border-black-40 hp-border-color-dark-80 px-8 py-12" style="border-color: black !important;">
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-6 px-0 text-center">
+                                                <span class="d-block hp-input-description text-black-80 hp-text-color-dark-20 fw-normal">Polygon Count</span>
+                                                <span class="d-block hp-input-description text-black-100 hp-text-color-dark-40">{{polygonCount}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <a >
+                                    <div class="rounded border border-black-40 hp-border-color-dark-80 px-8 py-12" style="border-color: black !important;">
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-6 px-0 text-center">
+                                                <span class="d-block hp-input-description text-black-80 hp-text-color-dark-20 fw-normal">Material Count</span>
+                                                <span class="d-block hp-input-description text-black-100 hp-text-color-dark-40">{{materialCount}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-2" *ngIf="warning != null">
+                                <a (click)="openDialog()">
+                                    <div class="rounded border border-black-40 hp-border-color-dark-80 px-8 py-12" style="border-color: black !important;">
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-6 px-0 text-center">
+                                                <span class="d-block hp-input-description text-danger hp-hover-bg-danger-4 hp-hover-bg-dark-danger fw-normal">Warning</span>
+                                                <span class="d-block hp-input-description text-danger hp-hover-bg-danger-4 hp-hover-bg-dark-danger">View Report</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

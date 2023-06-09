@@ -33,6 +33,15 @@
                   Upload List
                 </button>
               </div>
+              <div>
+                <ng-container>
+                  <p class="text-white hp-p1-body " *ngIf="budget != 0">Monthly Budget - ${{budget}}</p>
+                  <input  type="text" placeholder="$" class="text-center budgetInput" #budgetPrice>
+                  <button class="btn btn-sm btn-primary" (click)="addBudget()" style="margin-left: 4px;">Add Budget</button>
+                </ng-container>
+                
+                
+              </div>
             </div>
           </div>
         </div>
@@ -69,7 +78,11 @@
                     <th scope="col">Client Name</th>
                     <th scope="col">Product Count</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Acc Manager</th>
                     <th scope="col">Product List</th>
+                    <th scope="col">Project Dead Line</th>
+                    <th scope="col">Internal Dead Line</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -87,12 +100,36 @@
                     <td scope="row">{{ i + 1 }}</td>
                     <td>{{ client.ClientName }}</td>
                     <td>{{ client.productCount }}</td>
-                    <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.status }}</td>
+                    <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.per }}%</td>
+                    <td><div class="dropdown" *ngIf="client.account_Manager == '';else manager">
+                      <a class="btn btn-primary dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        Add
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li><a class="dropdown-item" href="javascript:;" (click)="AddManager('Emil',client._id,i)">Emil</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" (click)="AddManager('Carl',client._id,i)">Carl</a></li>
+                        <li><a class="dropdown-item" href="javascript:;" (click)="AddManager('Lukas',client._id,i)">Lukas</a></li>
+                       
+                      </ul>
+                    </div>
+                    <ng-template #manager>
+                      <strong>{{client.account_Manager}}</strong>  
+                    </ng-template>
+                    </td>
                     <td>
                       <button class="btn btn-sm btn-outline-primary">
                         <a class="myhover" (click)="sendClientName(client.ClientName)" [routerLink]="['products',client._id]"
                           >View Here</a>
                       </button>
+                    </td>
+                    <td><input *ngIf="client.project_deadline ==  '';else proDeadline" type="date" name="" class="calenderClass" id="project" (input)="setProjectDeadline($event,client._id)">
+                    <ng-template #proDeadline>
+                      {{client.project_deadline}}
+                    </ng-template></td>
+                    <td><input *ngIf="client.internal_deadline == '';else internalDeadline" type="date" name="" class="calenderClass" id="internal" (input)="setInternalDeadline($event,client._id)">
+                      <ng-template #internalDeadline>
+                        {{client.internal_deadline}}
+                      </ng-template>
                     </td>
                   </tr>
                 </tbody>

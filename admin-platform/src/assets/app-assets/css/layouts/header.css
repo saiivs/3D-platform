@@ -19,7 +19,7 @@ body.header-full .hp-main-layout header {
 }
 .hp-main-layout > header {
   background: none;
-  padding: 16px 32px 32px;
+  padding: 16px 32px 17px;
   border-radius: 7px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -28,7 +28,7 @@ body.header-full .hp-main-layout header {
       -ms-flex-align: center;
           align-items: center;
   z-index: 3;
-  height: 112px;
+  height: 70px;
 }
 .hp-main-layout > header > .row {
   height: 100%;

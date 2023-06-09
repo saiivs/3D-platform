@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
 import swal from "sweetalert2/dist/sweetalert2.js"
 import '@google/model-viewer'
+import { combineLatest } from 'rxjs';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,7 +14,10 @@ import { Subscription } from 'rxjs';
 export class QaAdminReviewComponent implements OnInit,OnDestroy{
 
   @ViewChild('comntRef') comntRef:any;
-  constructor(private backEnd : BackendService,private route:ActivatedRoute){
+  @ViewChild('chatBody') chatBodyRef!: ElementRef;
+  clientDetails: Array<any> = [];
+  modelerDetails: any = {};
+  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router){
 
   }
 
@@ -31,31 +35,67 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
   clientName:string = "";
+  flag:Boolean = true;
   polygonCount!:number;
+  warningMsg:string = "";
   srcFile:string = "";
+  QaTeamName:string = "";
+  correctionValue:string = "";
+  canCloseModal:boolean = false;
+  correctionInvalid:string = "";
+  modRollNo:string = '';
   subscription!:Subscription;
 
-  ngOnInit() {
-    
-    this.backEnd.currProName.subscribe((proName)=>{
-      this.backEnd.currModeler.subscribe((modelerName)=>{
-        this.modelerName = modelerName
-      })
-      this.productName = proName;
-      this.backEnd.currentData.subscribe((clientName)=>{
-        this.clientName = clientName
-      })
+  validateGlbFile(data:any){
+    let modelData = data.gltfData;
+    function getFileExtension(fileName:string) {
+      const extension = fileName.substring(fileName.lastIndexOf('/') + 1).toLowerCase();
+      return extension;
+    }
+    let polygonWarng;
+    let extnsWrng;
+    let imgHieghtWrng;
+    if(modelData.info.totalTriangleCount > 150000){
+       polygonWarng = `Polygon Count Exceeded`
+    }
+    modelData.info.resources.forEach((obj:any) =>{
+      if(obj.image){
+        let format = getFileExtension(obj.mimeType);
+        if(format == 'png') extnsWrng =`Invalid file extension`
+        if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+      }
     })
+    if(polygonWarng || extnsWrng || imgHieghtWrng){
+      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng].filter(Boolean).join(', ');
+      localStorage.setItem("ModelWarning",this.warningMsg);
+    }else{
+      localStorage.removeItem("ModelWarning");
+    }
+  }
+
+  ngOnInit() {
+    if(this.correctionValue == ""){
+      this.canCloseModal = false;
+    }else{
+      this.canCloseModal = true;
+    }
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
     this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString();
       if(data){
-        console.log({data});
-        
-        this.polygonCount = data.polygonCount
-        this.QaCommentArr = [...data.Arr]
-        this.srcFile = `https://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.validateGlbFile(data);
+        this.clientDetails = data.modelDetails[0].clientDetails;
+        this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
+            if(obj.articleID == this.articleId) return obj
+          })
+        this.modRollNo = this.modelerDetails.modRollno;
+        this.polygonCount = data.gltfData.info.totalTriangleCount;
+        this.QaCommentArr = [...data.Arr];
+        if(this.QaCommentArr[0].comments.length == 0){
+          this.flag = false;
+        }
+        this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString();
@@ -64,9 +104,16 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
           }
           this.groupedMessages[date].push(message);
         });
-        console.log(this.groupedMessages); 
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },10)
       }
     })
+  }
+
+  scrollToBottom() {
+    const chatBody = this.chatBodyRef.nativeElement;
+    chatBody.scrollTop = chatBody.scrollHeight;
   }
 
   getComment(event:any){
@@ -85,12 +132,11 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
       this.groupedMessages[this.currentDate] = [];
     }
     this.groupedMessages[this.currentDate].push(pushObj);
-    console.log(this.groupedMessages);    
+    this.flag = true;
     this.comntRef.nativeElement.value = ""
    
     this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
-
     })
 
   }
@@ -100,25 +146,43 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   }
 
   updateModalStatus(articleId:string,status:string){
-    swal.fire({
-      position: 'center',
-      title: 'Confirm',
-      text:  `Are your sure to approve this model?`,
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'cancel'
-    }).then((result)=>{
-      if(result.value){
-          this.backEnd.approveModal(this.clientId,articleId,status).subscribe((res)=>{
-            this.QaCommentArr[0].modalStatus = 'Approved'
-          })
-      }else{
-        if(result.dismiss === swal.DismissReason.cancel){
+    if(status != 'Correction'){
+      swal.fire({
+     position: 'center',
+     title: 'Confirm',
+     text:  `Are your sure to ${status} this model?`,
+     showCancelButton: true,
+     confirmButtonText: 'Yes',
+     cancelButtonText: 'cancel'
+   }).then((result)=>{
+     if(result.value){
+         this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{
+           this.QaCommentArr[0].modalStatus = status
+         })
+     }else{
+       if(result.dismiss === swal.DismissReason.cancel){
 
-        }
-      }
-    })
+       }
+     }
+   })
+   } 
   }
+
+  checkInPut(event:any){
+    if(event.target.value == "") this.canCloseModal = false;
+    else this.canCloseModal =true;
+    
+  }
+
+  @ViewChild('correctionInput') correction!:ElementRef;
+  getCorrection(status:string){
+    this.correctionValue = this.correction.nativeElement.value;
+    if(this.correctionValue != ""){
+      this.backEnd.approveModal(this.clientId,this.articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{})
+    }else{
+      this.correctionInvalid = "Invalid correction field";
+      }  
+    }
 
   downloadFile(articleId:string){
     let link = document.createElement('a');
@@ -126,6 +190,14 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     link.href = `https://localhost:3001/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
+  }
+
+  fullScreenMode(){
+    try {
+      this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientId]);
+    } catch (error) {
+      console.log(error);  
+    } 
   }
 
   ngOnDestroy(): void {

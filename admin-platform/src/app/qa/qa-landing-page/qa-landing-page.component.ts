@@ -18,28 +18,38 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
   totalRecords!:number
   page:number = 1;
   assProListComplete:string = "Incomplete";
+  totalModels:number = 0;
+  totalQaModels:number = 0;
+  totalApprovedModels:number = 0;
+  totalCorruptionModels:number = 0;
+  totalApprovedClients:number = 0;
   subscription!:Subscription;
+
 
   ngOnInit() {
    this.subscription =  this.backEnd.getClientsForQa().subscribe((data)=>{
-      console.log({data});
       if(data){
         this.clientsArr = [...data];
         for(let item of this.clientsArr){
+          this.totalModels = this.totalModels + item.assignedPro.length;
           item.assignedPro.filter((obj:any)=>{
-            if(obj.adminStatus == 'Rejected' || obj.adminStatus == 'Not Approved'){
+            if(obj.productStatus == 'Not Uploaded' || obj.productStatus == 'Uploaded' || obj.productStatus == 'Correction'){
               item.approvedClient = false;
+              if(obj.productStatus == 'Correction') this.totalCorruptionModels = this.totalCorruptionModels + 1;
+              if(obj.productStatus == 'Uploaded') this.totalQaModels ++
+              
+            }else{
+              this.totalApprovedModels = this.totalApprovedModels + 1;
             }
           })
+          if(item.approvedClient) this.totalApprovedClients ++;
         }
         this.totalRecords = this.clientsArr.length;
-      }
-      
+      } 
     })
   }
 
-  modalerName(name:string,clientName:string){
-    this.backEnd.getModelerName(name);
+  modalerName(clientName:string){
     this.backEnd.getClientName(clientName);
 
   }

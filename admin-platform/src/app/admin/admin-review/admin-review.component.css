@@ -48,7 +48,7 @@
   box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37);
 }
 
-.chat-content:before {
+/* .chat-content:before {
   position: absolute;
   top: 10px;
   right: -10px;
@@ -57,7 +57,7 @@
   content: '';
   border: 5px solid transparent;
   border-left-color: #62a8ea
-}
+} */
 
 .chat-content>p:last-child {
   margin-bottom: 0
@@ -105,7 +105,7 @@
 }
 
 .panel-footer {
-  padding: 0 30px 15px;
+  padding: 0 0 15px;
   background-color: transparent;
   border-top: 1px solid transparent;
   border-bottom-right-radius: 3px;
@@ -154,6 +154,14 @@ p.meta{
 
 .chatHead button{
   height: fit-content;
+}
+
+.mywarning{
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  width: 100%;
 }
 
 model-viewer {

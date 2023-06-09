@@ -76,13 +76,22 @@
                     };let i = index">
                     <td scope="row">{{i+1}}</td>
                     <td>{{pro.articleID}}</td>
-                    <td>{{pro.productName}}</td>
-                    <td><a href="" style="cursor: pointer;">{{pro.productLink}}</a></td>
+                    <td>
+                      <div>
+                      <div>{{pro.productName}}</div>
+                      <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" style="font-size: smaller;">Reference</a></div>    
+                      </div>
+                      
+                    </td>
+                    <td *ngIf="pro.productLink;else noLink" ><a href="{{pro.productLink}}" style="cursor: pointer;">click here</a></td>
+                    <ng-template #noLink>
+                      <td class="text-danger">NO LINK</td>
+                    </ng-template>
                     <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
                     <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                     <td >
                       <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" class="btn btn-sm btn-outline-primary">
-                        <a class="myhover" (click)="proName(pro.productName)" [routerLink]="['../../reviews',pro.articleID,clientId]"
+                        <a class="myhover" (click)="proName(pro.productName,pro.assigned,pro.modRollno)" [routerLink]="['../../reviews',pro.articleID,clientId]"
                           >View Model</a>
                       </button>
                     </td>

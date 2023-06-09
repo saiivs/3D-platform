@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Types } from 'mongoose';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ModalerProductsComponent implements OnInit,OnDestroy{
   @ViewChild('fileInput') fileInput: any;
-constructor(private route:ActivatedRoute,private backEndService :BackendService,private toaster:ToastrService){
+constructor(private route:ActivatedRoute,private backEndService :BackendService,private toaster:ToastrService,private router:Router){
 
 }
 
@@ -32,7 +32,8 @@ ngOnInit() {
   this.productId = this.route.snapshot.params['id'];
   this.subscription = this.backEndService.getModalerPro(this.productId).subscribe((data:modelerLanding[])=>{
     this.clientId = data[0].clientId
-    this.products = [...data[0].assignedPro]
+    this.products = [...data[0].assignedPro];  
+    this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
     this.totalRecords = this.products.length
   })
 
@@ -72,11 +73,13 @@ onUpload(id:string,index:number){
   formData.append('file',this.uploadedFile,this.uploadedFile.name);
   formData.append('id',id);
   formData.append('clientId',this.clientId)
+  formData.append('modRollNo',localStorage.getItem('rollNo')||"");
   this.backEndService.uploadModal(formData).subscribe((res)=>{
     if(res){
-      this.toaster.success('success','model successfully uploaded')
+      this.toaster.success('success','model successfully uploaded');
       this.products[index].modalFile = false;
-      this.products[index].productStatus = 'Uploaded'
+      this.products[index].productStatus = 'Uploaded';
+      this.router.navigate(['/modaler', 'reviews',id,this.clientId])
     }
   })
 }

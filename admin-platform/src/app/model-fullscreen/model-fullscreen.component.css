@@ -1,0 +1,24 @@
+model-viewer {
+    position: relative;
+    float: left;
+    height: 27vw;
+    width: 80%;
+  }
+
+  .modelDetails{
+    display: flex;
+    list-style: none;
+    padding: 0;
+  }
+
+  .modelDetails li {
+    margin-right: 10px;
+    font-size: 14px;
+    line-height: 34px;
+    color: #3b4143;
+  }
+
+  .exitFullScreen{
+    margin-top: 11px;
+    padding-left: 11px;
+  }
