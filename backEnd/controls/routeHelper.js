@@ -11,22 +11,22 @@ let credentials = [
         role:"admin"
     },
     {
-        email:"userQA1@charpstar.com",
-        name:"userQA1",
+        email:"roney@charpstar.com",
+        name:"roney",
         password: process.env.QA_PASS,
         role:"QA",
         rollNo :"QA5"
     },
     {
-        email:"userQA4@charpstar.com",
-        name:"userQA4",
+        email:"shreyas@charpstar.com",
+        name:"shreyas",
         password: process.env.QA_PASS,
         role:"QA",
         rollNo :"QA3"
     },
     {
-        email:"userQA2@charpstar.com",
-        name: "userQA2",
+        email:"urvee@charpstar.com",
+        name: "urvee",
         password: process.env.QA_PASS,
         role:"QA",
         rollNo : "QA1"
@@ -46,16 +46,16 @@ let credentials = [
         password:process.env.PASS_3D
     },
     {
-        email:'userQA3@charpstar.com',
+        email:'karthik@charpstar.com',
         rollNo : "QA4",
-        name: "userQA3",
+        name: "karthik",
         role:"QA",
         password:process.env.QA_PASS
     },
     {
-        email:'user3D3@charpstar.com',
+        email:'richard@charpstar.com',
         rollNo:'1',
-        name:'user3D3',
+        name:'richard',
         role:'3D',
         password:process.env.PASS_3D
     },
@@ -63,9 +63,9 @@ let credentials = [
 
 let modalers = [
     {
-        email:'user3D3@charpstar.com',
+        email:'richard@charpstar.com',
         rollNo: "1",
-        name:'user3D3'
+        name:'richard'
     },
     {
         email:"user3D2@charpstar.com",
@@ -82,19 +82,19 @@ let modalers = [
 let QATeams = [
     {
         rollNo : "QA1",
-        name: "userQA2"
+        name: "urvee"
     },
     {
         rollNo : "QA3",
-        name: "userQA4"
+        name: "shreyas"
     },
     {
         rollNo : "QA4",
-        name: "userQA3"
+        name: "karthik"
     },
     {
         rollNo : "QA5",
-        name: "userQA1"
+        name: "roney"
     }
 ]
 
