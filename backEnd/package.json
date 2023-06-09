@@ -12,7 +12,6 @@
     "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "express-fileupload": "^1.4.0",
-    "gltf": "^1.0.3",
     "gltf-validator": "^2.0.0-dev.3.9",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
