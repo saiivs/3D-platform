@@ -264,7 +264,7 @@
                         };
                   let i = index
                 ">
-                <ng-container *ngIf="recieved === ''||(pro.tag.toLowerCase().includes(recieved))||(pro.articleID.toLowerCase().includes(recieved))||(pro.productName.toLowerCase().includes(recieved))">
+                <ng-container *ngIf="recieved === ''||(pro.tag.toLowerCase().includes(recieved))||(pro.articleId.toLowerCase().includes(recieved))||(pro.productName.toLowerCase().includes(recieved))">
                   <td *ngIf="!pro.assigned;else done"><input class="form-check-input" [(ngModel)]="pro.isSelected" type="checkbox" id="flexCheckDefault"></td>
                     <ng-template #done>
                       <td><i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill" style="font-size: 1.5em;color: green;"></i></td>
@@ -273,7 +273,7 @@
                     <td>
                       <div>
                         <div>
-                          {{pro.articleID}}
+                          {{pro.articleId}}
                         </div>
                         <div class="dropdown">
                           <a class="dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
@@ -282,7 +282,7 @@
                         
                           <ul class="dropdown-menu scrollable-dropdown" aria-labelledby="dropdownMenuLink">
                             <ng-container *ngIf="tagList.length != 0;else notags">
-                              <li  *ngFor="let tag of tagList;" (click)="addTag(i,tag.tagName,pro.articleID)"><a class="dropdown-item"  >{{tag.tagName}}</a></li>
+                              <li  *ngFor="let tag of tagList;" (click)="addTag(i,tag.tagName,pro.articleId)"><a class="dropdown-item"  >{{tag.tagName}}</a></li>
                             </ng-container>
                             <ng-template #notags>
                               <li><a class="dropdown-item text-danger text-center">No tags</a></li>
@@ -296,15 +296,15 @@
                     </td>
                     <td>
                       <div>
-                        <div>{{pro.productName}}</div>
-                        <div *ngIf="!pro.Reff;else ReffUrl" (click)="getRefference(i,pro.articleID)"><i matTooltip="Add Refference" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-upload-cloud-2-fill" style="font-size: 1.3rem;"></i></div> 
+                        <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
+                        <div *ngIf="!pro.Reff;else ReffUrl" (click)="getRefference(i,pro.articleId,pro.productName)"><i matTooltip="Add Refference" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-upload-cloud-2-fill" style="font-size: 1.3rem;"></i></div> 
                         <ng-template #ReffUrl>
-                          <div><a style="font-size: smaller;" href="{{pro.Reff}}">Click here</a></div>
+                          <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click here</a></div>
                         </ng-template>
                         
                     </div>
                   </td>
-                    <td *ngIf="pro.productLink;else noLink"><a  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
+                    <td *ngIf="pro.productLink;else noLink"><a target="_blank" href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
                     </td>
                     
                     <ng-template #noLink>
@@ -317,7 +317,7 @@
                       <ng-template #addPrice >
                         <div class="input-number-input-wrap" *ngIf="pro.priceAdded;else price">
                           <input class="input-number-input"   #priceValue  type="number" min="1" max="10" value="1">
-                          <button class="myAddBtn" (click)="getPrice(priceValue.value,pro.articleID,pro.modRollno,i)">Add</button>
+                          <button class="myAddBtn" (click)="getPrice(priceValue.value,pro.articleId,pro.modRollno,i)">Add</button>
                       </div>
                       </ng-template>
                       <ng-template #price>
@@ -337,7 +337,7 @@
                     </ng-template>
                     <td>
                       <button class="btn btn-sm btn-outline-primary" *ngIf="pro.productStatus != 'Not uploaded';else NoData">
-                        <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleID,clientId]"
+                        <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId]"
                           >View model</a>
                       </button>
                       <ng-template #NoData>

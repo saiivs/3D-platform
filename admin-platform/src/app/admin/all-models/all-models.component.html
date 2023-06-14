@@ -4,7 +4,7 @@
             <div class="row g-32">
                 <ng-container *ngFor="let model of models;let i = index">
                   
-                       <div class="col-12 col-md-6 col-xl-4" *ngIf="recieved == ''||model?.productName?.toLowerCase().includes(recieved)||model?.articleID?.toLowerCase().includes(recieved)">
+                       <div class="col-12 col-md-6 col-xl-4" *ngIf="recieved == ''||model?.productName?.toLowerCase().includes(recieved)||model?.articleId?.toLowerCase().includes(recieved)">
                         <ng-container *ngIf="model.productStatus != 'Not uploaded'">
                             <div class="card hp-card-6 hp-eCommerceCardOne hp-eCommerceCardOne-wishlist" style="min-height: 350px;">
                         <div class="card-body">
@@ -24,8 +24,8 @@
 
                                 <div class="col-12">
                                     <div class="text-center mb-24">
-                                        <a [routerLink]="['../../interactive-section',model.articleID,model.clientId]" (click)="nameLoad(modeler[0].modelerName)" class="d-block">
-                                            <img src="http://localhost:3001/pngFiles/{{model.articleID}}&&{{model.clientId}}.png" alt="">
+                                        <a [routerLink]="['../../interactive-section',model.articleId,model.clientId]" (click)="nameLoad(modeler[0].modelerName)" class="d-block">
+                                            <img src="http://localhost:3001/pngFiles/{{model.articleId}}&&{{model.clientId}}.png" alt="">
                                         </a>
                                     </div>
 
@@ -43,7 +43,7 @@
 
                                     <div class="col-12 mb-16 mt-16">
                                         <p class="mb-4 text-black-100 hp-text-color-dark-0 hp-p1-body fw-medium">{{model.productName}}</p>
-                                        <p class="mb-0 hp-caption fw-normal text-black-80 hp-text-color-dark-30">{{model.articleID}}</p>
+                                        <p class="mb-0 hp-caption fw-normal text-black-80 hp-text-color-dark-30">{{model.articleId}}</p>
                                     </div>
 
                                     <!-- <div class="row g-8">

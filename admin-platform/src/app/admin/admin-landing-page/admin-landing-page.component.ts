@@ -6,6 +6,7 @@ import { client } from 'src/app/models/interface';
 import { csvData , clientData} from '../../csvRecord';
 import { BackendService } from '../../services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import * as Papa from 'papaparse';
 
 @Component({
   selector: 'app-admin-landing-page',
@@ -73,68 +74,67 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
     return headerRow
   }
 
-  getDataRecordsArrayFromCSVFile(csvRecordsArr:any[],headerArrLen:number):any{
-    let flag = true;
-
-    for (let i=1;i<csvRecordsArr.length;i++){
-      let currRecord = (<string>csvRecordsArr[i]).split(',')
-
-      if(currRecord.length == headerArrLen){
-        let csvFileData:csvData = new csvData()
-        csvFileData.slNo = currRecord[0]
-        csvFileData.articleID = currRecord[1]
-        csvFileData.productName = currRecord[2]
-        csvFileData.productLink = currRecord[3]
-       this.csvArr.push(csvFileData)
-      }else{
-        flag = false;
-        break;
+   toCamelCase(str:string) {
+    let words = str.trim().split(/\s+/);
+    let camelWords = words.map(function (word, index) {
+      if (index === 0) {
+        return word.toLowerCase();
       }
-    }
-    if(!flag) return false;
-    else return true;
-
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+    let camelCaseString = camelWords.join('');
+    return camelCaseString;
   }
 
   @ViewChild("inputCsvFile") resetFile:any
 
   csvFileReader(event:any){
-
     this.csvFile = event.srcElement.files;
-
-
     if(this.isValidCSVFile(this.csvFile[0])){
-
-      this.csvFileName = this.csvFile[0].name.replace(".csv","");
-      let input = event.target;
-      let reader = new FileReader();
-      reader.readAsText(input.files[0]);
-
-      reader.onload = ()=>{
-        let csvData = reader.result;
-        let csvRecordsArr = (<string>csvData).split(/\r\n|\n/);
-        let headerArr = this.getHeaderArray(csvRecordsArr);
-
-        this.getDataRecordsArrayFromCSVFile(csvRecordsArr,headerArr.length);
-
-      }
+    this.csvFileName = this.csvFile[0].name.replace(".csv","");
+    Papa.parse(event.target.files[0],{ 
+      header:true,
+      complete: (results) => {
+              let headers = results.meta.fields || []
+              let headerLength = 0;
+              if (headers) {
+                headerLength = headers.length;
+                if(headerLength == 5){
+                  const data = results.data;
+                data.forEach((row:any) => {
+                let csvFileData:csvData = new csvData();
+                headers.forEach((header) => {
+                  let camelCaseHeader = this.toCamelCase(header);
+                  csvFileData[camelCaseHeader] = row[header];
+                });
+                this.csvArr.push(csvFileData);
+                  });
+                }else{
+                  this.resetFile.nativeElement.value= ""
+                  this.toastr.error('Error', 'Please check the number of rows')
+                } 
+              }  
+            },
+      error: (error) => {
+        console.error(error);
+      },
+    })
     }else{
-      this.resetFile.nativeElement.value= ""
-      this.toastr.error('Error', 'Please select a csv file')
-    }
+        this.resetFile.nativeElement.value= ""
+        this.toastr.error('Error', 'Please select a csv file')
+      }
   }
 
   uploadCsv(){
     if(this.csvFileName !=""){
     this.toastr.success('success','File successfully uploaded')
     let clientInfo:clientData = new clientData();
-        clientInfo.ClientName = this.csvFileName;
+        clientInfo.clientName = this.csvFileName;
         clientInfo.productCount = this.csvArr.length;
         clientInfo.status = "Not Approved"
         this.newClientTableData.push(clientInfo);
         this.backEndService.createProduct(this.csvArr,this.newClientTableData).subscribe((response)=>{
           this.clientTableData.push(response)
-          window.location.reload()
           this.resetFile.nativeElement.value= ""
           this.csvArr = []
           this.newClientTableData = []

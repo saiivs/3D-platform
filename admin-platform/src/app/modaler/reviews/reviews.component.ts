@@ -23,12 +23,10 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     
   }
 
-  clientID:string = "";
-  articleID:string = "";
+  articleId:string = "";
   QaCommentArr:Array<any> = []
   QaComment:string = ""
   clientId:string = "";
-  articleId:string = "";
   newCmnt : any= {};
   flag:Boolean = true;
   newData :any = {}
@@ -88,7 +86,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
           this.validateGlbFile(data);
           this.clientDetails = data.modelDetails[0].clientDetails;
           this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
-            if(obj.articleID == this.articleId) return obj
+            if(obj.articleId == this.articleId) return obj
           })
           this.polygonCount = data.gltfData.info.totalTriangleCount;
           this.QaCommentArr = [...data.Arr]

@@ -48,7 +48,7 @@
 
           <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
               By
-              <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientDetails[0]?.ClientName}}</span>
+              <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientDetails[0]?.clientName}}</span>
           </span>
           <ul class="proDetails">
             <li>Product Status : <span [ngStyle]="{color : QaCommentArr[0]?.modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0]?.modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;

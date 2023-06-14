@@ -28,7 +28,7 @@
               </div>
               <div class="input-group mb-3 mt-3">
                 <input #inputCsvFile type="file" class="form-control" id="inputGroupFile02"
-                  (change)="csvFileReader($event)" />
+                  (input)="csvFileReader($event)" />
                 <button class="btn btn-primary" (click)="uploadCsv()">
                   Upload List
                 </button>
@@ -98,7 +98,7 @@
                       let i = index
                     ">
                     <td scope="row">{{ i + 1 }}</td>
-                    <td>{{ client.ClientName }}</td>
+                    <td>{{ client.clientName }}</td>
                     <td>{{ client.productCount }}</td>
                     <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.per }}%</td>
                     <td><div class="dropdown" *ngIf="client.account_Manager == '';else manager">
@@ -118,7 +118,7 @@
                     </td>
                     <td>
                       <button class="btn btn-sm btn-outline-primary">
-                        <a class="myhover" (click)="sendClientName(client.ClientName)" [routerLink]="['products',client._id]"
+                        <a class="myhover" (click)="sendClientName(client.clientName)" [routerLink]="['products',client._id]"
                           >View Here</a>
                       </button>
                     </td>

@@ -3,6 +3,7 @@ var router = express.Router();
 const routeHelper = require('../controls/routeHelper');
 const auth = require('../controls/middleware')
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });

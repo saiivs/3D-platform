@@ -16,14 +16,14 @@ export interface userRes {
 
 export interface csvRecord{
   slNo?:string,
-  articleID? :string,
+  articleId? :string,
   productName? : string,
   productLink? : string
 }
 
 export interface client{
   _id :Types.ObjectId,
-  ClientName:string,
+  clientName:string,
   productCount: string,
   status:string,
   account_Manager:string,
@@ -50,7 +50,7 @@ export interface productList{
   QaTeam:string,
   adminStatus:string,
   approved:Boolean,
-  articleID:string,
+  articleId:string,
   assigned:string,
   isSelected:Boolean,
   productLink:string,
@@ -129,7 +129,7 @@ export interface model {
   QaTeam:string,
   adminStatus:string,
   approved:false,
-  articleID:string|Boolean,
+  articleId:string|Boolean,
   clientId:Types.ObjectId,
   date:string,
   invoice: Boolean,

@@ -51,11 +51,11 @@ export class InvoiceComponent implements OnInit{
        for(let model of this.approvedModels){
         this.subTotal += model.price;
         if(model.clientId == client._id){
-          if(name != client.ClientName){
-            model.ClientName = client.ClientName;
-            name = client.ClientName;
+          if(name != client.clientName){
+            model.clientName = client.clientName;
+            name = client.clientName;
           }else{
-            model.ClientName = ""
+            model.clientName = ""
           } 
         } 
        }

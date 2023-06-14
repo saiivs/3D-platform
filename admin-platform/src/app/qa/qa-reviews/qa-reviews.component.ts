@@ -89,7 +89,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         this.validateGlbFile(data);
         this.clientDetails = data.modelDetails[0].clientDetails;
         this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
-            if(obj.articleID == this.articleId) return obj
+            if(obj.articleId == this.articleId) return obj
           })
         this.modRollNo = this.modelerDetails.modRollno
         this.polygonCount = data.gltfData.info.totalTriangleCount;

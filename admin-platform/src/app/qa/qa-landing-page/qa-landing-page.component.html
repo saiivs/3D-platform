@@ -166,11 +166,11 @@
                 let i = index
               ">
                     <td scope="row">{{ i + 1 }}</td>
-                    <td>{{ client.ClientData[0].ClientName }}</td>
+                    <td>{{ client.ClientData[0].clientName }}</td>
                     <td>{{ client.assignedPro.length }}</td>
                     <td>
                       <button class="btn btn-sm btn-outline-primary myhover">
-                        <a class="myhover" (click)="modalerName(client.ClientData[0].ClientName)"  [routerLink]="['Qa-products',client._id]"
+                        <a class="myhover" (click)="modalerName(client.ClientData[0].clientName)"  [routerLink]="['Qa-products',client._id]"
                           >View Here</a>
                       </button>
                     </td>

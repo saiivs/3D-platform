@@ -306,7 +306,7 @@ getPrice(price:string,articleId:string,modelerRollno:string,index:number){
   
 }
 
-getRefference(index:number,articleId:string){
+getRefference(index:number,articleId:string,ProductName:string){
   let i = (this.page - 1) * 6 + index;
   swal.fire({
     title: 'Enter The Refference Url',
@@ -318,10 +318,11 @@ getRefference(index:number,articleId:string){
     confirmButtonText: 'Submit',
     showLoaderOnConfirm: true,
     preConfirm: (url) => {
-     this.backEndService.updateRefference(url,articleId,this.clientId).subscribe((res)=>{
+     this.backEndService.updateRefference(url,articleId,this.clientId,ProductName).subscribe((res)=>{
       if(res){
         this.products[i].Reff = url;
         this.toaster.success('success','Url is updated');
+        this.backEndService.scrapeImages(url,ProductName).subscribe((res)=>{})
       }
       
      })

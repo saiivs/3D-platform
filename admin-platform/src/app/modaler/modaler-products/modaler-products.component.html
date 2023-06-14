@@ -79,7 +79,7 @@
                       totalItems: totalRecords
                     };let i = index">
                     <td scope="row">{{i+1}}</td>
-                    <td>{{pro.articleID}}</td>
+                    <td>{{pro.articleId}}</td>
                     <td><div>
                       <div>{{pro.productName}}</div>
                       <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" style="font-size: smaller;">Reference</a></div>    
@@ -95,12 +95,12 @@
                     <td *ngIf="!pro?.modalFile;else uploadBtn"><input type="file" id="actual-btn" #fileInput (change)="acceptFile($event)" hidden/><label for="actual-btn" (click)="getIndex(i)">Choose File</label></td>
                     <ng-template #uploadBtn>
                       <td>
-                        <button class="btn btn-sm btn-primary" (click)="onUpload(pro.articleID,i)">Upload Model</button><span class="closeBtn" (click)="resetFile(i)">X &nbsp;Close</span>
+                        <button class="btn btn-sm btn-primary" (click)="onUpload(pro.articleId,i)">Upload Model</button><span class="closeBtn" (click)="resetFile(i)">X &nbsp;Close</span>
                       </td>
                     </ng-template>
                     <td *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
                       <button class="btn btn-sm btn-outline-primary">
-                        <a (click)="proNameLoad(pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleID,clientId]"
+                        <a (click)="proNameLoad(pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId]"
                           >View Model</a>
                       </button>
                     </td>

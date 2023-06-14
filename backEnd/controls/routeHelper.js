@@ -12,21 +12,21 @@ let credentials = [
     },
     {
         email:"roney@charpstar.com",
-        name:"roney",
+        name:"Roney",
         password: process.env.QA_PASS,
         role:"QA",
         rollNo :"QA5"
     },
     {
         email:"shreyas@charpstar.com",
-        name:"shreyas",
+        name:"Shreyas",
         password: process.env.QA_PASS,
         role:"QA",
         rollNo :"QA3"
     },
     {
         email:"urvee@charpstar.com",
-        name: "urvee",
+        name: "Urvee",
         password: process.env.QA_PASS,
         role:"QA",
         rollNo : "QA1"
@@ -46,16 +46,16 @@ let credentials = [
         password:process.env.PASS_3D
     },
     {
-        email:'karthik@charpstar.com',
+        email:'rafi@charpstar.com',
         rollNo : "QA4",
-        name: "karthik",
+        name: "Rafi",
         role:"QA",
         password:process.env.QA_PASS
     },
     {
         email:'richard@charpstar.com',
         rollNo:'1',
-        name:'richard',
+        name:'Richard',
         role:'3D',
         password:process.env.PASS_3D
     },
@@ -65,7 +65,7 @@ let modalers = [
     {
         email:'richard@charpstar.com',
         rollNo: "1",
-        name:'richard'
+        name:'Richard'
     },
     {
         email:"user3D2@charpstar.com",
@@ -82,19 +82,19 @@ let modalers = [
 let QATeams = [
     {
         rollNo : "QA1",
-        name: "urvee"
+        name: "Urvee"
     },
     {
         rollNo : "QA3",
-        name: "shreyas"
+        name: "Shreyas"
     },
     {
         rollNo : "QA4",
-        name: "karthik"
+        name: "Rafi"
     },
     {
         rollNo : "QA5",
-        name: "roney"
+        name: "Roney"
     }
 ]
 
@@ -132,9 +132,9 @@ module.exports = {
 
     createPro:async(req,res)=>{
         try{
-        let {Client,proList} = req.body
-        console.log(Client);
-        let clientInfo = await database.dbcreateClient(Client[0]);
+        let {client,proList} = req.body
+        console.log(client);
+        let clientInfo = await database.dbcreateClient(client[0]);
         console.log({clientInfo});
         if(clientInfo){
             let id = clientInfo._id.toString()
@@ -483,8 +483,8 @@ module.exports = {
 
     updateModelPrice:async(req,res)=>{
         try {
-            let {price,clientId,articleID,modelerRollNo,budgetExceed} =  req.body;
-            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleID,modelerRollNo,budgetExceed);
+            let {price,clientId,articleId,modelerRollNo,budgetExceed} =  req.body;
+            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed);
             if(priceUpdated){
                 res.status(200).json(true);
             }else{
@@ -529,8 +529,8 @@ module.exports = {
     updateReff:async(req,res)=>{
         try {
             console.log(req.body);
-            let {url,articleId,clientId} = req.body;
-            let updatedReff = await database.dbUpdateReff(url,articleId,clientId);
+            let {url,articleId,clientId,productName} = req.body;
+            let updatedReff = await database.dbUpdateReff(url,articleId,clientId,productName);
             if(updatedReff){
                 res.status(200).json(true)
             }else throw new Error
@@ -786,7 +786,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             res.status(500).json(false);
-        }
-        
-     }
+        }  
+     },
+
 }

@@ -79,8 +79,8 @@ export class BackendService {
     return localStorage.getItem('userToken')||" "
   }
 
-  createProduct(proList:any,Client:any):Observable<any>{
-    return this.http.post<any>(`${this.url}/productList/post`,{proList,Client}).pipe((catchError(this.erroHandler)));
+  createProduct(proList:any,client:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/productList/post`,{proList,client}).pipe((catchError(this.erroHandler)));
   }
 
   getClient():Observable<clientandBudget>{
@@ -211,8 +211,8 @@ export class BackendService {
     return this.http.post<boolean>(`${this.url}/setDeadLine/post`,{date,clientId,type}).pipe((catchError(this.erroHandler)))
   }
 
-  updatePrice(price:number,clientId:Types.ObjectId,articleID:string,modelerRollNo:string,budgetExceed:string):Observable<boolean>{
-    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleID,modelerRollNo,budgetExceed}).pipe((catchError(this.erroHandler)))
+  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,budgetExceed:string):Observable<boolean>{
+    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed}).pipe((catchError(this.erroHandler)))
   }
 
   createBudget(budgetPrice:number):Observable<boolean>{
@@ -223,8 +223,8 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/getClientsExpense/get`).pipe((catchError(this.erroHandler)))
   }
 
-  updateRefference(url:string,articleId:string,clientId:Types.ObjectId):Observable<boolean>{
-    return this.http.post<boolean>(`${this.url}/updateReff/post`,{url,articleId,clientId}).pipe((catchError(this.erroHandler)))
+  updateRefference(url:string,articleId:string,clientId:Types.ObjectId,ProductName:string):Observable<boolean>{
+    return this.http.post<boolean>(`${this.url}/updateReff/post`,{url,articleId,clientId,ProductName}).pipe((catchError(this.erroHandler)))
   }
 
   getNotificationData(userRoll:string|null,rollNo:string|null,flag:string):Observable<any>{
@@ -284,6 +284,10 @@ export class BackendService {
   }
 
   saveRequirement(requirement:string,clientId:any):Observable<any>{
-    return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId})
+    return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId});
+  }
+
+  scrapeImages(link:string,productName:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/scrapeImages/post`,{link,productName});
   }
 }

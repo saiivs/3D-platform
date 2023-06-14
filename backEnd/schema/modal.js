@@ -19,7 +19,7 @@ let proList = new Schema({
 
 let clientInfo = new Schema({
 
-    ClientName:{
+    clientName:{
         type:String,
         required:true
     },

@@ -79,11 +79,11 @@
                 let i = index
               ">
                     <td scope="row">{{ i + 1 }}</td>
-                    <td>{{ client.ClientData[0].ClientName }}</td>
+                    <td>{{ client.ClientData[0].clientName }}</td>
                     <td>{{ productCount }}</td>
                     <td>
                       <button  class="btn btn-sm btn-outline-primary myhover">
-                        <a class="myhover" (click)="QaNameLoad(client.QATeamName,client.ClientData[0]?.ClientName)" [routerLink]="['modaler-products',client._id]"
+                        <a class="myhover" (click)="QaNameLoad(client.QATeamName,client.ClientData[0]?.clientName)" [routerLink]="['modaler-products',client._id]"
                           >View Here</a>
                       </button>
                     </td>

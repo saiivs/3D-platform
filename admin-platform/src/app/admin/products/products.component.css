@@ -10,6 +10,15 @@
   overflow-x: hidden;
 }
 
+.text-with-dots {
+  width: 150px; /* Set the desired width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+
 .assignBtn{
   display: flex;
   column-gap: 2rem;

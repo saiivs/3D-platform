@@ -49,13 +49,13 @@
                         let i = index
                       ">
                           <td scope="row">{{ i + 1 }}</td>
-                          <td>{{ client.ClientName }}</td>
+                          <td>{{ client.clientName }}</td>
                           <td>{{ client.productCount }}</td>
                           <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.status }}</td>
                           <td><strong>{{client.account_Manager}}</strong></td>
                           <td>
                             <button class="btn btn-sm btn-outline-primary">
-                              <a class="myhover" (click)="sendClientName(client.ClientName)" [routerLink]="['products',client._id]"
+                              <a class="myhover" (click)="sendClientName(client.clientName)" [routerLink]="['products',client._id]"
                                 >View Here</a>
                             </button>
                           </td>
