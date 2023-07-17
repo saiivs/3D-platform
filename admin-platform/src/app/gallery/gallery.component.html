@@ -1,0 +1,81 @@
+<h5 class="mb-8" [hidden]="display" >{{product.productName}}</h5>
+<div class="row pe-32 g-16" [hidden]="display">
+    <ng-container *ngIf="noImgForGallery == '';">
+        <div class="col-6 col-md-2" *ngFor="let img of imgSrc| paginate
+    : {
+        id: 'listing_pagination',
+        itemsPerPage: 6,
+        currentPage: page,
+        totalItems: totalRecords
+      };let i = index">
+        <a (click)="preview(img,i)" class="onHover">
+            <div class="rounded myborder px-8 py-12" appActive>
+                <div class="row align-items-center justify-content-center">
+                    <div class="col px-0 hp-flex-none w-auto hp-mr-4">
+                        <img src="{{img}}" height="28" alt="reference">
+                    </div>
+
+                    <!-- <div class="col-6 px-0 text-center">
+                        <span class="d-block hp-input-description text-black-80 hp-text-color-dark-20 fw-normal">Red</span>
+                        <span class="d-block hp-input-description text-black-100 hp-text-color-dark-40">399.00</span>
+                    </div> -->
+                </div>
+            </div>
+        </a>
+    </div> 
+    </ng-container>    
+</div>
+<div class="myPagination" [hidden]="display">
+    <pagination-controls *ngIf="imgSrc.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+      (pageChange)="page = $event"></pagination-controls>
+      <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+        <div class="input-group">
+           <input type="file" class="form-control" name="images" multiple (change)="onFileSelected($event)" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+           <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" type="submit" id="inputGroupFileAddon04">Button</button>
+       </div>    
+       </form>
+</div>
+
+<div class="divider" style="margin: 16px 0;" [hidden]="display"></div>
+
+<div class="row">
+    <ng-container *ngIf="noImgForGallery == '';else norference">
+        <span (click)="fullScreen()" *ngIf="fullScreenIcon" class="text-end"><i  [matTooltip]="mode" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+    <span *ngIf="!fullScreenIcon" (click)="fullScreen()" class="text-end"><i matTooltip="Exit Full Screen" matTooltipPosition="below" style="font-size: large;" class="hp-text-color-dark-0 ri-2x ri-fullscreen-exit-fill"></i></span>
+    <div class="col-12">
+        <div class="row g-8">
+            <div class="swiper-slide">
+                <div class="d-flex align-items-center justify-content-center thumbPos" #pre>
+                    <app-test [intitialImgTest]="initialImg"></app-test>
+                </div>
+            </div>
+        </div>
+    </div> 
+    </ng-container>
+    <ng-template #norference>
+        <div class="emptyContainer">
+          <span class="text-danger">{{noImgForGallery}}</span>
+          <div>
+            <img class="empty"  src="assets/myImg/empty-folder.png" alt="empty" />
+          </div>
+          <div class="uploadRefe">
+            <span>Upload the downloaded images here</span>
+            <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+             <div class="input-group">
+                <input type="file" class="form-control" name="images" multiple (change)="onFileSelected($event)" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" type="submit" id="inputGroupFileAddon04">Button</button>
+            </div>    
+            </form>
+            
+          </div>
+        </div>  
+        <div class="inspectInfo">
+            <ul>
+                <li style="list-style: circle;"><small>Open your web browser and visit the product page at <a target="_blank" href="{{product.productLink}}">LINK</a>.</small></li>
+                <li style="list-style: circle;"><small>To save an image from the page, find the image you want and right-click to select "Save Image."</small></li>
+                <li style="list-style: circle;"><small>To upload the downloaded images, simply click the "Choose File" button above and select multiple images at once.</small></li>
+                <li style="list-style: disc;"><small>If you are unable to find the "Save Image" option, please contact the administrator for assistance.</small></li>
+            </ul> 
+        </div>  
+    </ng-template>
+</div> 

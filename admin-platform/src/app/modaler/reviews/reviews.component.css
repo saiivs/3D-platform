@@ -163,6 +163,18 @@ p.meta{
   width: 100%;
 }
 
+.QAbtn{
+  position: absolute;
+  z-index: 2;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}
+
+.startQa:hover a{
+color: white;
+}
+
 model-viewer {
   position: relative;
   float: left;

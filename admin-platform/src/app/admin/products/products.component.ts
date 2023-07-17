@@ -322,7 +322,6 @@ getRefference(index:number,articleId:string,ProductName:string){
       if(res){
         this.products[i].Reff = url;
         this.toaster.success('success','Url is updated');
-        this.backEndService.scrapeImages(url,ProductName).subscribe((res)=>{})
       }
       
      })

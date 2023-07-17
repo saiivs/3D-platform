@@ -23,6 +23,7 @@ export class InteractiveChatComponent implements OnInit{
   QaComment:string = ""
   clientId:string = "";
   articleId:string = "";
+  version:number = 0;
   newCmnt : any= {};
   newData :any = {}
   checkDate : string = new Date().toISOString().slice(0,10);
@@ -82,7 +83,8 @@ export class InteractiveChatComponent implements OnInit{
     }
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
-    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId).subscribe((data)=>{
+    this.version = this.route.snapshot.params['version']
+    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.validateGlbFile(data);

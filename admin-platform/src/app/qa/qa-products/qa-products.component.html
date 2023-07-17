@@ -91,7 +91,7 @@
                     <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                     <td >
                       <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" class="btn btn-sm btn-outline-primary">
-                        <a class="myhover" (click)="proName(pro.productName,pro.assigned,pro.modRollno)" [routerLink]="['../../reviews',pro.articleId,clientId]"
+                        <a class="myhover" (click)="scrapeImages(pro.productLink,pro.productName,pro.articleId)" [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]"
                           >View Model</a>
                       </button>
                     </td>

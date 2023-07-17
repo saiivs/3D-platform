@@ -31,6 +31,8 @@ subscription!:Subscription;
  ngOnInit() {
   this.subscription = this.backEndService.getClientsForModaler().subscribe((clientData)=>{
     if(clientData){
+      console.log(clientData);
+      
       this.clients = [...clientData]
       this.modelersArray = clientData[0].modelerData
       this.totalRecords = clientData.length

@@ -18,7 +18,7 @@ children:[
   {path:"",component:AdminLandingPageComponent},
   {path:"products/:id",component:ProductsComponent},
   {path:"reviews/:articleId/:clientId",component:AdminReviewComponent},
-  {path:"interactive-section/:articleId/:clientId",component:InteractiveChatComponent},
+  {path:"interactive-section/:articleId/:clientId/:version",component:InteractiveChatComponent},
   {path:"modeler-status",component:ModelerStatusComponent},
   {path:"client_modelers/:clientId",component:ClientModelerListComponent},
   {path:"model-FullScreen/:articleId/:clientId",component:ModelFullscreenComponent},

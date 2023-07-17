@@ -29,25 +29,31 @@ export class ModalerComponent implements OnInit{
 
   ngOnInit() {
     this.titleService.setTitle("3D_Modaler-Clients")
-    this.backEnd.getNotificationData(localStorage.getItem('userRoll'),localStorage.getItem("rollNo"),"seeLess").subscribe((res)=>{
+    this.backEnd.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((res)=>{
       this.notifyData = [...res.data]; 
+      console.log(this.notifyData);
+      
       this.helpNotification = [...res.helpData]
       this.notificationLen += this.notifyData.length;
     })
   }
 
-  openDialog(correctionString:string): void {
-    const corrData : correctionData = {
-      correction:correctionString,
-    }
-    const dialogRef = this.dialog.open(CorrectionDilogComponent,{
-      width:"35rem",
-      data:corrData
-    });
+  correctionModelView(version:number,articleId:string,clientId:string){ 
+    this.route.navigate(['modaler/model-correction',articleId,clientId,version])
   }
+
+  // openDialog(correctionString:string): void {
+  //   const corrData : correctionData = {
+  //     correction:correctionString,
+  //   }
+  //   const dialogRef = this.dialog.open(CorrectionDilogComponent,{
+  //     width:"35rem",
+  //     data:corrData
+  //   });
+  // }
   getAllNotification(flag:string){
     this.seeMoreToggle = !this.seeMoreToggle;
-    this.backEnd.getNotificationData(localStorage.getItem('userRoll'),localStorage.getItem("rollNo"),flag).subscribe((res)=>{
+    this.backEnd.getNotificationData(localStorage.getItem("rollNo"),flag).subscribe((res)=>{
       this.notifyData = [...res.data];
       this.helpNotification = [...res.helpData]
     })

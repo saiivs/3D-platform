@@ -1,0 +1,79 @@
+model-viewer {
+    position: relative;
+    float: left;
+    height: 39vw;
+    width: 80%;
+  }
+
+  .gallery{
+    padding: 25px;
+    border: 1px solid #b2bec3;
+    border-radius: 10px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  }
+
+  .modelView{
+    border: 1px solid #b2bec3;
+    border-radius: 10px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    height: 100%;
+  }
+
+  .hotspot{
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: blue;
+    box-sizing: border-box;
+    color: #ffffff;
+    pointer-events: none;
+  }
+
+  .hotspot[slot="hotspot-hand"]{
+    --min-hotspot-opacity: 0;
+    background-color: red;
+  }
+
+  .hotspot[slot="hotspot-foot"]:not([data-visible]) {
+    background-color: transparent;
+    border: 3px solid blue;
+  }
+
+  .annotation{
+    background-color: #ffffff;
+    position: absolute;
+    transform: translate(10px, 10px);
+    border-radius: 10px;
+    padding: 10px;
+    border: 2px solid blue;
+  }
+  /* This keeps child nodes hidden while the element loads */
+  :not(:defined) > * {
+    display: none;
+  }
+
+  .correctionPoints{
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+
+  :host /deep/ mat-tab-header {
+    margin-bottom: 1rem;
+  }
+
+  .imageEnlarge:hover{
+    cursor: pointer;
+  }
+
+  .mywarning{
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    width: 100%;
+  }
+  
+  

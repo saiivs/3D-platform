@@ -8,14 +8,17 @@ import { QaReviewsComponent } from './qa-reviews/qa-reviews.component';
 import { QaComponent } from './qa.component';
 import { ModelFullscreenComponent } from '../model-fullscreen/model-fullscreen.component';
 
+
+
 const route:Routes = [
 {path:"",component:QaComponent,canActivate:[QAGuardGuard],
 children:[
   {path:"",component:QaLandingPageComponent},
   {path:"Qa-products/:id",component:QaProductsComponent},
-  {path:"reviews/:articleId/:clientId",component:QaReviewsComponent},
-  {path:"admin/:articleId/:clientId",component:QaAdminReviewComponent},
-  {path:"model-FullScreen/:articleId/:clientId",component:ModelFullscreenComponent}
+  {path:"reviews/:articleId/:clientId/:version",component:QaReviewsComponent},
+  {path:"admin/:articleId/:clientId/:version",component:QaAdminReviewComponent},
+  {path:"model-FullScreen/:articleId/:clientId/:version",component:ModelFullscreenComponent},
+  
 ]}
 ]
 

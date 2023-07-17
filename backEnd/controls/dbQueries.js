@@ -8,10 +8,12 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 
 
-const polygonCounter = async(articleId,clientId)=>{
+const polygonCounter = async(articleId,clientId,clientName,version)=>{
     try {
-        let fullpath = `public/models/${articleId}&&${clientId}.glb`
-        const modelData = fs.readFileSync(`public/models/${articleId}&&${clientId}.glb`);
+        const regex = /[^a-zA-Z0-9]/g;
+        clientName = clientName.replace(regex,'_')
+        let fullpath = `public/models/${clientName}/${articleId}/version-${version}/${articleId}.glb`
+        const modelData = fs.readFileSync(`public/models/${clientName}/${articleId}/version-${version}/${articleId}.glb`);
         let filename = 'file.gltf'
         let result = await validator.validateBytes(new Uint8Array(modelData), {
             uri: filename,
@@ -40,6 +42,27 @@ const polygonCounter = async(articleId,clientId)=>{
     }
 
 }
+
+const downloadImages = async(url, path)=>{
+    const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'stream'
+      });
+    
+      response.data.pipe(fs.createWriteStream(path));
+    
+      return new Promise((resolve, reject) => {
+        response.data.on('end', () => {
+          resolve("Success");
+        });
+    
+        response.data.on('error', (err) => {
+          reject(err);
+        });
+      });
+}
+  
 
 module.exports = {
     dbcreateClient:async(client)=>{
@@ -223,13 +246,13 @@ module.exports = {
         }   
     },
 
-    dbGetClientForModaler:async(ModalerName)=>{
+    dbGetClientForModaler:async(modalerRollNo)=>{
         try{
           
         let clientData = await db.modalerProducts.aggregate([
             {
                 $match:{
-                   assignedPro:{$elemMatch :{assigned : ModalerName}}
+                   assignedPro:{$elemMatch :{modRollno : modalerRollNo}}
                 }
             },
             {
@@ -292,23 +315,42 @@ module.exports = {
                 adminStatus: 'Not Approved',
                 comments:[]
             }
+            let cmntDataExist = await db.QaReviews.findOne({clientId:clientId,articleId:id});
+            if(!cmntDataExist){
             let model = new db.QaReviews(cmntData);
             let admin = new db.AdminReviews(cmntData);
             await admin.save()
             await model.save()
+            }
+            const checkModelUnderQA = await db.QaReviews.findOne({clientId:clientId,articleId:id});
+            if(!checkModelUnderQA.underQA)
+            {
             let updateRes = await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.productStatus": status}});
             await db.Products.updateOne({clientId:clientId,"productList.articleId":id},{$set:{"productList.$.productStatus":status}})
             await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.productStatus':status}});
-            
+            await db.QaReviews.updateOne({clientId:clientId,articleId:id},{$set:{modalStatus:status}});
+            let clientDetails = await db.clients.findOne({_id:clientId});
             if(updateRes){
-                return true;
+                return {status:true,data:clientDetails};
             }else{
                 throw new Error
+            }   
+            }else{
+               return {status:false,msg:"model under QA"} 
             }
+            
         } catch (error) {
             console.log(error);
-            return false;
+            return {status:false,msg:"something went wrong while uploading the model!!"};
         }
+    },
+
+    dbupdateVersion:async(data,status,count)=>{
+        let {id,clientId,modRollNo}  = data;
+        let updateModelerListModel = await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.version':count}});
+        await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.version": count}});
+        console.log({updateModelerListModel});
+        return;
     },
 
     dbGetClientsForQa:async(qaRollNo)=>{
@@ -402,7 +444,7 @@ module.exports = {
         }   
     },
 
-    dbGetQaComments:async(clientId,articleId)=>{
+    dbGetQaComments:async(clientId,articleId,version)=>{
         try {
             
             let commentData = await db.QaReviews.findOne({clientId:clientId,articleId:articleId});
@@ -420,10 +462,10 @@ module.exports = {
                 }
             ])
             let pngExist = fs.existsSync(`./public/pngFiles/${articleId}&&${clientId}.png`);
-            
+            console.log({modelDetails});
         console.log({commentData});
         if(commentData){
-            let result = await polygonCounter(articleId,clientId);
+            let result = await polygonCounter(articleId,clientId,modelDetails[0].clientDetails[0].clientName,version);
             console.log({result});
             if(result){
               let gltfData = result; 
@@ -812,17 +854,52 @@ module.exports = {
         }    
     },
 
-    dbGetNotifications:async(userRoll,rollNo,flag)=>{
+    dbGetNotifications:async(rollNo,flag)=>{
         try {
+            console.log("sdfasdf");
             if(flag == "seeLess"){
-            let today = new Date().setHours(0,0,0,0);
-            let fiveDaysAgo = new Date(today - (5 * 24 * 60 * 60 * 1000));
-            let data = await db.correction.find({modRollNo:rollNo,date:{$lte:today,$gte:fiveDaysAgo}});
+            // let today = new Date().setHours(0,0,0,0);
+            // let fiveDaysAgo = new Date(today - (5 * 24 * 60 * 60 * 1000));
+            let data = await db.hotspot.aggregate([
+                {
+                    $match:{
+                        mod_rollNo:rollNo,
+                        date: { $gte: new Date(new Date() - 7 * 24 * 60 * 60 * 1000) }
+                    }
+                },
+                {
+                    $sort:{
+                        date:-1
+                    }
+                },
+                {
+                    $group:{
+                        _id:{
+                            version:"$version",
+                            articleId:"$articleId",
+                            clientId:"$clientId",
+                            QA:"$QA"
+                        },
+                        count:{$sum:1}  
+                    }
+                },
+                {
+                    $project:{
+                        _id:0,
+                        version:"$_id.version",
+                        articleId:"$_id.articleId",
+                        clientId:"$_id.clientId",
+                        QA:"$_id.QA",
+                        count:1
+                    }
+                }
+            ]);
+            console.log(data);
             let helpData = [];
             if(rollNo == "1"){
                 helpData = await db.helpLine.find({});
             }
-            console.log(data);
+            
             return {data,helpData};  
             }else{
                 let data = await db.correction.find({modRollNo:rollNo});
@@ -873,9 +950,11 @@ module.exports = {
         }   
     },
 
-    dbGetGlbFileDetails:async(articleId,clientId)=>{
+    dbGetGlbFileDetails:async(articleId,clientId,version)=>{
         try {
-           let resultNew = await polygonCounter(articleId,clientId);
+           let clientDetails = await db.clients.findOne({_id:new ObjectId(clientId)});
+           let clientName = clientDetails.clientName;
+           let resultNew = await polygonCounter(articleId,clientId,clientName,version);
            if(resultNew) return resultNew; 
            else throw new Error;
         } catch (error) {
@@ -1165,6 +1244,277 @@ module.exports = {
             console.log(error);
             return false
         } 
+    },
+
+    dbScrapeImg:async(link,productName,articleId,clientName)=>{
+        try {console.log("started");
+            const folderPath = `./public/images/${clientName}/${articleId}`;
+            if(!fs.existsSync(folderPath)){
+            const response = await axios.get(link);
+            const $ = cheerio.load(response.data);
+            let hasMatchingWord = (altText,searchText)=>{
+                console.log("hasMAtch called");
+                const altWords = altText.toLowerCase().split(' ');
+                const searchWords = searchText.toLowerCase().split(' ');
+                return searchWords.some(word => altWords.includes(word));
+            }
+    
+            let images = $('img').filter(function() {
+                console.log(`image tag: ${this}`);
+                const altText = $(this).attr('alt');
+                return altText && hasMatchingWord(altText,productName)
+            })
+            console.log("reached");
+           
+            const scrapedImages = images.map(function() {
+                console.log("called");
+                let src = $(this).attr('src');
+                let dataZoomImage = $(this).attr('data-zoom-image');
+                const srcset = $(this).attr('srcset');
+                console.log({src,dataZoomImage,srcset});
+    
+                const baseUrl = new URL(link);
+                if (src && !src.startsWith('http')) {
+                  src = new URL(src, baseUrl).href;
+                }
+                if (dataZoomImage && !dataZoomImage.startsWith('http')) {
+                  dataZoomImage = new URL(dataZoomImage, baseUrl).href;
+                }
+                if(srcset && !srcset.startsWith('http')){
+                  srcset = new URL(srcset,baseUrl).href;
+                }
+                return { src, dataZoomImage, srcset };
+              });
+              console.log({scrapedImages});
+
+              if(scrapedImages.length != 0 ){
+                const imageUrls = Object.values(scrapedImages).map((image) => {
+                    if(image.dataZoomImage) return image.dataZoomImage
+                    else return image.src
+                });
+                let nameWithoutSpace = productName.replace(/\s/g, "")  
+                const downloadPromises = imageUrls.map((url, index) => {
+                  const folderPath = `./public/images/${clientName}/${articleId}`;
+                  if(!fs.existsSync(folderPath)){
+                    fs.mkdirSync(folderPath,{ recursive: true });
+                  }
+                  const path = `./public/images/${clientName}/${articleId}/${index + 1}.jpg`;
+                  return downloadImages(url, path);
+                });
+                try {
+                  let response = await Promise.allSettled(downloadPromises);
+                  response = response.some(obj => obj.status == 'rejected');
+                  if(response) return {success:true,message:"Incomplete"};
+                  else return {success:true,message:"Complete"}
+                } catch (err) {
+                  console.error('Error downloading images:', err);
+                  return {success:true,message:"No images found!"}
+                }   
+              }else{
+                return {success:true,message:"No images found!"}
+              }
+            }else{
+                return {success:true,message:"Complete"}
+            }
+        } catch (error) {
+            console.log(error);
+            return {success:false,message:"server error!!"}
+        }
+    },
+
+    dbGetClientById:async(clientId,articleId)=>{
+        try {
+          let client = await db.clients.findOne({_id:clientId});
+          let clientPro = await db.Products.findOne({clientId:clientId});
+          console.log({clientPro});
+            if(client){
+                let fileCount = 0;
+                if(fs.existsSync(`./public/images/${client.clientName}/${articleId}`));{
+                   let files = fs.readdirSync(`./public/images/${client.clientName}/${articleId}`);
+                   fileCount = files.length;
+                }
+                clientPro = clientPro.productList.find(obj => obj.articleId == articleId);
+                return {client,fileCount,clientPro}
+            } else{
+                throw new Error;
+            } 
+        } catch (error) {
+            console.log(error);
+            return false;
+        }   
+    },
+
+    dbCreateHotspot:async(hotspotName,normal,position,articleId,clientId,nor)=>{
+        try {
+          let obj = {
+            hotspotName:hotspotName,
+            normalValue:normal,
+            positionValue:position,
+            articleId:articleId,
+            clientId:clientId,
+            hotspotId:nor
+        }
+        await db.hotspot.create(obj)  
+        return true;
+        } catch (error) {
+            console.log(error);
+            return false
+        }    
+    },
+
+    dbGetHotspots:async(articleId,clientId)=>{
+        try {
+            let clientDetails = await db.clients.findOne({_id:clientId});
+            const regex =  /[^a-zA-Z0-9]/g;
+            console.log(clientDetails);
+            let clientName = clientDetails.clientName.replace(regex,"_");
+           let hotspots = await db.hotspot.aggregate([
+            {
+                $match:{clientId:new ObjectId(clientId),articleId:articleId}
+            },
+            {
+                $group:{
+                    _id:null,
+                    maxOne:{$max:"$version"}
+                }
+            }
+           ])
+           console.log(hotspots);
+           if(hotspots.length != 0){
+            if(!fs.existsSync(`./public/models/${clientName}/${articleId}/version-${hotspots[0].maxOne + 1}/${articleId}.glb`)){
+                return {status:true,version:hotspots.maxOne,msg:"no updates"}
+            }else{
+                return {status:true,version:hotspots.maxOne,msg:"update available"}
+            }  
+           }else{
+            return {status:false,msg:"New model"};
+           }
+        } catch (error) {
+            console.log(error);
+            return {status:false,error:"server error.Something went wrong over fetching hotspots"}
+        }    
+    },
+
+    dbGetClientForQaDo:async(clientId)=>{
+        try {
+            let getClient = await db.clients.findOne({_id:clientId});
+            if(getClient){
+                return getClient
+            }else{
+                throw new Error;
+            } 
+        } catch (error) {
+            console.log(error);
+            return false
+        }   
+    },
+
+    createCorrection:async(data)=>{
+        try {
+            let clientDetails = await db.clients.findOne({_id:data.clientId});
+            let modelTeam = await db.modalerProducts.findOneAndUpdate({clientId:data.clientId,'assignedPro.articleId':data.articleId},{$set:{"assignedPro.$.productStatus":"Correction"}});
+            const regex = /[^a-zA-Z0-9]/g;
+            let clientName = clientDetails.clientName.replace(regex,"_");
+            if(modelTeam){
+                modelTeam = modelTeam.assignedPro.find(obj => obj.articleId == data.articleId);
+                let a = await db.modelerList.findOneAndUpdate({rollNo:modelTeam.modRollno,models:{$elemMatch:{articleId:data.articleId,clientId:new ObjectId(data.clientId)}}},{$set:{'models.$.productStatus':"Correction"}});
+                await db.Products.updateOne({clientId:data.clientId,"productList.articleId":data.articleId},{$set:{"productList.$.productStatus":"Correction"}});   
+                await db.QaReviews.updateOne({clientId:data.clientId,articleId:data.articleId},{$set:{modalStatus:"Correction",underQA:false}});
+            } 
+        if(clientDetails){
+            if(data.version == 1){
+                console.log("first time");
+                data.version = 1
+                data.QA = modelTeam.QaTeam;
+                data.modeler = modelTeam.assigned;
+                data.QA_rollNo = modelTeam.qaRollNo;
+                data.mod_rollNo = modelTeam.modRollno;
+                data.date = new Date()
+                let correction = await db.hotspot.create(data);
+                console.log({correction});
+                return {status:true,version:1,correction:correction._id,client:clientDetails}
+            }else{
+                console.log("else case run");
+                data.QA = modelTeam.QaTeam;
+                data.modeler = modelTeam.assigned;
+                data.QA_rollNo = modelTeam.qaRollNo;
+                data.mod_rollNo = modelTeam.modRollno;
+                data.date = new Date()
+                let correction = await db.hotspot.create(data);
+                return {status:true,version:data.version,correction:correction._id,client:clientDetails}
+            }   
+        }else{
+            throw new Error("client not found")
+        }
+        } catch (error) {
+            console.log(error);
+            return {status:false,msg:error}
+        }     
+    },
+
+    dbGetLatestHotspots:async(clientId,articleId)=>{
+        try {
+            let updateAvailable = false;
+            let clientDetails = await db.clients.findOne({_id:clientId});
+            const regex =  /[^a-zA-Z0-9]/g;
+            let clientName = clientDetails.clientName.replace(regex,"_");
+            let maxVersion = await db.hotspot.aggregate([
+            {
+                $match:{clientId:new ObjectId(clientId),articleId:articleId}
+            },
+            {
+                $group:{
+                    _id:null,
+                    maxOne:{$max:"$version"}
+                }
+            }
+        ])
+        console.log("asdffffffffffffffffffffffffffff");
+        console.log({maxVersion});
+        if(maxVersion.length != 0){
+          if(fs.existsSync(`./public/models/${clientName}/${articleId}/version-${maxVersion[0].maxOne + 1}/${articleId}.glb`)){
+            console.log("Asdfdf");
+            updateAvailable = true;
+          }
+          let latest = await db.hotspot.find({clientId:clientId,articleId:articleId,version:maxVersion[0].maxOne});
+        if(latest.length != 0){
+            console.log({updateAvailable});
+            return {data:latest,update:updateAvailable}
+        }else{
+            console.log("not corrections");
+        } 
+        }else{
+            console.log("aggragation no");
+            return {data:false}
+        }
+        
+        } catch (error) {
+            console.log(error);
+            return false;
+        }   
+    },
+
+    dbGetHotspotById:async(hotspotInfo)=>{
+        try {
+            console.log(hotspotInfo);
+            let hotspot = await db.hotspot.find({articleId:hotspotInfo.articleId,clientId:new ObjectId(hotspotInfo.clientId),version:hotspotInfo.version});
+            console.log({hotspot});
+            if(hotspot.length != 0) return hotspot;
+            else throw new Error(`unable to find the hotspot of ${hotspotInfo.version}!!`)
+        } catch (error) {
+            console.log(error);
+            return false;
+        }   
+    },
+
+    dbUpdateModelUnderQA:async(model)=>{
+        try {
+            await db.QaReviews.updateOne({clientId:model.clientId,articleId:model.clientId},{$set:{underQA:model.flag}});
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     }
    
-}
+} 

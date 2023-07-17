@@ -56,7 +56,7 @@ export interface productList{
   productLink:string,
   productName:string,
   productStatus:string,
-  slNo:string,
+  slno:string,
   price:string,
   priceAdded?:Boolean,
   Reff?:string,

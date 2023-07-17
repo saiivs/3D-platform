@@ -102,12 +102,17 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
                 if(headerLength == 5){
                   const data = results.data;
                 data.forEach((row:any) => {
-                let csvFileData:csvData = new csvData();
-                headers.forEach((header) => {
-                  let camelCaseHeader = this.toCamelCase(header);
-                  csvFileData[camelCaseHeader] = row[header];
-                });
-                this.csvArr.push(csvFileData);
+                  let isEmptyRow = Object.values(row).every((value) => {
+                    return value === undefined || value === '';
+                  });
+                  if(!isEmptyRow){
+                    let csvFileData:csvData = new csvData();
+                    headers.forEach((header) => {
+                      let camelCaseHeader = this.toCamelCase(header);
+                      csvFileData[camelCaseHeader] = row[header];
+                    });
+                    this.csvArr.push(csvFileData);
+                  }
                   });
                 }else{
                   this.resetFile.nativeElement.value= ""

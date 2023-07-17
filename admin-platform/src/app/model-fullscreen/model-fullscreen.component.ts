@@ -18,6 +18,7 @@ export class ModelFullscreenComponent implements OnInit{
   modelSrc:string = ""
   clientId:string = "";
   articleId:string = "";
+  version:number = 0;
   polygonCount:number = 0;
   materialCount:number = 0;
   modelName :string|null = localStorage.getItem('ProductName');
@@ -28,8 +29,11 @@ export class ModelFullscreenComponent implements OnInit{
   ngOnInit(){
     this.articleId = this.route.snapshot.params['articleId'];
     this.clientId = this.route.snapshot.params['clientId'];
-    this.modelSrc = `http://localhost:3001/models/${this.articleId}&&${this.clientId}.glb`
-    this.backEnd.getGlbFileDetails(this.articleId,this.clientId).subscribe((res)=>{
+    this.version = this.route.snapshot.params['version']
+    const regex = /[^a-zA-Z0-9]/g;
+    let clientName = this.clientName?.replace(regex,"_")
+    this.modelSrc = `http://localhost:3001/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+    this.backEnd.getGlbFileDetails(this.articleId,this.clientId,this.version).subscribe((res)=>{
       this.modelDetail = res;
       this.polygonCount = res.info.totalTriangleCount;
       this.materialCount = res.info.materialCount; 
@@ -37,7 +41,6 @@ export class ModelFullscreenComponent implements OnInit{
   }
 
   openDialog(): void {
-   
     const dialogRef = this.dialog.open(ModelWarningComponent,{
       width:"35rem",
       data:this.modelDetail.info
@@ -54,7 +57,7 @@ export class ModelFullscreenComponent implements OnInit{
     }else{
       subUrl = 'admin'
     }
-    this.router.navigate([`${subUrl}/reviews`,this.articleId,this.clientId]);
+    this.router.navigate([`${subUrl}/reviews`,this.articleId,this.clientId,this.version]);
   }
 
 }

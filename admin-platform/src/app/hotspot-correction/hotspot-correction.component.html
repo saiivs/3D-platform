@@ -1,0 +1,36 @@
+<ng-container *ngIf="noCorrectionForm;else noCorrectionMsg">
+    <ng-container *ngIf="correctionArr.length != 0;else addHotspotMsg">
+         <h5>Fill down the corrections</h5>
+   <ul>
+       <li *ngFor="let correction of correctionArr;let i = index" #correctionItem>
+        <div class="listContainer">
+            <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{i+1}}</span> 
+        <input style="width: 70%;" (input)="getCorrection($event,i)" type="text" class="form-control mb-16" placeholder="type here.." aria-label="Username" aria-describedby="basic-addon1">
+        <input type="file" (input)="getCorrectionImg($event,i)" id="{{correction.hotspotName}}" hidden>
+        <label for="{{correction.hotspotName}}" class="btn btn-sm btn-primary">Image</label>
+        <button matTooltip="Delete" (click)="emitChildEvent(correction.hotspotId)" matTooltipPosition="right" class="btn btn-sm btn-danger"><i class="hp-text-color-dark-0 ri-1x ri-delete-bin-2-line"></i></button> 
+        </div>
+    </li>  
+</ul>
+<div>
+    <button (click)="createCorrection()" class="btn btn-sm submit-btn">Submit</button>
+    <small *ngIf="emptyField != ''">{{emptyField}}</small>
+</div>   
+    </ng-container>
+    <ng-template #addHotspotMsg>
+        <div class="noUpdates">
+            <span>
+               Please add the hotspots over the model and move forward. 
+            </span>  
+        </div> 
+    </ng-template>
+ 
+</ng-container>
+<ng-template #noCorrectionMsg>
+    <div class="noUpdates">
+        <i class="hp-text-color-dark-0 ri-2x ri-alert-fill"></i>
+       <span>Sorry no updates available</span> 
+    </div>  
+</ng-template>
+
+

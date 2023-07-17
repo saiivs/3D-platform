@@ -1,5 +1,6 @@
 
 
+
 const mongoose = require('mongoose');
 
 let Schema = mongoose.Schema;
@@ -100,6 +101,11 @@ let qaComments = new Schema({
     comments:{
         type:Array,
         required:true
+    },
+    underQA:{
+        type:Boolean,
+        required:true,
+        default:false
     }
 })
 
@@ -251,6 +257,62 @@ let clientRequirement = new Schema({
     }
 })
 
+let modelHotspot = new Schema({
+    hotspotName:{
+        type:String,
+        required:true
+    },
+    normalValue:{
+        type:String,
+        required:true
+    },
+    positionValue:{
+        type:String,
+        required:true
+    },
+    clientId:{
+        type:ObjectId,
+        required:true
+    },
+    articleId:{
+        type:String,
+        required:true
+    },
+    hotspotId:{
+        type:String,
+        required:true
+    },
+    correction:{
+        type:String,
+        required:false
+    },
+    version:{
+        type:Number,
+        required:false
+    },
+    modeler:{
+        type:String,
+        required:true
+    },
+    QA:{
+        type:String,
+        required:true
+    },
+    mod_rollNo:{
+        type:String,
+        required:true
+    },
+    QA_rollNo:{
+        type:String,
+        required:true
+    },
+    date:{
+        type:Date,
+        required:true
+    }
+    
+})
+
 let Products = mongoose.model('productList',proList);
 let clients = mongoose.model('clientList',clientInfo);
 let modalerProducts = mongoose.model('assignedProducts',assignedProducts);
@@ -263,6 +325,7 @@ let invoice = mongoose.model('invoices',invoiceData);
 let tags = mongoose.model('tags',modelTags);
 let helpLine = mongoose.model('helpLine',help);
 let requirement = mongoose.model('requiremnet',clientRequirement);
+let hotspot = mongoose.model('hotspots',modelHotspot);
 
 module.exports = {
     Products,
@@ -276,5 +339,6 @@ module.exports = {
     invoice,
     tags,
     helpLine,
-    requirement
+    requirement,
+    hotspot
 }

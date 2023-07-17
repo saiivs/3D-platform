@@ -13,7 +13,16 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "baseHref": "https://charpstar.co/app2/",
+            "allowedCommonJsDependencies": [
+              "sweetalert2",
+              "papaparse",
+              "apexcharts",
+              "html2canvas",
+              "rgbcolor",
+              "raf",
+              "core-js"
+           ],
+           "baseHref": "https://charpstar.co/app2/",
             "outputPath": "dist/admin-platform",
             "index": "src/index.html",
             "main": "src/main.ts",

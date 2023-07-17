@@ -163,8 +163,8 @@ export class BackendService {
     return this.http.post<boolean>(`${this.url}/QaComments/post`,{comment,clientId,articleId,user}).pipe((catchError(this.erroHandler)))
   }
 
-  getQaComments(clientId:string,articleId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/QaComments/Get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)))
+  getQaComments(clientId:string,articleId:string,version:number):Observable<any>{
+    return this.http.get<any>(`${this.url}/QaComments/Get/${clientId}/${articleId}/${version}`).pipe((catchError(this.erroHandler)))
   }
 
   approveModal(clientId:string,articleId:string,status:string,rollNo:string|null,modelerName:string,correction:string = "",modelName:string = "",modelerRollNo:string):Observable<any>{
@@ -227,16 +227,16 @@ export class BackendService {
     return this.http.post<boolean>(`${this.url}/updateReff/post`,{url,articleId,clientId,ProductName}).pipe((catchError(this.erroHandler)))
   }
 
-  getNotificationData(userRoll:string|null,rollNo:string|null,flag:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/NotificationData/get/${userRoll}/${rollNo}/${flag}`).pipe((catchError(this.erroHandler)));
+  getNotificationData(rollNo:string|null,flag:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/NotificationData/get/${rollNo}/${flag}`).pipe((catchError(this.erroHandler)));
   }
 
   getModelersProgress(clientId:Types.ObjectId):Observable<any>{
     return this.http.get<any>(`${this.url}/getProgress/get/${clientId}`).pipe((catchError(this.erroHandler)));
   }
 
-  getGlbFileDetails(articleId:String,clientId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getGlbDetails/get/${articleId}/${clientId}`).pipe((catchError(this.erroHandler)))
+  getGlbFileDetails(articleId:String,clientId:string,version:number):Observable<any>{
+    return this.http.get<any>(`${this.url}/getGlbDetails/get/${articleId}/${clientId}/${version}`).pipe((catchError(this.erroHandler)))
   }
 
   getNotificationForAdmin(status:string):Observable<any>{
@@ -287,7 +287,53 @@ export class BackendService {
     return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId});
   }
 
-  scrapeImages(link:string,productName:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/scrapeImages/post`,{link,productName});
+  scrapeImages(link:string,productName:string,articleId:string,clientName:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/scrapeImages/post`,{link,productName,articleId,clientName});
+  }
+
+  getScrapedImg(articleId:string,productName:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getScrapedImgs/get/${articleId}/${productName}`);
+  }
+
+  getClientDetailsById(clientId:any,articleId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getClientById/get/${clientId}/${articleId}`)
+  }
+
+  uploadReferenceManually(formData:FormData,articleId:string,clientName:string):Observable<any>{
+    formData.append('articleId', articleId);
+    formData.append('clientName', clientName);
+    return this.http.post<any>(`${this.url}/uploadRefManuall/post`,formData);
+  }
+
+  createHotSpot(hotspotName:string,normal:string,position:string,articleId:string,clientId:string,nor:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/createHotspot/post`,{hotspotName,normal,position,articleId,clientId,nor});
+  }
+
+  checkForHotspots(clientId:string,articleId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getHotspots/get/${clientId}/${articleId}`)
+  }
+
+  getLatestCorrection(clientId:string,articleId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getLatestCorrection/get/${clientId}/${articleId}`)
+  }
+
+  updateHotspotCorrections(correctionData:Array<any>):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateHotspot/post`,correctionData)
+  }
+
+  updateHotspotCorrectionImg(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateHotspotImg/post`,formData);
+  }
+
+  getClientDetailsForQADo(clientId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getClientForQADo/get/${clientId}`);
+  }
+
+  getHotspotwithVersion(version:number,clientId:string,articleId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getHotspotWithId/get/${version}/${clientId}/${articleId}`);
+  }
+
+  updateModelUnderQa(clientId:string,articleId:string,flag:boolean):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateModelUnderQA/post`,{clientId,articleId,flag})
   }
 }

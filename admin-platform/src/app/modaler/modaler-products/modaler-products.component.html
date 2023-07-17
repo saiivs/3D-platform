@@ -82,9 +82,9 @@
                     <td>{{pro.articleId}}</td>
                     <td><div>
                       <div>{{pro.productName}}</div>
-                      <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" style="font-size: smaller;">Reference</a></div>    
+                      <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
                   </div></td>
-                    <td *ngIf="pro.productLink;else noLink"><a  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
+                    <td *ngIf="pro.productLink;else noLink"><a target="_blank"  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
                     </td>
                     <ng-template #noLink>
                       <td class="text-danger">NO LINK</td>
@@ -100,7 +100,7 @@
                     </ng-template>
                     <td *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
                       <button class="btn btn-sm btn-outline-primary">
-                        <a (click)="proNameLoad(pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId]"
+                        <a (click)="proNameLoad(pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]"
                           >View Model</a>
                       </button>
                     </td>

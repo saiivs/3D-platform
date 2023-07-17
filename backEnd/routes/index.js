@@ -1,8 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const routeHelper = require('../controls/routeHelper');
-const auth = require('../controls/middleware')
-
+const auth = require('../controls/middleware');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -49,7 +48,7 @@ router.get('/api/Qa-products/Get/:id',auth.authentication,routeHelper.getQaPro);
 router.post('/api/QaComments/post',auth.authentication,routeHelper.createCommentQa);
 
 //get the comments of qa
-router.get('/api/QaComments/Get/:clientId/:articleId',auth.authentication,routeHelper.getQaComments);
+router.get('/api/QaComments/Get/:clientId/:articleId/:version',auth.authentication,routeHelper.getQaComments);
 
 //approve the modal
 router.post('/api/approveModal/post',auth.authentication,routeHelper.approveModal);
@@ -94,13 +93,13 @@ router.get('/api/getClientsExpense/get',auth.authentication,routeHelper.getClien
 router.post('/api/updateReff/post',auth.authentication,routeHelper.updateReff);
 
 //get the data for notification
-router.get('/api/NotificationData/get/:userRoll/:rollNo/:flag',auth.authentication,routeHelper.getNotifications);
+router.get('/api/NotificationData/get/:rollNo/:flag',auth.authentication,routeHelper.getNotifications);
 
 //get the progress of the modeler for a specific client.
 router.get('/api/getProgress/get/:clientId',auth.authentication,routeHelper.getProgress);
 
 //get more details from the glb file for fullscreen mode
-router.get('/api/getGlbDetails/get/:articleId/:clientId',auth.authentication,routeHelper.getGlbFileDetails);
+router.get('/api/getGlbDetails/get/:articleId/:clientId/:version',auth.authentication,routeHelper.getGlbFileDetails);
 
 //get notification for admin
 router.get('/api/notification_Admin/get/:status',auth.authentication,routeHelper.getNotificationsAdmin);
@@ -137,5 +136,35 @@ router.post('/api/saveModelPng/post',auth.authentication,routeHelper.savePng);
 
 //create the requirement for the client.
 router.post('/api/createRequirement/post',auth.authentication,routeHelper.createRequirement);
+
+//scraping the images for QA
+router.post('/api/scrapeImages/post',auth.authentication,routeHelper.scrapeImg);
+
+//get client details by id
+router.get('/api/getClientById/get/:clientId/:articleId',auth.authentication,routeHelper.getClientById);
+
+//uploading the multiple reference images manually by the QA.
+router.post('/api/uploadRefManuall/post',auth.authentication,routeHelper.uploadRefManuall);
+
+//create a hotspot for 3D model
+router.post('/api/createHotspot/post',auth.authentication,routeHelper.createHotspot);
+
+//get the hotspots of specific model
+router.get('/api/getHotspots/get/:clientId/:articleId',auth.authentication,routeHelper.getHotspots);
+
+//updating the correction and image details in hotspot collection
+router.post('/api/updateHotspotImg/post',auth.authentication,routeHelper.updateHotspotImg);
+
+//get the clientDetails for the Qa do part
+router.get('/api/getClientForQADo/get/:clientId',auth.authentication,routeHelper.getClientForQADo);
+
+router.get('/api/getLatestCorrection/get/:clientId/:articleId',auth.authentication,routeHelper.getLatestHotspots);
+
+router.get('/api/getHotspotWithId/get/:version/:clientId/:articleId',auth.authentication,routeHelper.getHotspotById);
+
+//update the model under the Qa to restrict the modeler
+router.post('/api/updateModelUnderQA/post',auth.authentication,routeHelper.updateModelUnderQA)
+
+
 
 module.exports = router;

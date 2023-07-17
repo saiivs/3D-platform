@@ -12,7 +12,7 @@ import { BackendService } from 'src/app/services/backend.service';
 export class QaProductsComponent implements OnInit,OnDestroy{
 
   constructor(private backEnd:BackendService,private route:ActivatedRoute){
-
+    
   }
 
   products:Array<any> = []
@@ -28,16 +28,17 @@ export class QaProductsComponent implements OnInit,OnDestroy{
     this.Id = this.route.snapshot.params['id'];
     this.subscription = this.backEnd.getQaPro(this.Id).subscribe((data)=>{
       this.clientId = data[0].clientId
-      this.clientDetails = data[0].ClientData
+      this.clientDetails = data[0].ClientData; 
       this.products = [...data[0].assignedPro];
       this.totalRecords = this.products.length;
     })
   }
 
-  proName(name:string,modelerName:string,modRollNo:string){
-    this.backEnd.getModelerName(modelerName)
-    this.backEnd.getProName(name);
-    this.backEnd.getModRollNo(modRollNo)
+  scrapeImages(url:string,name:string,articleId:string){
+    this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
+      console.log(res);
+      
+    })
   }
 
   ngOnDestroy(): void {

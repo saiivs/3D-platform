@@ -43,6 +43,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   clientName:string="";
   polygonCount!:number;
   warningMsg:string = "";
+  version:number = 0;
   srcFile:string = "";
   subscription!:Subscription;
 
@@ -75,9 +76,10 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   ngOnInit() {
-      this.clientId = this.route.snapshot.params['clientId'];
       this.articleId = this.route.snapshot.params['articleId'];
-      this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId).subscribe((data)=>{
+      this.clientId = this.route.snapshot.params['clientId'];
+      this.version = this.route.snapshot.params['version']
+      this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
         this.currentDate = new Date().toLocaleDateString('en-GB');
         if(data){
           if(data.pngExist){
@@ -94,7 +96,9 @@ export class ReviewsComponent implements OnInit,OnDestroy{
           if(this.QaCommentArr[0]?.comments.length == 0){
             this.flag = false;
           }
-          this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+          const regex = /[^a-zA-Z0-9]/g;
+          let clinetName = this.clientDetails[0].clientName.replace(regex,"_")
+          this.srcFile = `http://localhost:3001/models/${clinetName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
           this.QaCommentArr[0]?.comments.forEach((message: any) => {
             const conDate = new Date(message.date)
             const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -180,7 +184,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
 
   fullScreenMode(){
     try {
-      this.router.navigate(['modaler/model-FullScreen',this.articleId,this.clientId]);
+      this.router.navigate(['modaler/model-FullScreen',this.articleId,this.clientId,this.version]);
     } catch (error) {
       console.log(error);  
     } 

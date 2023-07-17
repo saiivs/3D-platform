@@ -21,6 +21,7 @@ productId:string = "";
 products:Array<any> = [];
 uploadedFile!:File;
 clientId : string = "";
+version:number = 0;
 index!:number;
 totalRecords!:number
 page:number = 1;
@@ -32,7 +33,7 @@ ngOnInit() {
   this.productId = this.route.snapshot.params['id'];
   this.subscription = this.backEndService.getModalerPro(this.productId).subscribe((data:modelerLanding[])=>{
     this.clientId = data[0].clientId
-    this.products = [...data[0].assignedPro];  
+    this.products = [...data[0].assignedPro]; 
     this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
     this.totalRecords = this.products.length
   })
@@ -62,7 +63,6 @@ acceptFile(event :any){
   }
 }
 
-
 resetFile(index:number){
   this.products[index].modalFile = false
   this.fileInput.nativeElement.value = '';
@@ -75,11 +75,14 @@ onUpload(id:string,index:number){
   formData.append('clientId',this.clientId)
   formData.append('modRollNo',localStorage.getItem('rollNo')||"");
   this.backEndService.uploadModal(formData).subscribe((res)=>{
-    if(res){
+    if(res.status){
+      this.version = res.version;
       this.toaster.success('success','model successfully uploaded');
       this.products[index].modalFile = false;
       this.products[index].productStatus = 'Uploaded';
-      this.router.navigate(['/modaler', 'reviews',id,this.clientId])
+      this.router.navigate(['/modaler', 'reviews',id,this.clientId,res.version])
+    }else{
+      this.toaster.error('Error','Sorry model is under QA.');
     }
   })
 }

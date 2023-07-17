@@ -4,7 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import {NgxPaginationModule} from 'ngx-pagination'
 import { MatDialogModule } from '@angular/material/dialog';
+import { NgxImageZoomModule } from 'ngx-image-zoom';
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 
@@ -18,6 +21,13 @@ import { ModelFullscreenComponent } from './model-fullscreen/model-fullscreen.co
 import { ToastrModule } from 'ngx-toastr';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ModelWarningComponent } from './model-warning/model-warning.component';
+import { QaDoComponent } from './qa-do/qa-do.component';
+import { ActiveDirective } from './customDirectives/active.directive';
+import { TestComponent } from './test/test.component';
+import { GalleryComponent } from './gallery/gallery.component';
+import { HotspotCorrectionComponent } from './hotspot-correction/hotspot-correction.component';
+import { CorrectionImageComponent } from './correction-image/correction-image.component';
+
 
 
 
@@ -29,8 +39,13 @@ import { ModelWarningComponent } from './model-warning/model-warning.component';
     ErrorPageComponent,
     CorrectionDilogComponent,
     ModelFullscreenComponent,
-    ModelWarningComponent
-
+    ModelWarningComponent,
+    QaDoComponent,
+    ActiveDirective,
+    TestComponent,
+    GalleryComponent,
+    HotspotCorrectionComponent,
+    CorrectionImageComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,6 +56,9 @@ import { ModelWarningComponent } from './model-warning/model-warning.component';
     BrowserAnimationsModule,
     MatDialogModule,
     MatTooltipModule, 
+    NgxPaginationModule,
+    NgxImageZoomModule,
+    MatTabsModule,
     ToastrModule.forRoot(),
     SweetAlert2Module.forRoot()
   ],

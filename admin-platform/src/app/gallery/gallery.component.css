@@ -1,0 +1,49 @@
+.myborder{
+    border: 1px solid #b2bec3;
+  }
+
+  .onHover:hover{
+    cursor: pointer;
+  }
+
+  .active{
+    border:2px solid blue!important;
+  }
+
+  .empty{
+    width: 5rem;
+    height: 5rem;
+  }
+  
+  .emptyContainer{
+    text-align: center;
+  }
+
+  .uploadRefe{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 3rem;
+  }
+
+  .myPagination{
+    margin-top: 1rem;
+  }
+
+  .uploadRefe span {
+    font-weight: 500;
+  }
+  
+  .inspectInfo {
+    margin-top: 2.5rem;
+  }
+  
+  ul, ol {
+    list-style: initial;
+  }
+
+  .thumbPos{
+    height: 25rem;
+  }
+
+  

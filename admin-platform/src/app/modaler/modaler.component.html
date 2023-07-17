@@ -240,20 +240,20 @@
                                 <div class="text-center" *ngIf="!seeMoreToggle" (click)="getAllNotification('seeLess')"><p class="hp-badge-text seeMoreBtn pt-2">See Less</p></div>
                                 <div class="hp-overflow-y-auto px-10 myScroll" style="max-height: 400px; margin-right: -10px; margin-left: -10px;">
                                     <ng-container *ngIf="notifyData.length != 0 || helpNotification.length != 0;else noNotify">
-                                        <div *ngFor="let notify of notifyData;let i = index" class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
+                                        <div  *ngFor="let notify of notifyData;let i = index" class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
                                         <div class="w-auto px-0 me-12">
                                             <div class="avatar-item d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;">
                                                 <i class="hp-text-color-dark-0 ri-2x ri-todo-line"></i>
                                             </div>
                                         </div>
 
-                                        <div class="w-auto px-0 col">
+                                        <div (click)="correctionModelView(notify.version,notify.articleId,notify.clientId)" class="w-auto px-0 col">
                                             <!-- <span class="hp-text-color-black-60" >Correction detected in model</span> -->
                                             <p class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
-                                                Correction detected in model {{notify.productName}}. QA By {{notify.QaName}}. 
+                                                Correction detected in model {{notify.articleId}}. QA By {{notify.QA}}. 
                                             </p>
-                                           <button class="crtnViewBtn" (click)="openDialog(notify.correction)"><span class="d-block hp-badge-text fw-medium text-white">View</span></button> 
-                                            <!-- <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">1m ago</span> -->
+                                           
+                                         <!-- <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">1m ago</span> -->
                                         </div>
                                     </div>
                                     <div *ngFor="let help of helpNotification;let i = index" class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">

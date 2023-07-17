@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const  database = require("./dbQueries");
 const fs = require('fs');
+const { type } = require('os');
+
+
+
 
 let credentials = [
     {
@@ -213,7 +217,7 @@ module.exports = {
         try {
             let email = req.params.email;
             let modaler = modalers.find(obj => obj.email == email)
-            let clients = await database.dbGetClientForModaler(modaler.name);
+            let clients = await database.dbGetClientForModaler(modaler.rollNo);
             if(clients){
                 res.status(200).json(clients)
             }else{
@@ -244,24 +248,41 @@ module.exports = {
 
     savemodalFile:async(req,res)=>{
         try {
-           let file = req.files.file;
+           let file = req.files.file; 
         if(file){
             let status = "Uploaded"
-            let data = await database.dbupdateProductStatus(req.body,status);
-            if(data){
-                file.mv(`./public/models/${req.body.id}&&${req.body.clientId}.glb`,async(err,data)=>{
+            let data = await database.dbupdateProductStatus(req.body,status); 
+            let count = 1;
+            if(data.status){ 
+                const regex = /[^a-zA-Z0-9]/g;
+                const updatedClientName = data.data.clientName.replace(regex,'_')
+                if(!fs.existsSync(`./public/models/${updatedClientName}/${req.body.id}`)){
+                    fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-1`,{recursive:true});
+                }else{
+                    content = fs.readdirSync(`./public/models/${updatedClientName}/${req.body.id}`);
+                    count = content.length + count;
+                    fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-${count}`,{recursive:true})
+                    
+                }
+                await database.dbupdateVersion(req.body,status,count);
+                file.mv(`./public/models/${updatedClientName}/${req.body.id}/version-${count}/${req.body.id}.glb`,async(err,data)=>{
                     if(err){
+                        console.log(err);
                         throw new Error
-                    }else{
+                    }else{ 
                         console.log("uploaded");
-                        res.status(200).json(true);
+                        res.status(200).json({status:true,version:count});
                     }
                 })
+            }else if(data.msg == "model under QA"){
+                    res.status(200).json({status:false,msg:data.msg})
+            }else{
+                throw new Error(data.msg)
             }
         } 
         } catch (error) {
             console.log(error);
-            res.status(500).status(500).json(false);
+            res.status(500).json(false);
         }   
     },
 
@@ -314,9 +335,10 @@ module.exports = {
 
     getQaComments:async(req,res)=>{
         try {
-           let clientId = req.params.clientId;
+        let clientId = req.params.clientId;
         let articleId = req.params.articleId;
-        let getData = await database.dbGetQaComments(clientId,articleId);
+        let version = req.params.version;
+        let getData = await database.dbGetQaComments(clientId,articleId,version);
         console.log({getData});
         if(getData){
             res.status(200).json(getData)
@@ -542,8 +564,8 @@ module.exports = {
 
     getNotifications:async(req,res)=>{
         try {
-            let {userRoll,rollNo,flag} = req.params;
-            let notifyData = await database.dbGetNotifications(userRoll,rollNo,flag);
+            let {rollNo,flag} = req.params;
+            let notifyData = await database.dbGetNotifications(rollNo,flag);
             if(notifyData){
                 res.status(200).json(notifyData);
             }else{
@@ -575,8 +597,8 @@ module.exports = {
 
     getGlbFileDetails:async(req,res)=>{
         try {
-            let {articleId,clientId} = req.params;
-            let glbData = await database.dbGetGlbFileDetails(articleId,clientId);
+            let {articleId,clientId,version} = req.params;
+            let glbData = await database.dbGetGlbFileDetails(articleId,clientId,version);
             if(glbData){
                 res.status(200).json(glbData)
             }else{
@@ -789,4 +811,198 @@ module.exports = {
         }  
      },
 
+     scrapeImg:async(req,res)=>{
+        try {
+            let {link,productName,articleId,clientName} = req.body;
+            let scrapedImg = await database.dbScrapeImg('https://www.elon.se/canvac-cfk5301v','FLAKT Canvac CFK5301V',articleId,clientName);
+
+            if(scrapedImg.success && scrapedImg.message == "Complete"){
+                res.status(200).json({status:"success"});
+            }else if(scrapedImg.message == 'Incomplete'){
+                res.status(200).json({status:"Incomplete"});
+            }else if(scrapedImg.message == 'No images found!'){
+                res.status(200).json({status:"No images found!"});
+            }else{
+                throw new Error;
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }   
+      },
+
+      getClientById:async(req,res)=>{
+        try {
+           let {clientId,articleId} = req.params;
+           let getClientData = await database.dbGetClientById(clientId,articleId);
+           if(getClientData){
+            return res.status(200).json(getClientData);
+            }else{
+                throw new Error('no client found');
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        } 
+      },
+
+      uploadRefManuall:(req,res)=>{
+        try {
+            let imageFiles = req.files.images
+            
+            console.log(typeof(imageFiles));
+            console.log(imageFiles);
+            // const {articleId,clientName} = req.body;
+            let articleId = '56908';
+            let clientName = 'saikrishna'
+            if(!fs.existsSync(`./public/images/${clientName}/${articleId}`)){
+                fs.mkdirSync(`./public/images/${clientName}/${articleId}`,{ recursive: true });
+            }
+            imageFiles.forEach(file => {
+                file.mv(`./public/images/${clientName}/${articleId}/${file.name}`,(err,data)=>{
+                    if(!err){
+                        console.log("uploaded");
+                        res.status(200).json(true);
+                    }else{
+                        console.log(err);
+                        console.log("not uploaded");
+                        res.status(500).json(false);
+                    }
+                })
+            });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false)
+        }  
+      },
+
+      createHotspot:async(req,res)=>{
+        try {
+            console.log(req.body);
+            let {hotspotName,normal,position,articleId,clientId,nor} = req.body;
+            let result = await database.dbCreateHotspot(hotspotName,normal,position,articleId,clientId,nor);
+            if(result){
+                res.status(200).json(true)
+            }else{
+                throw new Error('hotspot not created! something went wrong')
+            }   
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      getHotspots:async(req,res)=>{
+        try {
+            let {articleId,clientId} = req.params;
+            let result = await database.dbGetHotspots(articleId,clientId);
+            if(result){
+                res.status(200).json(result)
+            }else if(result.msg = "New model"){
+                res.status(200).json({status:true,version:0});
+            }else{
+                throw new Error(result.error);
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }    
+      },
+
+      getClientForQADo:async(req,res)=>{
+        try {
+            let clientId = req.params.clientId;
+            let result = await database.dbGetClientForQaDo(clientId);
+            if(result){
+                res.status(200).json(result)
+            }else{
+                throw new Error;
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+    },
+
+      updateHotspotImg:async(req,res)=>{
+        try {
+        let data = req.body;
+        console.log(data);
+        let count = 0;
+        let images = req.files
+        for(let key in data){
+            count ++
+            console.log({key});
+            let objString = data[key];
+            let item = JSON.parse(objString);
+            let saveCorrection = await database.createCorrection(item);
+            if(saveCorrection.status){
+             const regex = /[^a-zA-Z0-9]/g;
+             saveCorrection.client.clientName = saveCorrection.client.clientName.replace(regex,"_")
+             if(images){
+                fs.mkdirSync(`./public/corrections/${saveCorrection.client.clientName}/${item.articleId}/version-${saveCorrection.version}`,{recursive:true});
+                let image = images[`image${count}`];
+                if(image){
+                  image.mv(`./public/corrections/${saveCorrection.client.clientName}/${item.articleId}/version-${saveCorrection.version}/${saveCorrection.correction}.jpg`,(err,data)=>{
+                    if(!err){
+                        console.log("uploaded");
+                    }else{
+                        throw new Error('correction image uploading failed')
+                    }
+                })   
+                }  
+             }
+            }
+        }
+        res.status(200).json(true);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false)
+        }
+      },
+
+      getLatestHotspots:async(req,res)=>{
+        try {
+           let {clientId,articleId} = req.params;
+        let result = await database.dbGetLatestHotspots(clientId,articleId);
+        if(result){
+            if(!result.data){
+                res.status(200).json({status:true})
+            }else{
+             res.status(200).json(result); 
+            }
+            
+        } else{
+            throw new Error("something went wrong while fetching the latest hotspots!")
+        }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }  
+      },
+
+      getHotspotById:async(req,res)=>{
+        try {
+          const {version,clientId,articleId} = req.params;
+        let result = await database.dbGetHotspotById({version,clientId,articleId});
+        if(result) res.status(200).json(result);
+        else res.status(500).json(false);   
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);  
+        } 
+      },
+
+      updateModelUnderQA:async(req,res)=>{
+        try {
+          const {clientId,articleId,flag} = req.body; 
+          const result = await database.dbUpdateModelUnderQA(clientId,articleId); 
+          if(result) res.status(200).json(true);
+          else throw new Error('Something went wrong while updating the under QA status!!')
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      }
 }

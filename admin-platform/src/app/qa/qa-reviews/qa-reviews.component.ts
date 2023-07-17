@@ -26,6 +26,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   QaComment:string = ""
   clientId:string = "";
   articleId:string = "";
+  version:number = 0;
   newCmnt : any= {};
   newData :any = {};
   flag:Boolean = true;
@@ -83,7 +84,9 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     }
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
-    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId).subscribe((data)=>{
+    this.version = this.route.snapshot.params['version']
+
+    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.validateGlbFile(data);
@@ -97,7 +100,11 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        const regex = /[^a-zA-Z0-9]/g;
+        let clientName = this.clientDetails[0].clientName.replace(regex,"_")
+        console.log({clientName});
+        
+        this.srcFile = `http://localhost:3001/models/${clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
