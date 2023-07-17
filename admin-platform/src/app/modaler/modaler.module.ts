@@ -17,7 +17,6 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { ModelerCorrectionViewComponent } from './modeler-correction-view/modeler-correction-view.component';
-import { ModelerHotspotViewComponent } from './modeler-hotspot-view/modeler-hotspot-view.component';
 import {MatTabsModule} from '@angular/material/tabs';
 
 
@@ -35,7 +34,6 @@ import {MatTabsModule} from '@angular/material/tabs';
     InvoiceComponent,
     BankFormComponent,
     ModelerCorrectionViewComponent,
-    ModelerHotspotViewComponent,
   ],
   
   imports: [
