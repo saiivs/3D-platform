@@ -62,7 +62,6 @@
                     <th scope="col">Client Name</th>
                     <th scope="col">Product Count</th>
                     <th scope="col">Product List</th>
-                    <th scope="col">QA</th>
                     <th scope="col">Product Status</th>
 
                   </tr>
@@ -87,7 +86,6 @@
                           >View Here</a>
                       </button>
                     </td>
-                    <td>{{client.QATeamName}}</td>
                     <td *ngIf="client.approvedClient;else notApproved"  style="font-size: 1rem;color: green;font-weight: 600;">Complete</td>
                     <ng-template #notApproved>
                       <td class="text-danger" style="font-size: 1rem;font-weight: 600;">Incomplete</td>

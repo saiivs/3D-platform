@@ -18,6 +18,8 @@ import { MatInputModule } from '@angular/material/input';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { ModelerCorrectionViewComponent } from './modeler-correction-view/modeler-correction-view.component';
 import {MatTabsModule} from '@angular/material/tabs';
+import { ModelerProfileComponent } from './modeler-profile/modeler-profile.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 
@@ -34,6 +36,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     InvoiceComponent,
     BankFormComponent,
     ModelerCorrectionViewComponent,
+    ModelerProfileComponent,
   ],
   
   imports: [
@@ -45,6 +48,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     MatFormFieldModule ,
     MatInputModule,
     MatTabsModule,
+    FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
   ],

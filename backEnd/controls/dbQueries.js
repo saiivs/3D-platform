@@ -171,7 +171,7 @@ module.exports = {
         }   
     },
 
-    assignPro:async(data,name,QaName,modRoll,QaRoll)=>{
+    assignPro:async(data,name,email,QaName,modRoll,QaRoll)=>{
         try {
             let date = new Date()
             date.setHours(0, 0, 0, 0);
@@ -182,6 +182,7 @@ module.exports = {
             let modeler  = {
                 modelerName : name ,
                 rollNo:modRoll,
+                email:email,
                 models:[...proListforModeler],
                 bankDetails:[]
             }
@@ -208,10 +209,6 @@ module.exports = {
                 await db.modalerProducts.updateOne({_id:sameClientPro._id},{$push:{assignedPro:{$each:data.products}}});
             }else{
             let formatedData = {
-                modalerName : name,
-                modalerRollNo:data.rollNo,
-                QATeamName : QaName,
-                QATeamRollNo:data.QaRoll,
                 clientId:new ObjectId(data.clientId),
                 assignedPro:data.products,
                 approvedClient: true,
@@ -355,20 +352,24 @@ module.exports = {
 
     dbGetClientsForQa:async(qaRollNo)=>{
         try {
+            console.log({qaRollNo});
             let clients = await db.modalerProducts.aggregate([
                 {
-                    $match:{QATeamRollNo:qaRollNo}
+                    $match:{"assignedPro.qaRollNo":qaRollNo}
                 },
                 {
                     $lookup:{
                         from:"clientlists",
                         localField:"clientId",
                         foreignField:"_id",
-                        as:"ClientData"
+                        as:"clientData"
                     }
+                },
+                {
+                    $unwind:"$clientData"
                 }
             ])
-            console.log(clients);
+            console.log({clients});
             if(clients){
                 return clients
             }else{
@@ -392,7 +393,7 @@ module.exports = {
                         from:"clientlists",
                         localField:"clientId",
                         foreignField:"_id",
-                        as:"ClientData"
+                        as:"clientData"
                     }
                 }
             ])
@@ -815,7 +816,7 @@ module.exports = {
         try {
             let date = new Date().setHours(0,0,0,0)
             let clients = await db.clients.find({});
-            if(clients.length){
+            if(clients.length != 0){
                 let exp = await db.Products.aggregate([
                     {
                         $group:{
@@ -826,9 +827,10 @@ module.exports = {
                 ])
                 let budgetData = await db.budget.find({date:date});
                 budgetData = budgetData.length != 0 ? budgetData[0].budget : 0;
-                return {clients,exp,budgetData}
-            }
-            
+                return {status:true,clients,exp,budgetData}
+            }else{
+                return {status:false}
+            }    
         } catch (error) {
             console.log(error);
             return false;
@@ -1411,6 +1413,8 @@ module.exports = {
 
     createCorrection:async(data)=>{
         try {
+            console.log("correction creation");
+            console.log({data});
             let clientDetails = await db.clients.findOne({_id:data.clientId});
             let modelTeam = await db.modalerProducts.findOneAndUpdate({clientId:data.clientId,'assignedPro.articleId':data.articleId},{$set:{"assignedPro.$.productStatus":"Correction"}});
             const regex = /[^a-zA-Z0-9]/g;
@@ -1511,6 +1515,49 @@ module.exports = {
         try {
             await db.QaReviews.updateOne({clientId:model.clientId,articleId:model.clientId},{$set:{underQA:model.flag}});
             return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbGetUserBankDetails:async(userInfo)=>{
+        try {
+            const user = await db.modelerList.findOne({rollNo:userInfo.rollNo});
+            console.log({user});
+            if(user){
+                const bankInfo = user.bankDetails.length != 0 ? user.bankDetails[0] : false;
+                return {status:true,data:bankInfo,modeler:user}
+            }else{
+                return {status:false}
+            }
+        } catch (error) {
+           console.log(error);
+           return {status:false}; 
+        }
+    },
+
+    dbUpdateBankInfo:async(bankInfo,rollNo)=>{
+        try {
+            console.log(bankInfo,rollNo);
+          let result = await db.modelerList.updateOne({rollNo:rollNo},{$set:{bankDetails:bankInfo}});
+          console.log(result);
+          if(result.modifiedCount === 1) return true ;
+          else return false;  
+        } catch (error) {
+            console.log(error);
+            return false
+        }     
+    },
+
+    dbCreateAbout:async(email,txt)=>{
+        try {
+            let result = await db.modelerList.updateOne({email:email},{$set:{about:txt}});
+            if(result.modifiedCount === 1 ){
+                return true;
+            }else{
+                return false;
+            }
         } catch (error) {
             console.log(error);
             return false;

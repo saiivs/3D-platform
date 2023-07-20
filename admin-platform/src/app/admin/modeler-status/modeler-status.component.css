@@ -82,3 +82,15 @@ div::-webkit-scrollbar {
   .myhover:hover{
     color: white;
   }
+
+  .emptyTable{
+    text-align: center;
+  }
+  .emptyImg{
+    margin: auto;
+    width: 5rem;
+  }
+
+  .hoverProfile:hover{
+    cursor: pointer;
+  }

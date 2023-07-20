@@ -111,7 +111,7 @@
 
                     <div class="w-auto ms-8 px-0 hp-sidebar-hidden mt-4">
                         <span class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">User Name</span>
-                        <a href="profile-information.html" class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
+                        <a [routerLink]="'profile'" class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
                     </div>
                 </div>
             </div>
@@ -329,7 +329,7 @@
                             <div class="rounded hp-bg-black-0 hp-bg-dark-100 px-18 py-24">
                                 <span class="d-block h5 hp-text-color-black-100 hp-text-color-dark-0 mb-16">Profile Settings</span>
 
-                                <a href="profile-information.html" class="hp-p1-body fw-medium hp-hover-text-color-primary-2">View Profile</a>
+                                <a [routerLink]="'profile'" class="hp-p1-body fw-medium hp-hover-text-color-primary-2">View Profile</a>
 
                                 <div class="divider mt-18 mb-16"></div>
 
@@ -372,11 +372,8 @@
                                
 
                                 <div class="row">
+                                    
                                     <div class="col-12">
-                                        <a class="hp-p1-body fw-medium" href="profile-information.html">Account Settings</a>
-                                    </div>
-
-                                    <div class="col-12 mt-24">
                                         <a class="hp-p1-body fw-medium myLogOut" (click)="logOut()">Logout</a>
                                     </div>
                                 </div>
@@ -566,7 +563,7 @@
 
                           <div class="w-auto ms-8 px-0 hp-sidebar-hidden mt-4">
                               <span class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">User Name</span>
-                              <a href="profile-information.html" class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
+                              <a [routerLink]="'profile'" class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
                           </div>
                       </div>
                   </div>

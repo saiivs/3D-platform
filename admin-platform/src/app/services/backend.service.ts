@@ -150,9 +150,9 @@ export class BackendService {
     return this.http.post<any>(`${this.url}/upload-modal/post`,formData).pipe((catchError(this.erroHandler)))
   }
 
-  getClientsForQa():Observable<QaLanding[]>{
+  getClientsForQa():Observable<any>{
     let userEmail = localStorage.getItem('userEmail')
-    return this.http.get<QaLanding[]>(`${this.url}/clientsForQa/Get/${userEmail}`).pipe((catchError(this.erroHandler)))
+    return this.http.get<any>(`${this.url}/clientsForQa/Get/${userEmail}`).pipe((catchError(this.erroHandler)))
   }
 
   getQaPro(Id:string):Observable<any>{
@@ -336,4 +336,21 @@ export class BackendService {
   updateModelUnderQa(clientId:string,articleId:string,flag:boolean):Observable<any>{
     return this.http.post<any>(`${this.url}/updateModelUnderQA/post`,{clientId,articleId,flag})
   }
+
+  getUserDetailsForProfile(userEmail:string|null):Observable<any>{
+    return this.http.get<any>(`${this.url}/getUserDetailsForProfile/get/${userEmail}`)
+  }
+
+  updateBankDetails(bankInfo:any,rollNo:string|null):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateBankDetails/post`,{bankInfo,rollNo})
+  }
+
+  createAboutforModeler(modelerEmail:string,aboutTxt:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/createAbout/post`,{modelerEmail,aboutTxt})
+  }
+
+  getQAForProfile(userEmail:string|null):Observable<any>{
+    return this.http.get<any>(`${this.url}/getQAForProfile/get/${userEmail}`)
+  }
 }
+

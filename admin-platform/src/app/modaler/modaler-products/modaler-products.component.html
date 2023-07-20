@@ -61,6 +61,7 @@
                     <th scope="col">Sl No</th>
                     <th scope="col">Article Id</th>
                     <th scope="col">Product Name</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Product Link</th>
                     <th scope="col">QA</th>
                     <th scope="col">Product Status</th>
@@ -80,10 +81,13 @@
                     };let i = index">
                     <td scope="row">{{i+1}}</td>
                     <td>{{pro.articleId}}</td>
-                    <td><div>
-                      <div>{{pro.productName}}</div>
+                    <td><div class="modalNameContainer">
+                      <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
                       <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
                   </div></td>
+                  <td>
+                    $ {{pro.price}}
+                  </td>
                     <td *ngIf="pro.productLink;else noLink"><a target="_blank"  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
                     </td>
                     <ng-template #noLink>

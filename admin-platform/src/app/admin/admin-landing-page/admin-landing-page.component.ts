@@ -38,7 +38,9 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
   ngOnInit(){
     this.titleService.setTitle(this.title)
     this.searchService.checkUrlForSearchBtn(false);
-    this.subscription = this.backEndService.getClient().subscribe((data)=>{  
+    this.subscription = this.backEndService.getClient().subscribe((data)=>{
+      console.log({data});
+        
         this.clientTableData = data.data
         data.productDetails.forEach(()=>{
           for(let model of data.productDetails){
@@ -53,8 +55,8 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
               if(approvedcount == 0){
                 this.clientTableData[modelDetailIndex].per = 0;
               }else{
-                let percentage = (proCount / approvedcount) * 100;
-                this.clientTableData[modelDetailIndex].per = percentage;
+                let percentage = ((approvedcount/proCount) * 100).toFixed(2);
+                this.clientTableData[modelDetailIndex].per = Number(percentage);
               }
               
             } 

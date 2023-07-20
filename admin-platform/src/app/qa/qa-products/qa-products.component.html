@@ -79,11 +79,11 @@
                     <td>
                       <div>
                       <div>{{pro.productName}}</div>
-                      <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" style="font-size: smaller;">Reference</a></div>    
+                      <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
                       </div>
                       
                     </td>
-                    <td *ngIf="pro.productLink;else noLink" ><a href="{{pro.productLink}}" style="cursor: pointer;">click here</a></td>
+                    <td *ngIf="pro.productLink;else noLink" ><a href="{{pro.productLink}}" target="_blank" style="cursor: pointer;">click here</a></td>
                     <ng-template #noLink>
                       <td class="text-danger">NO LINK</td>
                     </ng-template>

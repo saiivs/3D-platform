@@ -163,7 +163,19 @@ router.get('/api/getLatestCorrection/get/:clientId/:articleId',auth.authenticati
 router.get('/api/getHotspotWithId/get/:version/:clientId/:articleId',auth.authentication,routeHelper.getHotspotById);
 
 //update the model under the Qa to restrict the modeler
-router.post('/api/updateModelUnderQA/post',auth.authentication,routeHelper.updateModelUnderQA)
+router.post('/api/updateModelUnderQA/post',auth.authentication,routeHelper.updateModelUnderQA);
+
+//fetch the details of modeler/QA for profile
+router.get('/api/getUserDetailsForProfile/get/:email',auth.authentication,routeHelper.getUserDetailsForProfile);
+
+//update the bank details of modeler
+router.post('/api/updateBankDetails/post',auth.authentication,routeHelper.updateBankInfo);
+
+//create the about for the modeler
+router.post('/api/createAbout/post',auth.authentication,routeHelper.createAbout);
+
+//get the QA details for profile
+router.get('/api/getQAForProfile/get/:email',auth.authentication,routeHelper.getQAForPofile)
 
 
 

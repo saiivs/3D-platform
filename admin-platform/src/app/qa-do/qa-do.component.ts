@@ -166,6 +166,10 @@ export class QaDoComponent implements OnInit{
   }
 
   onTabChange(event:MatTabChangeEvent){
+    console.log("check index");
+    
+    console.log(event.index);
+    
     if(event.index >= 2){
       this.hotspotDenied = false
       this.hotSpotData = [];
@@ -186,8 +190,8 @@ export class QaDoComponent implements OnInit{
       }
     }else if(this.isNewModelAvailable){
       console.log("yes");
-      
-      this.hotspotDenied = true;
+      if(event.index != 1)this.hotspotDenied = true;
+      else this.hotspotDenied = false;
       this.versionTracker = 'Updated model'
       this.removeAllHotspot();
       if(this.tempHotspot.length == 0 ){
@@ -203,7 +207,9 @@ export class QaDoComponent implements OnInit{
         this.src = `http://localhost:3001/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
       }  
     }else{
-      this.hotspotDenied = true;
+      if(event.index != 1)this.hotspotDenied = true;
+      else this.hotspotDenied = false;
+      
       this.removeAllHotspot();
       this.showLatestHotspotOverModel()
     }
@@ -235,7 +241,11 @@ export class QaDoComponent implements OnInit{
   }
  
   addHotspot(event:MouseEvent){
-    if(this.hotspotDenied){
+    console.log("check denied");
+    
+    console.log(this.hotspotDenied);
+    
+    if(!this.hotspotDenied){
       console.log("running");
       
     const modelViewerElement = this.modelViewerContainer.nativeElement.querySelector('model-viewer');

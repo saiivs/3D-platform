@@ -5,3 +5,18 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
+.emptyTable{
+    text-align: center;
+  }
+
+.emptyImg{
+    margin: auto;
+    width: 5rem;
+  }
+
+.errorContainer{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

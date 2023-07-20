@@ -9,11 +9,13 @@ import { ModelFullscreenComponent } from '../model-fullscreen/model-fullscreen.c
 import { InvoiceComponent } from './invoice/invoice.component';
 import { InteractiveChatComponent } from '../admin/interactive-chat/interactive-chat.component';
 import { ModelerCorrectionViewComponent } from './modeler-correction-view/modeler-correction-view.component';
+import { ModelerProfileComponent } from './modeler-profile/modeler-profile.component';
 
 const route:Routes = [
   {path:"",component:ModalerComponent,canActivate:[ModalerGuard],
   children:[
     {path:"",component:ModalerLandingPageComponent},
+    {path:"profile",component:ModelerProfileComponent},
     {path:"modaler-products/:id",component:ModalerProductsComponent},
     {path:"reviews/:articleId/:clientId/:version",component:ReviewsComponent},
     {path:"model-FullScreen/:articleId/:clientId/:version",component:ModelFullscreenComponent},

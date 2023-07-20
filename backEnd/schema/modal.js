@@ -51,22 +51,6 @@ let clientInfo = new Schema({
 })
 
 let assignedProducts = new Schema({
-    modalerName : {
-        type:String,
-        required:true
-    },
-    modalerRollNo : {
-        type:String,
-        required:true
-    },
-    QATeamName:{
-        type:String,
-        required:true
-    },
-    QATeamRollNo:{
-        type:String,
-        required:true
-    },
     clientId:{
         type:ObjectId,
         required:true
@@ -147,6 +131,14 @@ let modeler = new Schema({
     },
     bankDetails:{
         type:Array,
+        required:false
+    },
+    email:{
+        type:String,
+        required:true
+    },
+    about:{
+        type:String,
         required:false
     }
 })

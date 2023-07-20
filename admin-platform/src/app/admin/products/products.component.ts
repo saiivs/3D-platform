@@ -122,7 +122,6 @@ ngOnInit(){
     this.subscription2 = this.backEndService.getModalers().subscribe((modalers:team)=>{
       this.QATeamArr = [...modalers.QAarr]
       this.modalersArr = [...modalers.modalersAr]
-      
       for (let modeler of this.modalersArr){
         modeler.isSelected = false;
       }
@@ -131,8 +130,6 @@ ngOnInit(){
       }
    })
   })
-
-  
 
   this.reactiveForm = new FormGroup({
     modalerName:new FormControl(null)
@@ -153,8 +150,8 @@ checkBoxChange(){
 }
 
 MultiSelectionModeler(index:any,rollNo:string){
-  let i = (this.page - 1) * 6 + index;
-  let ArrIndex = i;
+  
+  let ArrIndex = index;
   this.modalerRollNo = rollNo
   this.ModelerName = `${this.modalersArr[ArrIndex].name}(3D)`
   for(let index in this.modalersArr){
@@ -167,10 +164,12 @@ MultiSelectionModeler(index:any,rollNo:string){
 }
 
 MultiSelectionQA(index:any,rollNo:string){
-  let i = (this.page - 1) * 6 + index;
-  let ArrIndex = i;
+  
+  let ArrIndex = index;
   this.QARollNo = rollNo
   this.QAName = `${this.QATeamArr[ArrIndex].name}(QA)`
+  console.log(this.QAName);
+  
   for(let index in this.QATeamArr){
     if(index != ArrIndex){
       this.QATeamArr[index].isSelected = false;
@@ -336,27 +335,28 @@ getRefference(index:number,articleId:string,ProductName:string){
 }
 
 getTagName(){
-  this.tagList.push({tagName:this.tagName});
+  if(this.tagName){
+    this.tagList.push({tagName:this.tagName});
   this.backEndService.createTags(this.tagName).subscribe((res)=>{
     if(res) this.tagName = "";
   })
+  }else{
+    this.toaster.error('Error','Please add a tag');
+  } 
 }
 
 addTag(index:number,tagName:string,articleId:string){
   let i = (this.page - 1) * 6 + index;
   this.tagNameDrpdown[i] = tagName;
   this.products[i].tag = tagName
-  this.backEndService.assignTag(tagName,articleId,this.clientId).subscribe((res)=>{
-    
+  this.backEndService.assignTag(tagName,articleId,this.clientId).subscribe((res)=>{ 
   })
 }
 
 @ViewChild('requirement',{ static: false }) requirement! : ElementRef;
 getRequirement(){
   this.requirementData= this.requirement.nativeElement.value;
-  this.backEndService.saveRequirement(this.requirementData,this.clientId).subscribe((res)=>{
-    
-    
+  this.backEndService.saveRequirement(this.requirementData,this.clientId).subscribe((res)=>{   
   })
 }
 

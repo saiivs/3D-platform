@@ -97,13 +97,10 @@ export interface modelerLanding{
 }
 
 export interface QaLanding{
-  ClientData:Array<any>,
-  QATeamName:string,
+  clientData:Array<string>,
   approvedClient:Boolean,
   assignedPro:[],
   clientId:string,
-  modalerName:string,
-  modalerRollNo:string,
   _id:string
   
 }
@@ -143,6 +140,16 @@ export interface model {
   slNo:string,
 }
 
+export interface userInfo{
+  email:string,
+  name:string,
+  password:string,
+  role:string,
+  phone:string,
+  address:string,
+  about?:string,
+  aboutStatus?:boolean
+}
 
 
 

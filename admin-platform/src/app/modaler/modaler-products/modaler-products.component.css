@@ -16,3 +16,17 @@ label {
 .myhover:hover{
   color: white;
 }
+
+.text-with-dots {
+  width: 150px; /* Set the desired width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.modalNameContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

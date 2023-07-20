@@ -28,8 +28,10 @@ export class QaProductsComponent implements OnInit,OnDestroy{
     this.Id = this.route.snapshot.params['id'];
     this.subscription = this.backEnd.getQaPro(this.Id).subscribe((data)=>{
       this.clientId = data[0].clientId
-      this.clientDetails = data[0].ClientData; 
+      this.clientDetails = data[0].clientData; 
       this.products = [...data[0].assignedPro];
+      let qaRollNo = localStorage.getItem("rollNo");
+      this.products = this.products.filter(obj => obj.qaRollNo == qaRollNo)
       this.totalRecords = this.products.length;
     })
   }

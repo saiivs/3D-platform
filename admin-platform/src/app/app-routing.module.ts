@@ -7,6 +7,7 @@ import { QaDoComponent } from './qa-do/qa-do.component';
 import { TestComponent } from './test/test.component';
 
 
+
 const routes: Routes = [
   {path:"",component:LoginComponent,canActivate:[LoginGuardGuard]},
   {path:"QA_panel/:articleId/:clientId/:version",component:QaDoComponent},

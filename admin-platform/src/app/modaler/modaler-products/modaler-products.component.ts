@@ -35,6 +35,8 @@ ngOnInit() {
     this.clientId = data[0].clientId
     this.products = [...data[0].assignedPro]; 
     this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
+    console.log(this.products);
+    
     this.totalRecords = this.products.length
   })
 

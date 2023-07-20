@@ -14,9 +14,10 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
 
   }
 
-  clientsArr:QaLanding[] = [];
+  clientsArr:Array<any> = [];
   totalRecords!:number
   page:number = 1;
+  products:Array<any> = [];
   assProListComplete:string = "Incomplete";
   totalModels:number = 0;
   totalQaModels:number = 0;
@@ -30,8 +31,13 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
    this.subscription =  this.backEnd.getClientsForQa().subscribe((data)=>{
       if(data){
         this.clientsArr = [...data];
+        let rollNo = localStorage.getItem("rollNo")
         for(let item of this.clientsArr){
-          this.totalModels = this.totalModels + item.assignedPro.length;
+          this.products = item.assignedPro.filter((obj:any)=>{
+            if(obj.qaRollNo == rollNo)
+            return obj;
+          })
+          this.totalModels = this.products.length;
           item.assignedPro.filter((obj:any)=>{
             if(obj.productStatus == 'Not Uploaded' || obj.productStatus == 'Uploaded' || obj.productStatus == 'Correction'){
               item.approvedClient = false;

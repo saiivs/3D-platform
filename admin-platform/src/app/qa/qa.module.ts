@@ -11,6 +11,8 @@ import { ScrollDownDirective } from './scroll-down.directive';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { QaProfileComponent } from './qa-profile/qa-profile.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 
@@ -25,6 +27,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     QaReviewsComponent,
     QaAdminReviewComponent,
     ScrollDownDirective,
+    QaProfileComponent,
     
 
     
@@ -35,7 +38,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     NgxPaginationModule,
     FormsModule,
     MatTooltipModule,
-    MatDialogModule
+    MatDialogModule,
+    FlexLayoutModule
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

@@ -4,6 +4,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 
@@ -19,6 +20,7 @@ import { ClientModelerListComponent } from './client-modeler-list/client-modeler
 import { ArchiveClientsComponent } from './archive-clients/archive-clients.component';
 import { AllModelsComponent } from './all-models/all-models.component';
 import { InteractiveChatComponent } from './interactive-chat/interactive-chat.component';
+import { AdminModelerProfileComponent } from './admin-modeler-profile/admin-modeler-profile.component';
 
 
 
@@ -34,6 +36,7 @@ import { InteractiveChatComponent } from './interactive-chat/interactive-chat.co
     ArchiveClientsComponent,
     AllModelsComponent,
     InteractiveChatComponent,
+    AdminModelerProfileComponent,
   ],
   imports: [
     CommonModule,
@@ -42,7 +45,8 @@ import { InteractiveChatComponent } from './interactive-chat/interactive-chat.co
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatTooltipModule
+    MatTooltipModule,
+    FlexLayoutModule,
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 

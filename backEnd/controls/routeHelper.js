@@ -12,56 +12,72 @@ let credentials = [
         email:"admin@charpstar.com",
         name: 'admin',
         password: process.env.ADMIN_PASS,
-        role:"admin"
+        role:"admin",
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:"roney@charpstar.com",
         name:"Roney",
         password: process.env.QA_PASS,
         role:"QA",
-        rollNo :"QA5"
+        rollNo :"QA5",
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:"shreyas@charpstar.com",
         name:"Shreyas",
         password: process.env.QA_PASS,
         role:"QA",
-        rollNo :"QA3"
+        rollNo :"QA3",
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:"urvee@charpstar.com",
         name: "Urvee",
         password: process.env.QA_PASS,
         role:"QA",
-        rollNo : "QA1"
+        rollNo : "QA1",
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:"user3D1@charpstar.com",
         name: "user3D1",
         password: process.env.PASS_3D,
         role:"3D",
-        rollNo:"4"
+        rollNo:"4",
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:"user3D2@charpstar.com",
         rollNo : "3",
         name : "user3D2",
         role:"3D",
-        password:process.env.PASS_3D
+        password:process.env.PASS_3D,
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:'rafi@charpstar.com',
         rollNo : "QA4",
         name: "Rafi",
         role:"QA",
-        password:process.env.QA_PASS
+        password:process.env.QA_PASS,
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
     {
         email:'richard@charpstar.com',
         rollNo:'1',
         name:'Richard',
         role:'3D',
-        password:process.env.PASS_3D
+        password:process.env.PASS_3D,
+        phone:"23232323232",
+        address:"Lorem ipsum dolor sit 07/6"
     },
 ]
 
@@ -201,7 +217,7 @@ module.exports = {
             let QaRollNo = req.body.QaRoll
             let modalerName = modalers.find(obj => obj.rollNo == rollNo)
             let QAname = QATeams.find(obj => obj.rollNo == QaRollNo)
-           let resData = await database.assignPro(req.body,modalerName.name,QAname.name,rollNo,QaRollNo)
+           let resData = await database.assignPro(req.body,modalerName.name,modalerName.email,QAname.name,rollNo,QaRollNo)
            if(resData){
             res.status(200).json(true)
            }else{
@@ -257,8 +273,10 @@ module.exports = {
                 const regex = /[^a-zA-Z0-9]/g;
                 const updatedClientName = data.data.clientName.replace(regex,'_')
                 if(!fs.existsSync(`./public/models/${updatedClientName}/${req.body.id}`)){
+                    console.log("new model directory creation");
                     fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-1`,{recursive:true});
                 }else{
+                    console.log("new versionss");
                     content = fs.readdirSync(`./public/models/${updatedClientName}/${req.body.id}`);
                     count = content.length + count;
                     fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-${count}`,{recursive:true})
@@ -289,6 +307,7 @@ module.exports = {
     getClientsForQa:async(req,res)=>{
         try {
             let userEmail = req.params.email;
+            console.log({userEmail});
             let Qa = credentials.find(obj => obj.email == userEmail);
             let clients = await database.dbGetClientsForQa(Qa.rollNo);
             if(clients){
@@ -537,10 +556,10 @@ module.exports = {
     getClientExpense:async(req,res)=>{
         try {
             let expData = await database.dbGetClientExpense();
-            if(expData){
+            if(expData.status){
                 res.status(200).json(expData);
             }else{
-                throw new Error()
+                res.status(200).json(expData)
             }
         } catch (error) {
             console.log(error);
@@ -1004,5 +1023,68 @@ module.exports = {
             console.log(error);
             res.status(500).json(false);
         }
+      },
+
+      getUserDetailsForProfile:async(req,res)=>{
+        try {
+            const email = req.params.email;
+            let user = credentials.find(obj => obj.email == email); 
+            if(user){
+             let userInfo = await database.dbGetUserBankDetails(user)
+            if(userInfo.status){
+                userInfo.userData = user
+                res.status(200).json(userInfo)
+            }else{
+                res.status(200).json(false)
+            }   
+            }else{
+                res.status(200).json(false)
+            }
+            
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      updateBankInfo:async(req,res)=>{
+        try {
+            const {bankInfo,rollNo} = req.body;
+            let result = await database.dbUpdateBankInfo(bankInfo,rollNo);
+            if(result) res.status(200).json(true);
+            else throw new Error;
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      createAbout:async(req,res)=>{
+        try {
+            const {modelerEmail,aboutTxt} = req.body;
+            let result = await database.dbCreateAbout(modelerEmail,aboutTxt);
+            if(result){
+                res.status(200).json(true);
+            }else{
+                throw new Error
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      getQAForPofile:async(req,res)=>{
+        try {
+        const email = req.params.email;
+        let QA = credentials.find(obj => obj.email == email);
+        if(QA) res.status(200).json(QA) ;
+        else throw new Error;
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+        
       }
 }
+

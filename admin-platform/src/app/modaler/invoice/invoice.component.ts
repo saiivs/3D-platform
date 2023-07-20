@@ -44,7 +44,7 @@ export class InvoiceComponent implements OnInit{
       
       this.approvedModels = this.approvedModels.filter(obj =>{
         this.totalPrice += obj.productStatus == 'Approved' ? obj.price : this.totalPrice;
-        return obj.productStatus == 'Approved'||obj.invoice == false;
+        return obj.productStatus == 'Approved'
       });
       this.clients.forEach((client)=>{
         let name = ""

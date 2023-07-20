@@ -1,5 +1,6 @@
 <div class="hp-main-layout-content">
-    <div class="row">
+<ng-container *ngIf="!emptyData;else noDataMsg">
+  <div class="row">
         <div class="col-12 col-xl-3 calenderBox">
             
             <label for="date">Select the Month&nbsp;</label>
@@ -120,6 +121,7 @@
                   <thead>
                     <tr>
                       <th scope="col">Sl No</th>
+                      <th scope="col">Profile</th>
                       <th scope="col">Modeler Name</th>
                       <th scope="col">Product Count</th>
                       <th scope="col">Status</th>
@@ -138,6 +140,14 @@
                   let i = index">
                   <ng-container *ngIf="serachForModel == ''||modeler.modelerName.includes(serachForModel)||modeler.modelerName.toLowerCase().includes(serachForModel)">
                      <td scope="row">{{i+1}}</td>
+                     <td>
+                      <div class="w-auto px-0 ">
+                        <div class="avatar-item bg-primary-4 d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;margin: auto;">
+                          <a [routerLink]="['../modeler/profile',modeler.email]"><img src="assets/app-assets/img/users/user-8.svg" height="100%" class="hp-img-cover hoverProfile"></a>
+                            
+                        </div>
+                    </div>
+                     </td>
                       <td>{{modeler.modelerName}}</td>
                       <td>{{modeler.models.length}}</td>
                       <td>{{modeler.percentage}}%</td>
@@ -167,4 +177,16 @@
           </div>
         </div>
       </div>
+</ng-container>
+   
 </div>
+<ng-template #noDataMsg>
+  <div>
+    <p class="hp-p1-body emptyTable">
+      No data to view. Try adding a new client.
+    </p>
+    <div class="emptyImg">
+      <img  src="assets/myImg/empty-folder.png" alt="empty" />
+    </div>
+  </div>
+ </ng-template> 
