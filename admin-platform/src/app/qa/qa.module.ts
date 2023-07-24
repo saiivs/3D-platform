@@ -13,6 +13,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { QaProfileComponent } from './qa-profile/qa-profile.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+// import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { ChatSocketService } from '../services/chat-socket.service';
+
+// const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 
 
 
@@ -26,10 +30,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     QaReviewsComponent,
     QaAdminReviewComponent,
     ScrollDownDirective,
-    QaProfileComponent,
-    
-
-    
+    QaProfileComponent, 
   ],
   imports: [
     CommonModule,
@@ -39,7 +40,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatTooltipModule,
     MatDialogModule,
     FlexLayoutModule
+    // SocketIoModule.forRoot(config)
   ],
+  providers: [ChatSocketService],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class QAModule { }

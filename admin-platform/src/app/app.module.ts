@@ -8,9 +8,6 @@ import {NgxPaginationModule} from 'ngx-pagination'
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
 import {MatTabsModule} from '@angular/material/tabs';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-
-
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,10 +25,6 @@ import { TestComponent } from './test/test.component';
 import { GalleryComponent } from './gallery/gallery.component';
 import { HotspotCorrectionComponent } from './hotspot-correction/hotspot-correction.component';
 import { CorrectionImageComponent } from './correction-image/correction-image.component';
-
-const config: SocketIoConfig = { url: 'http://localhost:3001', options: {} };
-
-
 
 @NgModule({
   declarations: [
@@ -62,7 +55,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001', options: {} };
     MatTabsModule,
     ToastrModule.forRoot(),
     SweetAlert2Module.forRoot(),
-    SocketIoModule.forRoot(config)
+    
   ],
   providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true},Title],
   bootstrap: [AppComponent] ,

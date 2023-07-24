@@ -6,7 +6,6 @@ import swal from "sweetalert2/dist/sweetalert2.js"
 
 import '@google/model-viewer'
 import { Subscription } from 'rxjs';
-import { ChatSocketService } from 'src/app/services/chat-socket.service';
 
 @Component({
   selector: 'app-qa-reviews',
@@ -78,6 +77,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
 
 
   ngOnInit() {
+    // this.chatService.connectToSocketServer();
     if(this.correctionValue == ""){
       this.canCloseModal = false;
     }else{

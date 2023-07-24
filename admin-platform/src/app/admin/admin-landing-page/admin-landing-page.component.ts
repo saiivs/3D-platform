@@ -101,7 +101,11 @@ export class AdminLandingPageComponent implements OnInit,OnDestroy {
               let headerLength = 0;
               if (headers) {
                 headerLength = headers.length;
-                if(headerLength == 5){
+                console.log(headers);
+                
+                console.log(headerLength);
+                
+                if(headerLength == 4){
                   const data = results.data;
                 data.forEach((row:any) => {
                   let isEmptyRow = Object.values(row).every((value) => {
