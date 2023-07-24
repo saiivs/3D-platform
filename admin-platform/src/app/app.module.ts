@@ -8,6 +8,7 @@ import {NgxPaginationModule} from 'ngx-pagination'
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
 import {MatTabsModule} from '@angular/material/tabs';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 
 
@@ -28,7 +29,7 @@ import { GalleryComponent } from './gallery/gallery.component';
 import { HotspotCorrectionComponent } from './hotspot-correction/hotspot-correction.component';
 import { CorrectionImageComponent } from './correction-image/correction-image.component';
 
-
+const config: SocketIoConfig = { url: 'http://localhost:3001', options: {} };
 
 
 
@@ -60,7 +61,8 @@ import { CorrectionImageComponent } from './correction-image/correction-image.co
     NgxImageZoomModule,
     MatTabsModule,
     ToastrModule.forRoot(),
-    SweetAlert2Module.forRoot()
+    SweetAlert2Module.forRoot(),
+    SocketIoModule.forRoot(config)
   ],
   providers: [{provide:HTTP_INTERCEPTORS,useClass:TokenInterceptor,multi:true},Title],
   bootstrap: [AppComponent] ,

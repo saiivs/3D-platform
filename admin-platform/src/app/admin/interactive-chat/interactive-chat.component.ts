@@ -74,7 +74,6 @@ export class InteractiveChatComponent implements OnInit{
     }
   }
 
-
   ngOnInit() {
     if(this.correctionValue == ""){
       this.canCloseModal = false;
@@ -89,6 +88,8 @@ export class InteractiveChatComponent implements OnInit{
       if(data){
         this.validateGlbFile(data);
         this.clientDetails = data.modelDetails[0].clientDetails;
+        const regex = /[^a-zA-Z0-9]/g;
+        this.clientName = this.clientDetails[0].clientName.replace(regex,"_");
         this.modelDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
           if(obj.articleId == this.articleId) return obj
         });
@@ -98,7 +99,7 @@ export class InteractiveChatComponent implements OnInit{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.srcFile = `http://localhost:3001/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');

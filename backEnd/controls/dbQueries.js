@@ -346,6 +346,7 @@ module.exports = {
         let {id,clientId,modRollNo}  = data;
         let updateModelerListModel = await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.version':count}});
         await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.version": count}});
+        await db.Products.updateOne({clientId:clientId,"productList.articleId":id},{$set:{"productList.$.version":count}})
         console.log({updateModelerListModel});
         return;
     },
@@ -570,11 +571,14 @@ module.exports = {
             }
         ])
         if(commentData){
-            let result = await polygonCounter(articleId,clientId);
+            let clientName = modelDetails[0].clientDetails[0].clientName;
+            let model = modelDetails[0].assignedPro.find(obj => obj.articleId == articleId);
+            let result = await polygonCounter(articleId,clientId,clientName,model.version);
             if(result){
                 let gltfData = result;
                 let Arr = [];
                 Arr.push(commentData)
+                console.log(Arr);
                 return {Arr,gltfData,modelDetails}
             }else{
                 throw new Error

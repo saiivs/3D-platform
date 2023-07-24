@@ -18,7 +18,7 @@ const routes:Routes=[
 children:[
   {path:"",component:AdminLandingPageComponent},
   {path:"products/:id",component:ProductsComponent},
-  {path:"reviews/:articleId/:clientId",component:AdminReviewComponent},
+  {path:"reviews/:articleId/:clientId/:version",component:AdminReviewComponent},
   {path:"interactive-section/:articleId/:clientId/:version",component:InteractiveChatComponent},
   {path:"modeler-status",component:ModelerStatusComponent},
   {path:"client_modelers/:clientId",component:ClientModelerListComponent},

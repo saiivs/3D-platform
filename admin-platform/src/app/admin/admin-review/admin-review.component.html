@@ -44,13 +44,13 @@
         </div>
   
         <div class="col-12 col-lg-6">
-            <h2 class="mb-8">{{productName}}</h2>
+            <h5 class="mb-8">{{productName}}</h5>
   
             <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
                 By
                 <span class="ms-4 text-black-80 hp-text-color-dark-30">{{clientName}}</span>
             </span>
-            <ul class="proDetails">
+            <ul class="proDetails" *ngIf="QaCommentArr.length != 0">
               <li>Product Status: <span [ngStyle]="{color : QaCommentArr[0].modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0].modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
               <li>Polygon Count: <span>{{polygonCount}}</span></li>
@@ -193,8 +193,7 @@
                 <!-- End Panel Chat -->
               </div>
               </div>
-            <div class="divider"></div>
-  
+           
             <!-- <div class="row g-24">
                 <div class="col-12">
                     <div class="row g-8">
@@ -282,7 +281,7 @@
         </div>
     </div>
   
-    <div class="divider"></div>
+   
   
   
   </div>

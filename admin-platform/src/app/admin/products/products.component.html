@@ -337,7 +337,7 @@
                     </ng-template>
                     <td>
                       <button class="btn btn-sm btn-outline-primary" *ngIf="pro.productStatus != 'Not uploaded';else NoData">
-                        <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId]"
+                        <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]"
                           >View model</a>
                       </button>
                       <ng-template #NoData>

@@ -61,7 +61,8 @@ export interface productList{
   priceAdded?:Boolean,
   Reff?:string,
   tag:string,
-  modRollno:string
+  modRollno:string,
+  version?:number
 }
 
 export interface team{

@@ -6,6 +6,7 @@ import swal from "sweetalert2/dist/sweetalert2.js"
 
 import '@google/model-viewer'
 import { Subscription } from 'rxjs';
+import { ChatSocketService } from 'src/app/services/chat-socket.service';
 
 @Component({
   selector: 'app-qa-reviews',
@@ -18,7 +19,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
   clientDetails: Array<any> = [];
   modelerDetails: any = {};
-  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private render:Renderer2,private elementRef: ElementRef){
+  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router){
 
   }
 

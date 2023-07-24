@@ -28,6 +28,8 @@ export class AllModelsComponent implements OnInit{
     this.backEndService.getAllModelsOfModeler(this.modelerId).subscribe((res)=>{      
       this.modeler = [...res];
       this.models = [...res[0].models]; 
+      console.log(this.models);
+      
     }) 
     this.searchService.searchValue.subscribe((data)=>{
       this.recieved = data;

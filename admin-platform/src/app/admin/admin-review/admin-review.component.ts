@@ -25,7 +25,9 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   QaComment:string = ""
   clientId:string = "";
   articleId:string = "";
+  version:number = 0;
   newCmnt : any= {};
+  modelDetails:Array<any> = [];
   newData :any = {}
   checkDate : string = new Date().toISOString().slice(0,10);
   userEmail = localStorage.getItem('userEmail');
@@ -71,13 +73,20 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   ngOnInit() {
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
+    this.version = this.route.snapshot.params['version'];
     this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
+        
+        this.modelDetails = [...data.modelDetails];
+        const regex = /[^a-zA-Z0-9]/g;
+        this.clientName = this.modelDetails[0].clientDetails[0].clientName.replace(regex,"_");
         this.validateGlbFile(data);
         this.polygonCount = data.gltfData.info.totalTriangleCount;
-        this.QaCommentArr = [...data.Arr]
-        this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.QaCommentArr = [...data.Arr];
+        console.log(this.QaCommentArr);
+        
+        this.srcFile = `http://localhost:3001/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');

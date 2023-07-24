@@ -78,7 +78,7 @@ ngOnInit(){
  
   this.productId = this.route.snapshot.params['id'];
   this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res)=>{
-    console.log(res);
+    console.log({res});
     
     this.budget = res.Arr[1].budgetValue; 
     this.updatedBudget = res.Arr[1].budgetValue;
