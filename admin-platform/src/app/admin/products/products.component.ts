@@ -27,10 +27,10 @@ reactiveForm !: FormGroup;
 masterCheckBox :Boolean = false;
 isChecked:Boolean = false;
 selectionText:string = "Select All";
-modalersArr: Array<any> = [];
+modelersArr: Array<any> = [];
 QATeamArr:Array<any> = [];
 checkedItems:productList[] = [];
-modalerRollNo:string =""
+modelerRollNo:string =""
 QARollNo:string = "";
 ModelerName:string = "3D Modelers";
 QAName:string = "QA Team"
@@ -121,10 +121,10 @@ ngOnInit(){
     if(this.totalPrice != 0) {
       this.updatedBudget -= this.totalPrice; 
     }
-    this.subscription2 = this.backEndService.getModalers().subscribe((modalers:team)=>{
-      this.QATeamArr = [...modalers.QAarr]
-      this.modalersArr = [...modalers.modalersAr]
-      for (let modeler of this.modalersArr){
+    this.subscription2 = this.backEndService.getModalers().subscribe((modelers:team)=>{
+      this.QATeamArr = [...modelers.QAarr]
+      this.modelersArr = [...modelers.modelersAr]
+      for (let modeler of this.modelersArr){
         modeler.isSelected = false;
       }
       for (let person of this.QATeamArr){
@@ -134,7 +134,7 @@ ngOnInit(){
   })
 
   this.reactiveForm = new FormGroup({
-    modalerName:new FormControl(null)
+    modelerName:new FormControl(null)
   })
 }
 
@@ -174,13 +174,13 @@ onPageChange(event:number){
 MultiSelectionModeler(index:any,rollNo:string){
   
   let ArrIndex = index;
-  this.modalerRollNo = rollNo
-  this.ModelerName = `${this.modalersArr[ArrIndex].name}(3D)`
-  for(let index in this.modalersArr){
+  this.modelerRollNo = rollNo
+  this.ModelerName = `${this.modelersArr[ArrIndex].name}(3D)`
+  for(let index in this.modelersArr){
     if(index != ArrIndex){
-      this.modalersArr[index].isSelected = false;
+      this.modelersArr[index].isSelected = false;
     }else{
-      this.modalersArr[index].isSelected = true;
+      this.modelersArr[index].isSelected = true;
     }
   }
 }
@@ -204,26 +204,26 @@ MultiSelectionQA(index:any,rollNo:string){
 aasignProduct(){
   this.isChecked = false;
   this.checkedItems = this.products.filter(pro => pro.isSelected == true);
-  if(this.checkedItems.length != 0 && this.modalerRollNo != "" && this.QARollNo != ""){
-    let modaler = this.modalersArr.find(obj=>obj.rollNo == this.modalerRollNo);
+  if(this.checkedItems.length != 0 && this.modelerRollNo != "" && this.QARollNo != ""){
+    let modeler = this.modelersArr.find(obj=>obj.rollNo == this.modelerRollNo);
     let Qa = this.QATeamArr.find(obj => obj.rollNo == this.QARollNo);
 swal.fire({
   position: 'center',
   title: 'Are you sure?',
-  text:  `Assign ${this.checkedItems.length} products to ${modaler.name} & ${Qa.name} for QA`,
+  text:  `Assign ${this.checkedItems.length} products to ${modeler.name} & ${Qa.name} for QA`,
   showCancelButton: true,
   confirmButtonText: 'Yes, go ahead.',
   cancelButtonText: 'cancel'
 }).then((result) => {
   if (result.value) {
-   this.backEndService.assignedPro(this.checkedItems,this.modalerRollNo,this.clientId,this.QARollNo).subscribe((res)=>{
+   this.backEndService.assignedPro(this.checkedItems,this.modelerRollNo,this.clientId,this.QARollNo).subscribe((res)=>{
 
   if(res){
     this.products = this.products.filter((item)=>{
       if(item.isSelected == true){
-        item.assigned = modaler.name
+        item.assigned = modeler.name
         item.QaTeam = Qa.name
-        item.modRollno = modaler.rollNo;
+        item.modRollno = modeler.rollNo;
         item.isSelected = false;
       }
       return [...this.products]
@@ -231,7 +231,7 @@ swal.fire({
     for (let person of this.QATeamArr){
       person.isSelected = false;
     }
-    for (let modeler of this.modalersArr){
+    for (let modeler of this.modelersArr){
       modeler.isSelected = false;
     }
     this.ModelerName = "3D Modelers";

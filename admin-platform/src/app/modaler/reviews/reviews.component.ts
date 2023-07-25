@@ -99,7 +99,8 @@ export class ReviewsComponent implements OnInit,OnDestroy{
           }
           const regex = /[^a-zA-Z0-9]/g;
           let clinetName = this.clientDetails[0].clientName.replace(regex,"_")
-          this.srcFile = `${environment.staticUrl}/models/${clinetName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
+          const cacheBuster = new Date().getTime();
+          this.srcFile = `${environment.staticUrl}/models/${clinetName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb?cache=${cacheBuster}`
           this.QaCommentArr[0]?.comments.forEach((message: any) => {
             const conDate = new Date(message.date)
             const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -185,7 +186,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
 
   fullScreenMode(){
     try {
-      this.router.navigate(['modaler/model-FullScreen',this.articleId,this.clientId,this.version]);
+      this.router.navigate(['modeler/model-FullScreen',this.articleId,this.clientId,this.version]);
     } catch (error) {
       console.log(error);  
     } 

@@ -81,7 +81,7 @@ let credentials = [
     },
 ]
 
-let modalers = [
+let modelers = [
     {
         email:'richard@charpstar.com',
         rollNo: "1",
@@ -204,7 +204,7 @@ module.exports = {
 
     getModelres:(req,res)=>{
         try {
-            res.status(200).json({modalersAr:modalers,QAarr:QATeams})
+            res.status(200).json({modelersAr:modelers,QAarr:QATeams})
         } catch (error) {
            res.status(500).json(false) 
         }  
@@ -214,9 +214,9 @@ module.exports = {
         try {
             let rollNo = req.body.rollNo;
             let QaRollNo = req.body.QaRoll
-            let modalerName = modalers.find(obj => obj.rollNo == rollNo)
+            let modelerName = modelers.find(obj => obj.rollNo == rollNo)
             let QAname = QATeams.find(obj => obj.rollNo == QaRollNo)
-           let resData = await database.assignPro(req.body,modalerName.name,modalerName.email,QAname.name,rollNo,QaRollNo)
+           let resData = await database.assignPro(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo)
            if(resData){
             res.status(200).json(true)
            }else{
@@ -231,8 +231,8 @@ module.exports = {
     getClientForModaler:async(req,res)=>{
         try {
             let email = req.params.email;
-            let modaler = modalers.find(obj => obj.email == email)
-            let clients = await database.dbGetClientForModaler(modaler.rollNo);
+            let modeler = modelers.find(obj => obj.email == email)
+            let clients = await database.dbGetClientForModaler(modeler.rollNo);
             if(clients){
                 res.status(200).json(clients)
             }else{
@@ -264,6 +264,7 @@ module.exports = {
     savemodalFile:async(req,res)=>{
         try {
            let file = req.files.file; 
+           console.log(file);
         if(file){
             let status = "Uploaded"
             let data = await database.dbupdateProductStatus(req.body,status); 
@@ -276,11 +277,18 @@ module.exports = {
                     fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-1`,{recursive:true});
                 }else{
                     console.log("new versionss");
-                    content = fs.readdirSync(`./public/models/${updatedClientName}/${req.body.id}`);
-                    count = content.length + count;
-                    fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-${count}`,{recursive:true})
-                    
-                }
+                    let checkQAStatus = await database.dbCheckQAStatus(req.body)
+                    if(checkQAStatus.status){
+                        if(!checkQAStatus.flag&&data.preModalStatus == "Uploaded"){
+                            content = fs.readdirSync(`./public/models/${updatedClientName}/${req.body.id}`);
+                            count = content.length
+                        }else{
+                            content = fs.readdirSync(`./public/models/${updatedClientName}/${req.body.id}`);
+                            count = content.length + count;
+                            fs.mkdirSync(`./public/models/${updatedClientName}/${req.body.id}/version-${count}`,{recursive:true})
+                        }
+                    }
+                                    }
                 await database.dbupdateVersion(req.body,status,count);
                 file.mv(`./public/models/${updatedClientName}/${req.body.id}/version-${count}/${req.body.id}.glb`,async(err,data)=>{
                     if(err){
@@ -288,6 +296,7 @@ module.exports = {
                         throw new Error
                     }else{ 
                         console.log("uploaded");
+                        console.log("differen");
                         res.status(200).json({status:true,version:count});
                     }
                 })

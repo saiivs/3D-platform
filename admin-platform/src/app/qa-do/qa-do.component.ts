@@ -63,7 +63,7 @@ export class QaDoComponent implements OnInit{
         const regex = /[^a-zA-Z0-9]/g;
         let clientName = res.clientName.replace(regex,"_")
         this.clientName = clientName
-        this.src = `${environment.apiUrl}/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`;
+        this.src = `${environment.staticUrl}/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`;
       }
     })
     this.backEndService.getLatestCorrection(this.clientId,this.articleId).subscribe((res)=>{ 
@@ -110,14 +110,14 @@ export class QaDoComponent implements OnInit{
 
   showLatestHotspotOverModel(){
     if(this.isNewModelAvailable){
-      this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${this.articleId}.glb`
+      this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${this.articleId}.glb`
     } 
     this.versionTracker = `Recent version`
     if(!this.latestHotspotUpdated){
     console.log("unwanted");
     
      this.latestHotspotData.forEach((hotspot:any,index:number)=>{
-      hotspot.corrImg = `${environment.apiUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${hotspot._id}.jpg`
+      hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${hotspot._id}.jpg`
       this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1);
     })
         this.hotSpotData = this.latestHotspotData
@@ -131,7 +131,7 @@ export class QaDoComponent implements OnInit{
         
         this.latestHotspotData = res;
         this.latestHotspotData.forEach((hotspot:any,index:number)=>{
-          hotspot.corrImg = `${environment.apiUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${hotspot._id}.jpg`
+          hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${hotspot._id}.jpg`
           this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1);
         }) 
         this.hotSpotData = this.latestHotspotData
@@ -148,10 +148,10 @@ export class QaDoComponent implements OnInit{
   showHistoryHotspotOverModel(version:number){
     if(this.checkModelChange){
       this.checkModelChange = false;
-      this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+      this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
     }
     this.hotSpotData.forEach((hotspot:any,index:number)=>{
-      hotspot.corrImg = `${environment.apiUrl}/corrections/${this.clientName}/${this.articleId}/version-${version}/${hotspot._id}.jpg`
+      hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${version}/${hotspot._id}.jpg`
     })
     // this.latestHotspotData.forEach((hotspot:any,index:number)=>{
     //   this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1);
@@ -205,7 +205,7 @@ export class QaDoComponent implements OnInit{
       }
       if(this.checkModelChange){
         this.checkModelChange = false;
-        this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+        this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
       }  
     }else{
       if(event.index != 1)this.hotspotDenied = true;

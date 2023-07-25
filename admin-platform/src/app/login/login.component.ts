@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
          if(localStorage.getItem("userRole")=="admin"){
           this.router.navigate(['admin'])
          }else if(localStorage.getItem("userRole")=="3D"){
-          this.router.navigate(['modaler'])
+          this.router.navigate(['modeler'])
          }else if(localStorage.getItem("userRole")=="QA"){
             this.router.navigate(['QA'])
          }

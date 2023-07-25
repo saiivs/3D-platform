@@ -42,7 +42,7 @@ export class GalleryComponent implements OnInit{
       
       if(res.fileCount != 0){
         for(let i = 0; i < res.fileCount; i++){
-        this.imgSrc.push(`${environment.apiUrl}/images/${this.clientDetails.clientName}/${this.articleId}/${i+1}.jpg`);
+        this.imgSrc.push(`${environment.staticUrl}/images/${this.clientDetails.clientName}/${this.articleId}/${i+1}.jpg`);
         this.totalRecords = this.imgSrc.length;
       }
       this.initialImg = this.imgSrc[0];

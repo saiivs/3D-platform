@@ -32,7 +32,7 @@ export class BankFormComponent implements OnInit{
   formSubmit(){
     this.backEnd.getBankDetails(this.reactiveForm.value,this.data).subscribe((res)=>{
       if(res) {
-        this.router.navigate(['modaler/Invoice',localStorage.getItem('rollNo')]);
+        this.router.navigate(['modeler/Invoice',localStorage.getItem('rollNo')]);
       } 
     })
   }

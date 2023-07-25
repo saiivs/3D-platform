@@ -96,7 +96,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `${environment.apiUrl}/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.srcFile = `${environment.staticUrl}/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString();
@@ -188,7 +188,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `${environment.apiUrl}/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.staticUrl}/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }

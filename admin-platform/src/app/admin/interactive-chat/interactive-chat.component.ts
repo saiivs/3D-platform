@@ -100,7 +100,7 @@ export class InteractiveChatComponent implements OnInit{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `${environment.apiUrl}/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+        this.srcFile = `${environment.staticUrl}/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -211,8 +211,8 @@ export class InteractiveChatComponent implements OnInit{
 
   downloadFile(articleId:string){
     let link = document.createElement('a');
-    link.download = `file.zip`
-    link.href = `${environment.apiUrl}/models/${articleId}&&${this.clientId}.glb`;
+    link.download = `file.glb`
+    link.href = `${environment.staticUrl}/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }

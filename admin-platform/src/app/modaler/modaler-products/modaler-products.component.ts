@@ -82,7 +82,7 @@ onUpload(id:string,index:number){
       this.toaster.success('success','model successfully uploaded');
       this.products[index].modalFile = false;
       this.products[index].productStatus = 'Uploaded';
-      this.router.navigate(['/modaler', 'reviews',id,this.clientId,res.version])
+      this.router.navigate(['/modeler', 'reviews',id,this.clientId,res.version])
     }else{
       this.toaster.error('Error','Sorry model is under QA.');
     }

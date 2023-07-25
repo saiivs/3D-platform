@@ -307,7 +307,7 @@ let modelHotspot = new Schema({
 
 let Products = mongoose.model('productList',proList);
 let clients = mongoose.model('clientList',clientInfo);
-let modalerProducts = mongoose.model('assignedProducts',assignedProducts);
+let modelerProducts = mongoose.model('assignedProducts',assignedProducts);
 let QaReviews = mongoose.model('qaComments',qaComments);
 let AdminReviews = mongoose.model('adminComments',adminComments);
 let modelerList  = mongoose.model('modeler',modeler);
@@ -322,7 +322,7 @@ let hotspot = mongoose.model('hotspots',modelHotspot);
 module.exports = {
     Products,
     clients,
-    modalerProducts,
+    modelerProducts,
     QaReviews,
     AdminReviews,
     modelerList,

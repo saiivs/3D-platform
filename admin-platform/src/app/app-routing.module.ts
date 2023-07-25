@@ -13,7 +13,7 @@ const routes: Routes = [
   {path:"QA_panel/:articleId/:clientId/:version",component:QaDoComponent},
   {path:"test",component:TestComponent},
   {path:"admin",loadChildren:()=>import('./admin/admin.module').then((parent)=>parent.AdminModule)},
-  {path:"modaler",loadChildren:()=>import('./modaler/modaler.module').then((parent)=>parent.ModalerModule)},
+  {path:"modeler",loadChildren:()=>import('./modaler/modaler.module').then((parent)=>parent.ModalerModule)},
   {path:"QA",loadChildren:()=>import('./qa/qa.module').then((parent)=>parent.QAModule)},
   { path: 'error', component: ErrorPageComponent },
   { path: '**', redirectTo: 'error' }

@@ -128,11 +128,11 @@
                   <button type="button" class="btn btn-default dropdown-toggle" style="background-color: lightgray;"  data-bs-toggle="dropdown">{{ModelerName}}<span class="caret"></span></button>
 
                   <ul class="dropdown-menu scrollable-menu" role="menu">
-                      <li *ngFor="let modaler of modalersArr;index as i">
+                      <li *ngFor="let modeler of modelersArr;index as i">
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" [(ngModel)]="modaler.isSelected"   (change)="MultiSelectionModeler(i,modaler.rollNo)"  id="flexCheckChecked" >
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="modeler.isSelected"   (change)="MultiSelectionModeler(i,modeler.rollNo)"  id="flexCheckChecked" >
                         <label class="form-check-label" for="flexCheckChecked">
-                          {{modaler.name}}
+                          {{modeler.name}}
                         </label>
                       </div></li>
                   </ul>

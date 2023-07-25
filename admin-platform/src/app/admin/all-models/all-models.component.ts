@@ -4,6 +4,7 @@ import "@google/model-viewer"
 import { model } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-all-models',
@@ -21,6 +22,7 @@ export class AllModelsComponent implements OnInit{
   modeler:Array<any> = [];
   models:Array<any> = [];
   recieved:string = "";
+  staticUrl:string = environment.staticUrl
 
   ngOnInit(){
     this.modelerId = this.route.snapshot.params[('modelerId')];

@@ -16,12 +16,12 @@ export class AdminModelerProfileComponent implements OnInit{
   bankInfo:any = {};
   aboutTxt:string = "";
   modeler:any = {};
-  modalerEmail:string = ""
+  modelerEmail:string = ""
 
 
   ngOnInit(): void {
-    this.modalerEmail = this.route.snapshot.params["email"]
-    this.backEndService.getUserDetailsForProfile(this.modalerEmail).subscribe((res)=>{
+    this.modelerEmail = this.route.snapshot.params["email"]
+    this.backEndService.getUserDetailsForProfile(this.modelerEmail).subscribe((res)=>{
       if(res){
         this.userData = res.userData;
         this.modeler = res.modeler;
@@ -41,7 +41,7 @@ export class AdminModelerProfileComponent implements OnInit{
     if(this.aboutTxt != ""){
       this.userData.about = this.aboutTxt;
       this.userData.aboutStatus = false;
-      this.backEndService.createAboutforModeler(this.modalerEmail,this.aboutTxt).subscribe(()=>{})
+      this.backEndService.createAboutforModeler(this.modelerEmail,this.aboutTxt).subscribe(()=>{})
     }
   }
 }

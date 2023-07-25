@@ -56,7 +56,7 @@ subscription!:Subscription;
   if(this.disableInvoice == false){
      let rollNo = localStorage.getItem("rollNo");
   if(this.modeler.bankDetails.length != 0){
-    this.router.navigate(['modaler/Invoice',rollNo]);
+    this.router.navigate(['modeler/Invoice',rollNo]);
  }else{
   this.dilog.open(BankFormComponent,{
     data:localStorage.getItem("rollNo")

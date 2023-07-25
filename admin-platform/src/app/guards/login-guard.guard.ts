@@ -17,7 +17,7 @@ export class LoginGuardGuard implements CanActivate {
       role = "admin"
       return role
     }else if(role == '3D'){
-      role = "modaler"
+      role = "modeler"
       return role;
     }else if(role == 'QA'){
       role = "QA"

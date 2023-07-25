@@ -33,7 +33,7 @@ export class ModelFullscreenComponent implements OnInit{
     this.version = this.route.snapshot.params['version']
     const regex = /[^a-zA-Z0-9]/g;
     let clientName = this.clientName?.replace(regex,"_")
-    this.modelSrc = `${environment.apiUrl}/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+    this.modelSrc = `${environment.staticUrl}/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
     this.backEnd.getGlbFileDetails(this.articleId,this.clientId,this.version).subscribe((res)=>{
       this.modelDetail = res;
       this.polygonCount = res.info.totalTriangleCount;
@@ -52,7 +52,7 @@ export class ModelFullscreenComponent implements OnInit{
   exitFullScreenMode(){
     let subUrl = ""
     if(localStorage.getItem("userRole") == "3D"){
-      subUrl = "modaler"
+      subUrl = "modeler"
     }else if(localStorage.getItem("userRole") == "QA"){
       subUrl = "QA"
     }else{

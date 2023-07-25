@@ -16,7 +16,7 @@ const route:Routes = [
   children:[
     {path:"",component:ModalerLandingPageComponent},
     {path:"profile",component:ModelerProfileComponent},
-    {path:"modaler-products/:id",component:ModalerProductsComponent},
+    {path:"modeler-products/:id",component:ModalerProductsComponent},
     {path:"reviews/:articleId/:clientId/:version",component:ReviewsComponent},
     {path:"model-FullScreen/:articleId/:clientId/:version",component:ModelFullscreenComponent},
     {path:"model-correction/:articleId/:clientId/:version",component:ModelerCorrectionViewComponent},

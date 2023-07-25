@@ -114,7 +114,7 @@ module.exports = {
         try{
         let data = await db.clients.find({});
         let monthlyBudget = await db.budget.find({});
-        let productDetails = await db.modalerProducts.aggregate([
+        let productDetails = await db.modelerProducts.aggregate([
             {
                 $group: {
                   _id: "$clientId",
@@ -206,17 +206,17 @@ module.exports = {
                 item.invoice = false;
                 item.tag = ""
                      }
-            let sameClientPro = await db.modalerProducts.findOne({clientId:data.clientId});
+            let sameClientPro = await db.modelerProducts.findOne({clientId:data.clientId});
             if(sameClientPro){
-                await db.modalerProducts.updateOne({_id:sameClientPro._id},{$push:{assignedPro:{$each:data.products}}});
+                await db.modelerProducts.updateOne({_id:sameClientPro._id},{$push:{assignedPro:{$each:data.products}}});
             }else{
             let formatedData = {
                 clientId:new ObjectId(data.clientId),
                 assignedPro:data.products,
-                approvedClient: true,
+                approvedClient: false,
                 date:date  
                   }
-        let prod = new db.modalerProducts(formatedData);
+        let prod = new db.modelerProducts(formatedData);
         await prod.save();
         
             }
@@ -245,13 +245,13 @@ module.exports = {
         }   
     },
 
-    dbGetClientForModaler:async(modalerRollNo)=>{
+    dbGetClientForModaler:async(modelerRollNo)=>{
         try{
           
-        let clientData = await db.modalerProducts.aggregate([
+        let clientData = await db.modelerProducts.aggregate([
             {
                 $match:{
-                   assignedPro:{$elemMatch :{modRollno : modalerRollNo}}
+                   assignedPro:{$elemMatch :{modRollno : modelerRollNo}}
                 }
             },
             {
@@ -286,7 +286,7 @@ module.exports = {
     dbGetAssignedPro:async(id)=>{
 
         try {
-           let proData = await db.modalerProducts.findOne({_id:id});
+           let proData = await db.modelerProducts.findOne({_id:id});
             console.log(proData); 
             if(proData){
                 if(Array.isArray(proData))return proData;
@@ -324,13 +324,13 @@ module.exports = {
             const checkModelUnderQA = await db.QaReviews.findOne({clientId:clientId,articleId:id});
             if(!checkModelUnderQA.underQA)
             {
-            let updateRes = await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.productStatus": status}});
+            let updateRes = await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.productStatus": status}});
             await db.Products.updateOne({clientId:clientId,"productList.articleId":id},{$set:{"productList.$.productStatus":status}})
             await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.productStatus':status}});
             await db.QaReviews.updateOne({clientId:clientId,articleId:id},{$set:{modalStatus:status}});
             let clientDetails = await db.clients.findOne({_id:clientId});
             if(updateRes){
-                return {status:true,data:clientDetails};
+                return {status:true,data:clientDetails,preModalStatus:checkModelUnderQA.modalStatus};
             }else{
                 throw new Error
             }   
@@ -347,7 +347,7 @@ module.exports = {
     dbupdateVersion:async(data,status,count)=>{
         let {id,clientId,modRollNo}  = data;
         let updateModelerListModel = await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.version':count}});
-        await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.version": count}});
+        await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.version": count}});
         await db.Products.updateOne({clientId:clientId,"productList.articleId":id},{$set:{"productList.$.version":count}})
         console.log({updateModelerListModel});
         return;
@@ -356,7 +356,7 @@ module.exports = {
     dbGetClientsForQa:async(qaRollNo)=>{
         try {
             console.log({qaRollNo});
-            let clients = await db.modalerProducts.aggregate([
+            let clients = await db.modelerProducts.aggregate([
                 {
                     $match:{"assignedPro.qaRollNo":qaRollNo}
                 },
@@ -387,7 +387,7 @@ module.exports = {
     dbGetQaPro:async(id)=>{
         try {
             console.log({id});
-            let proList = await db.modalerProducts.aggregate([
+            let proList = await db.modelerProducts.aggregate([
                 {
                     $match:{_id:new ObjectId(id)}
                 },
@@ -438,7 +438,7 @@ module.exports = {
         }else{
             throw new Error
         }
-        // await db.modalerProducts.updateOne({clientId:data.clientId,"assignedPro.articleId": data.articleId},{$set:{"assignedPro.$.productStatus": "Need Updates"}});
+        // await db.modelerProducts.updateOne({clientId:data.clientId,"assignedPro.articleId": data.articleId},{$set:{"assignedPro.$.productStatus": "Need Updates"}});
         // await db.Products.updateOne({clientId:data.clientId,"productList.articleId":data.articleId},{$set:{"productList.$.productStatus":"Need Updates"}})
         
         
@@ -452,7 +452,7 @@ module.exports = {
         try {
             
             let commentData = await db.QaReviews.findOne({clientId:clientId,articleId:articleId});
-            let modelDetails = await db.modalerProducts.aggregate([
+            let modelDetails = await db.modelerProducts.aggregate([
                 {
                     $match:{clientId:new ObjectId(clientId)}
                 },
@@ -496,7 +496,7 @@ module.exports = {
             await db.AdminReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{modalStatus:status}});
             await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:articleId,clientId:new ObjectId(clientId)}}},{$set:{'models.$.productStatus':status}});
            
-            let approve = await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": status}});
+            let approve = await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": status}});
             
             if(approve){
                 let pro = await db.Products.updateOne({clientId:clientId,"productList.articleId":articleId},{$set:{"productList.$.productStatus":status}});
@@ -546,7 +546,7 @@ module.exports = {
         }else{
             throw new Error
         }
-        // await db.modalerProducts.updateOne({clientId:data.clientId,"assignedPro.articleId": data.articleId},{$set:{"assignedPro.$.productStatus": "Need Updates"}});
+        // await db.modelerProducts.updateOne({clientId:data.clientId,"assignedPro.articleId": data.articleId},{$set:{"assignedPro.$.productStatus": "Need Updates"}});
         // await db.Products.updateOne({clientId:data.clientId,"productList.articleId":data.articleId},{$set:{"productList.$.productStatus":"Need Updates"}})
         
         
@@ -559,7 +559,7 @@ module.exports = {
     dbGetAdminComments:async(clientId,articleId)=>{
         try {
         let commentData = await db.AdminReviews.findOne({clientId:clientId,articleId:articleId});
-        let modelDetails = await db.modalerProducts.aggregate([
+        let modelDetails = await db.modelerProducts.aggregate([
             {
                 $match:{clientId:new ObjectId(clientId)}
             },
@@ -600,7 +600,7 @@ module.exports = {
             console.log({clientId,articleId});
             await db.AdminReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{modalStatus:"Need Updates",adminStatus:"Rejected"}});
             await db.QaReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{modalStatus:"Need Updates",adminStatus:"Rejected"}});
-            let approve = await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": "Need Updates","assignedPro.$.adminStatus":"Rejected"}});
+            let approve = await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": "Need Updates","assignedPro.$.adminStatus":"Rejected"}});
 
             console.log({approve});
             if(approve){
@@ -627,7 +627,7 @@ module.exports = {
             console.log({clientId,articleId});
             await db.AdminReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{adminStatus:'Approved',modalStatus:'Approved'}});
             await db.QaReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{adminStatus:'Approved',modalStatus:'Approved'}});
-            let approve = await db.modalerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": "Approved","assignedPro.$.adminStatus":"Approved"}});
+            let approve = await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": "Approved","assignedPro.$.adminStatus":"Approved"}});
             console.log({approve});
             if(approve){
                 let pro = await db.Products.updateOne({clientId:clientId,"productList.articleId":articleId},{$set:{"productList.$.productStatus":"Approved","productList.$.adminStatus":"Approved"}});
@@ -793,7 +793,7 @@ module.exports = {
             await db.Products.updateOne({clientId:clientId,'productList.articleId':articleId},{$set:{'productList.$.price':price}});
            let a =  await db.modelerList.findOneAndUpdate({rollNo:modelerRollNo,models:{$elemMatch:{clientId:new ObjectId(clientId),articleId:articleId}}},{$set:{'models.$.price':price}});
            console.log({a});
-            await db.modalerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.price':price}});
+            await db.modelerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.price':price}});
             return true;
         } catch (error) {
             console.log(error);
@@ -848,7 +848,7 @@ module.exports = {
             let updateReff = await db.Products.updateOne({clientId:clientId,'productList.articleId':articleId},{$set:{'productList.$.Reff':url}});
             console.log({updateReff});
             if(updateReff.acknowledged){
-                let ack = await db.modalerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.Reff':url}});
+                let ack = await db.modelerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.Reff':url}});
                 console.log({ack});
                 if(ack.acknowledged){
                     return true;
@@ -926,7 +926,7 @@ module.exports = {
 
     dbGetProgress:async(clientId)=>{
         try {
-            let data = await db.modalerProducts.aggregate([
+            let data = await db.modelerProducts.aggregate([
             {
                 $match:{clientId: new ObjectId(clientId)}
             },
@@ -1059,7 +1059,7 @@ module.exports = {
                     }
                     ]
                 );
-                await db.modalerProducts.updateMany(
+                await db.modelerProducts.updateMany(
                     {
                         "assignedPro.productStatus": "Approved",
                         "assignedPro.invoice": false
@@ -1146,7 +1146,7 @@ module.exports = {
 
     dbAssignTag:async(tagName,articleId,clientId)=>{
         try {
-        let taged = await db.modalerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.tag':tagName}});
+        let taged = await db.modelerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.tag':tagName}});
         if(taged.acknowledged){
             await db.Products.updateOne({clientId:clientId,'productList.articleId':articleId},{$set:{'productList.$.tag':tagName}});
             let a = await db.modelerList.updateMany(
@@ -1419,10 +1419,9 @@ module.exports = {
 
     createCorrection:async(data)=>{
         try {
-            console.log("correction creation");
             console.log({data});
             let clientDetails = await db.clients.findOne({_id:data.clientId});
-            let modelTeam = await db.modalerProducts.findOneAndUpdate({clientId:data.clientId,'assignedPro.articleId':data.articleId},{$set:{"assignedPro.$.productStatus":"Correction"}});
+            let modelTeam = await db.modelerProducts.findOneAndUpdate({clientId:data.clientId,'assignedPro.articleId':data.articleId},{$set:{"assignedPro.$.productStatus":"Correction"}});
             const regex = /[^a-zA-Z0-9]/g;
             let clientName = clientDetails.clientName.replace(regex,"_");
             if(modelTeam){
@@ -1600,6 +1599,20 @@ module.exports = {
         } catch (error) {
             console.log(error);
             return false;
+        }
+    },
+
+    dbCheckQAStatus:async(data)=>{
+        try {
+            const checkstatus = await db.QaReviews.findOne({clientId:data.clientId,articleId:data.id});
+            if(checkstatus){
+                return {status:true,flag:checkstatus.underQA}
+            }else{
+                throw new Error("QAComments not found database error!!")
+            }
+        } catch (error) {
+            console.log(error);
+            return {status:false};
         }
     }
 } 

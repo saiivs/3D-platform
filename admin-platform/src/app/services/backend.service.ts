@@ -25,7 +25,7 @@ export class BackendService {
   emitProductName$ = new BehaviorSubject<string>(localStorage.getItem('ProductName')||"default value");
   currProName = this.emitProductName$.asObservable();
 
-  emitModalerName$ = new BehaviorSubject<string>(localStorage.getItem('modalerName')||"default value");
+  emitModalerName$ = new BehaviorSubject<string>(localStorage.getItem('modelerName')||"default value");
   currModeler = this.emitModalerName$.asObservable();
 
   emitModelerRollNo$ = new BehaviorSubject<string>(localStorage.getItem('modRollNo')||"default value");
@@ -92,7 +92,7 @@ export class BackendService {
   }
 
   getModalers():Observable<team>{
-    return this.http.get<team>(`${this.url}/modalers/Get`).pipe((catchError(this.erroHandler)))
+    return this.http.get<team>(`${this.url}/modelers/Get`).pipe((catchError(this.erroHandler)))
   }
 
   assignedPro(products:Array<any>,rollNo:string,clientId:Types.ObjectId,QaRoll:string):Observable<any>{
@@ -114,7 +114,7 @@ export class BackendService {
   //behaviour subject for modeler name
   getModelerName(modelerName:string){
     this.emitModalerName$.next(modelerName);
-    localStorage.setItem("modalerName",modelerName)
+    localStorage.setItem("modelerName",modelerName)
   }
 
   getModRollNo(rollNo:string){
@@ -143,7 +143,7 @@ export class BackendService {
   }
 
   getModalerPro(id:any):Observable<modelerLanding[]>{
-    return this.http.get<modelerLanding[]>(`${this.url}/modaler-products/Get/${id}`).pipe((catchError(this.erroHandler)))
+    return this.http.get<modelerLanding[]>(`${this.url}/modeler-products/Get/${id}`).pipe((catchError(this.erroHandler)))
   }
 
   uploadModal(formData:FormData):Observable<any>{

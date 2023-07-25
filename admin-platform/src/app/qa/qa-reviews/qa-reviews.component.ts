@@ -106,7 +106,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         let clientName = this.clientDetails[0].clientName.replace(regex,"_")
         console.log({clientName});
         
-        this.srcFile = `${environment.apiUrl}/models/${clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
+        this.srcFile = `${environment.staticUrl}/models/${clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -222,7 +222,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `${environment.apiUrl}/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.staticUrl}/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }

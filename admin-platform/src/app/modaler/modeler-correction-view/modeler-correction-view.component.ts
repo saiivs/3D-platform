@@ -71,15 +71,15 @@ export class ModelerCorrectionViewComponent implements OnInit{
     let version = Number(versionTxt.split(" ")[1]);
     this.versionTracker = `version-${version}`
     if(version == this.version){
-      this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
+      this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
     }else if(version < this.version){
-      this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
+      this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
     } 
     
     this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
       if(res){
         this.hotspots = res;
-        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.apiUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
+        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
       }   
     })
   }

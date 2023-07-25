@@ -24,18 +24,18 @@ router.get('/clients/Get',auth.authentication,routeHelper.getClients);
 router.get('/products/get/:id',auth.authentication,routeHelper.getPro);
 
 //get 3d modelers
-router.get('/modalers/Get',auth.authentication,routeHelper.getModelres);
+router.get('/modelers/Get',auth.authentication,routeHelper.getModelres);
 
-//assign products for 3D modalers
+//assign products for 3D modelers
 router.post('/assignedProducts/post',auth.authentication,routeHelper.assignProducts);
 
-//get the client list for modalers
+//get the client list for modelers
 router.get('/clientsForModalers/Get/:email',auth.authentication,routeHelper.getClientForModaler);
 
-//get the assigned products for modalers
-router.get('/modaler-products/Get/:id',auth.authentication,routeHelper.getModalerPro);
+//get the assigned products for modelers
+router.get('/modeler-products/Get/:id',auth.authentication,routeHelper.getModalerPro);
 
-//save the modaler uploaded file
+//save the modeler uploaded file
 router.post('/upload-modal/post',auth.authentication,routeHelper.savemodalFile);
 
 //get clients for QA

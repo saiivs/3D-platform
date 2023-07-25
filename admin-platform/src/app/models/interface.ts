@@ -67,7 +67,7 @@ export interface productList{
 
 export interface team{
   QAarr:[],
-  modalersAr:[]
+  modelersAr:[]
 }
 
 export interface message{
@@ -91,8 +91,8 @@ export interface modelerLanding{
   approvedClient:Boolean,
   assignedPro:[],
   clientId:string,
-  modalerName:string,
-  modalerRollNo:string,
+  modelerName:string,
+  modelerRollNo:string,
   _id:string,
   modalFile?:any
 }
