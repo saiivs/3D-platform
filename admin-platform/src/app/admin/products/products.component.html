@@ -353,7 +353,7 @@
               </table>
               <div>
                 <pagination-controls id="listing_pagination" [maxSize]="6" [directionLinks]="true"
-                  (pageChange)="page = $event"></pagination-controls>
+                  (pageChange)="onPageChange($event)"></pagination-controls>
               </div>
             </div>
             <div class="col-12 mt-24 hljs-container">

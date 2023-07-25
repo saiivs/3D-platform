@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import swal from "sweetalert2/dist/sweetalert2.js"
 import { Types } from 'mongoose';
 import { productList, team } from 'src/app/models/interface';
+import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 
@@ -18,7 +19,6 @@ import { NotificationService } from 'src/app/services/notification.service';
 export class ProductsComponent implements OnInit,OnDestroy{
 
 constructor(private titleService :Title,private route:ActivatedRoute,private backEndService:BackendService,private toaster:ToastrService,private searchService:NotificationService,private router:Router){
-
 }
 
 productId:string = "";
@@ -34,7 +34,7 @@ modalerRollNo:string =""
 QARollNo:string = "";
 ModelerName:string = "3D Modelers";
 QAName:string = "QA Team"
-clinetName:string = "";
+clientName:string = "";
 clientId!:Types.ObjectId;
 totalRecords!:number;
 totalCompletedModels:number = 0;
@@ -58,6 +58,7 @@ priceUpdated:boolean = true;
 subscription1!:Subscription;
 subscription2!:Subscription;
 recieved: string = "";
+countForMasterCheckBox:number = 50;
 canClose:Boolean = false;
 requirementData:string = "";
 addRequirement:Boolean = true;
@@ -70,7 +71,7 @@ ngOnInit(){
     this.searchService.checkUrlForSearchBtn(true);
   } 
   this.backEndService.currentData.subscribe((name)=>{
-    this.clinetName = name
+    this.clientName = name
   })
   this.searchService.searchValue.subscribe((data)=>{
     this.recieved = data;
@@ -78,8 +79,9 @@ ngOnInit(){
  
   this.productId = this.route.snapshot.params['id'];
   this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res)=>{
-    console.log({res});
-    
+    this.clientName = res.Arr[2].clientName
+    const regex = /[^a-zA-Z0-9]/g;
+    this.clientName = this.clientName.replace(regex,'_')
     this.budget = res.Arr[1].budgetValue; 
     this.updatedBudget = res.Arr[1].budgetValue;
     if(res.requirement.length == 0){
@@ -137,16 +139,36 @@ ngOnInit(){
 }
 
 checkBoxChange(){
-    for(let pro of this.products){
-      if(!pro.assigned){
-        pro.isSelected = this.masterCheckBox
+    let limit = this.page * 50 - 1
+    this.products.forEach((pro,i)=>{
+      let count = (this.page - 1) * 50 + i
+      if(count <= limit){ 
+          if(!this.products[count]?.assigned){
+        this.products[count].isSelected = this.masterCheckBox
       }
       if(this.masterCheckBox){
         this.selectionText = " Unselect All"
       }else{
         this.selectionText = " Select All"
       }
+      }
+    })
+}
+
+onPageChange(event:number){
+  this.page = event;
+  let flag = false;
+  let limit = this.page * 50 - 1;
+  for(let i = 0 ; i < this.products.length; i ++){
+    let count = (this.page - 1) * 50 + i
+    if(count <= limit){
+      flag = this.products[count].isSelected ? false : true;
+      if(flag){
+        break;
+      }
     }
+  }
+  this.masterCheckBox = flag ? false : true;
 }
 
 MultiSelectionModeler(index:any,rollNo:string){
@@ -229,13 +251,13 @@ swal.fire({
   }
 }
 
-downloadFile(articleId:string){
-  let link = document.createElement('a');
-  link.download = `${this.clinetName}.zip`
-  link.href = `http://localhost:3000/modals/${articleId}&&${this.clientId}.zip`;
-  link.target = '_blank';
-  link.click()
-}
+// downloadFile(articleId:string){
+//   let link = document.createElement('a');
+//   link.download = `${this.clientName}.zip`
+//   link.href = `${environment.apiUrl}/modals/${this.clientName}/${articleId}/version-{}/.zip`;
+//   link.target = '_blank';
+//   link.click()
+// }
 
 
 nameLoad(modeler:string,pro:string){
@@ -244,12 +266,12 @@ this.backEndService.getAdminPro(pro)
 }
 
 addBtnFn(index:number){
-  let i = (this.page - 1) * 6 + index;
+  let i = (this.page - 1) * 50 + index;
   this.products[i].priceAdded = true; 
 }
 
 EditPrice(index:number){
-  let i = (this.page - 1) * 6 + index;
+  let i = (this.page - 1) * 50 + index;
   this.tempPrice = parseInt(this.products[i].price);
   
   this.totalPrice -= this.tempPrice;
@@ -260,7 +282,7 @@ EditPrice(index:number){
 }
 
 getPrice(price:string,articleId:string,modelerRollno:string,index:number){
-  let i = (this.page - 1) * 6 + index;
+  let i = (this.page - 1) * 50 + index;
   let priceValue =  Number(price);
   this.totalPrice += priceValue;
   if(this.totalPrice > this.budget){
@@ -306,7 +328,7 @@ getPrice(price:string,articleId:string,modelerRollno:string,index:number){
 }
 
 getRefference(index:number,articleId:string,ProductName:string){
-  let i = (this.page - 1) * 6 + index;
+  let i = (this.page - 1) * 50 + index;
   swal.fire({
     title: 'Enter The Refference Url',
     input: 'url',
@@ -346,7 +368,7 @@ getTagName(){
 }
 
 addTag(index:number,tagName:string,articleId:string){
-  let i = (this.page - 1) * 6 + index;
+  let i = (this.page - 1) * 50 + index;
   this.tagNameDrpdown[i] = tagName;
   this.products[i].tag = tagName
   this.backEndService.assignTag(tagName,articleId,this.clientId).subscribe((res)=>{ 

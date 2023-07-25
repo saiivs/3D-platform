@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
-import swal from "sweetalert2/dist/sweetalert2.js"
+import swal from "sweetalert2/dist/sweetalert2.js";
+import { environment } from '../../../environments/environment';
 import '@google/model-viewer'
 import { combineLatest } from 'rxjs';
 import { Subscription } from 'rxjs';
@@ -61,7 +62,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Invalid file extension`
+        if(format == 'png') extnsWrng =`Png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
@@ -95,7 +96,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `http://localhost:3001/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.srcFile = `${environment.apiUrl}/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString();
@@ -187,7 +188,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `https://localhost:3001/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.apiUrl}/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }

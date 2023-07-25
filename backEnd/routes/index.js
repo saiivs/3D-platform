@@ -175,7 +175,10 @@ router.post('/updateBankDetails/post',auth.authentication,routeHelper.updateBank
 router.post('/createAbout/post',auth.authentication,routeHelper.createAbout);
 
 //get the QA details for profile
-router.get('/getQAForProfile/get/:email',auth.authentication,routeHelper.getQAForPofile)
+router.get('/getQAForProfile/get/:email',auth.authentication,routeHelper.getQAForPofile);
+
+//get all models of a specific modeler
+router.get('/getAllModelListForModeler/:modelerId',auth.authentication,routeHelper.getAllModelListForModeler)
 
 
 

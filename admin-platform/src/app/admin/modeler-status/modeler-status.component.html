@@ -125,6 +125,7 @@
                       <th scope="col">Modeler Name</th>
                       <th scope="col">Product Count</th>
                       <th scope="col">Status</th>
+                      <th scope="col">List</th>
                       <th scope="col">View Models</th>
                     </tr>
                   </thead>
@@ -151,6 +152,12 @@
                       <td>{{modeler.modelerName}}</td>
                       <td>{{modeler.models.length}}</td>
                       <td>{{modeler.percentage}}%</td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary">
+                          <a class="myhover" [routerLink]="['../modeler/productList',modeler._id]" (click)="sendClientName()"
+                            >View Here</a>
+                        </button>
+                      </td>
                       <td>
                         <button class="btn btn-sm btn-outline-primary">
                           <a class="myhover" [routerLink]="['../models',modeler._id]" (click)="sendClientName()"

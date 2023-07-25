@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild 
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/services/backend.service';
+import { environment } from '../../../environments/environment';
 import '@google/model-viewer'
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -63,7 +64,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Invalid file extension`
+        if(format == 'png') extnsWrng =`Png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
@@ -98,7 +99,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
           }
           const regex = /[^a-zA-Z0-9]/g;
           let clinetName = this.clientDetails[0].clientName.replace(regex,"_")
-          this.srcFile = `http://localhost:3001/models/${clinetName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
+          this.srcFile = `${environment.apiUrl}/models/${clinetName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
           this.QaCommentArr[0]?.comments.forEach((message: any) => {
             const conDate = new Date(message.date)
             const date = new Date(conDate).toLocaleDateString('en-GB');

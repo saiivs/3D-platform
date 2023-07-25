@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, OnInit, Renderer2, ViewChild } fro
 import '@google/model-viewer'
 
 import { BackendService } from '../services/backend.service';
+import { environment } from '../../environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { TestComponent } from '../test/test.component';
 @Component({
@@ -41,7 +42,7 @@ export class GalleryComponent implements OnInit{
       
       if(res.fileCount != 0){
         for(let i = 0; i < res.fileCount; i++){
-        this.imgSrc.push(`http://localhost:3001/images/${this.clientDetails.clientName}/${this.articleId}/${i+1}.jpg`);
+        this.imgSrc.push(`${environment.apiUrl}/images/${this.clientDetails.clientName}/${this.articleId}/${i+1}.jpg`);
         this.totalRecords = this.imgSrc.length;
       }
       this.initialImg = this.imgSrc[0];

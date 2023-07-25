@@ -47,6 +47,8 @@ export class ModelerStatusComponent implements OnInit {
         this.totalExpence += expense;
         this.backEnd.getModelersStatus().subscribe((data) => {
           this.allModelers = [...data.allModelers];
+          console.log(this.allModelers);
+          
           if (this.allModelers.length != 0) {
             this.totalRecords = this.allModelers.length;
             this.allModelers = this.allModelers.map((obj) => {

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { CorrectionImageComponent } from '../../correction-image/correction-image.component'
+import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 
 
@@ -70,15 +71,15 @@ export class ModelerCorrectionViewComponent implements OnInit{
     let version = Number(versionTxt.split(" ")[1]);
     this.versionTracker = `version-${version}`
     if(version == this.version){
-      this.src = `http://localhost:3001/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
+      this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
     }else if(version < this.version){
-      this.src = `http://localhost:3001/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
+      this.src = `${environment.apiUrl}/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
     } 
     
     this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
       if(res){
         this.hotspots = res;
-        this.hotspots.forEach(hotspot => hotspot.corrImg = `http://localhost:3001/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
+        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.apiUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
       }   
     })
   }

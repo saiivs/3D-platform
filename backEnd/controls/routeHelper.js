@@ -190,7 +190,6 @@ module.exports = {
 
     getPro:async(req,res)=>{
         try{
-            console.log("routefun pro");
             let proId = req.params.id;
             let dbres = await database.dbGetPro(proId);
             if(dbres){
@@ -1083,8 +1082,23 @@ module.exports = {
         } catch (error) {
             console.log(error);
             res.status(500).json(false);
+        } 
+      },
+
+      getAllModelListForModeler:async(req,res)=>{
+        try {
+            console.log("adsfadfa");
+            const {modelerId} = req.params;
+            const result = await database.dbGetAllModelListForModeler(modelerId);
+            if(result){
+                res.status(200).json(result);
+            }else{
+                throw new Error("model list for modeler not found!!");
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
         }
-        
       }
 }
 

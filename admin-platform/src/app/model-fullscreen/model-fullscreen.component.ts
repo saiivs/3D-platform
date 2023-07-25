@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import "@google/model-viewer"
 import { BackendService } from 'src/app/services/backend.service';
+import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ModelWarningComponent } from '../model-warning/model-warning.component';
 import { warning } from '../models/interface';
@@ -32,7 +33,7 @@ export class ModelFullscreenComponent implements OnInit{
     this.version = this.route.snapshot.params['version']
     const regex = /[^a-zA-Z0-9]/g;
     let clientName = this.clientName?.replace(regex,"_")
-    this.modelSrc = `http://localhost:3001/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+    this.modelSrc = `${environment.apiUrl}/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
     this.backEnd.getGlbFileDetails(this.articleId,this.clientId,this.version).subscribe((res)=>{
       this.modelDetail = res;
       this.polygonCount = res.info.totalTriangleCount;

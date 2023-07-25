@@ -12,6 +12,7 @@ import { ArchiveClientsComponent } from './archive-clients/archive-clients.compo
 import { AllModelsComponent } from './all-models/all-models.component';
 import { InteractiveChatComponent } from './interactive-chat/interactive-chat.component';
 import { AdminModelerProfileComponent } from './admin-modeler-profile/admin-modeler-profile.component';
+import { ModelerProductListComponent } from './modeler-product-list/modeler-product-list.component';
 
 const routes:Routes=[
 {path:"",component:AdminComponent,canActivate:[AuthGuard],
@@ -25,7 +26,8 @@ children:[
   {path:"model-FullScreen/:articleId/:clientId",component:ModelFullscreenComponent},
   {path:"archive",component:ArchiveClientsComponent},
   {path:"models/:modelerId",component:AllModelsComponent},
-  {path:"modeler/profile/:email",component:AdminModelerProfileComponent}
+  {path:"modeler/profile/:email",component:AdminModelerProfileComponent},
+  {path:"modeler/productList/:modelerId",component:ModelerProductListComponent}
 ]}
 ]
 

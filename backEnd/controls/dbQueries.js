@@ -153,6 +153,7 @@ module.exports = {
     dbGetPro:async(id)=>{
         try {
             let proData = await db.Products.findOne({clientId:id});
+            let clientData = await db.clients.findOne({_id:new ObjectId(id)});
             let budget = await db.budget.find({});
             let requirement = await db.requirement.find({clientId:id});
             budget = budget.reverse();
@@ -161,6 +162,7 @@ module.exports = {
             let Arr = [];
             Arr.push(proData)
             Arr.push({budgetValue:budgetData});
+            Arr.push(clientData)
             return {Arr,requirement}
             }else{
                 throw new Error("Products Not Found")
@@ -1566,6 +1568,38 @@ module.exports = {
             console.log(error);
             return false;
         }
+    },
+    
+    dbGetAllModelListForModeler:async(modelerId)=>{
+        try {
+            console.log(modelerId);
+            const list = await db.modelerList.aggregate([
+                {
+                    $match:{_id:new ObjectId(modelerId)}
+                },
+                {
+                    $unwind:"$models"
+                },
+                {
+                    $lookup:{
+                        from:"clientlists",
+                        localField:"models.clientId",
+                        foreignField:"_id",
+                        as:"clientData"
+                    }
+                },
+                {
+                    $unwind:"$clientData"
+                }
+            ])
+            if(list.length != 0){
+                return list;
+            }else{
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     }
-   
 } 

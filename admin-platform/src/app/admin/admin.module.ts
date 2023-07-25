@@ -21,6 +21,7 @@ import { ArchiveClientsComponent } from './archive-clients/archive-clients.compo
 import { AllModelsComponent } from './all-models/all-models.component';
 import { InteractiveChatComponent } from './interactive-chat/interactive-chat.component';
 import { AdminModelerProfileComponent } from './admin-modeler-profile/admin-modeler-profile.component';
+import { ModelerProductListComponent } from './modeler-product-list/modeler-product-list.component';
 
 
 
@@ -37,6 +38,7 @@ import { AdminModelerProfileComponent } from './admin-modeler-profile/admin-mode
     AllModelsComponent,
     InteractiveChatComponent,
     AdminModelerProfileComponent,
+    ModelerProductListComponent,
   ],
   imports: [
     CommonModule,

@@ -352,5 +352,9 @@ export class BackendService {
   getQAForProfile(userEmail:string|null):Observable<any>{
     return this.http.get<any>(`${this.url}/getQAForProfile/get/${userEmail}`)
   }
+
+  getAllModelListForModeler(modelerId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getAllModelListForModeler/${modelerId}`)
+  }
 }
 

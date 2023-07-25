@@ -4,6 +4,7 @@ import { BackendService } from 'src/app/services/backend.service';
 import swal from "sweetalert2/dist/sweetalert2.js"
 import "@google/model-viewer"
 import { messageInfo } from 'src/app/models/interface';
+import { environment } from '../../../environments/environment';
 import { Subscription, combineLatest } from 'rxjs';
 
 @Component({
@@ -62,7 +63,7 @@ export class InteractiveChatComponent implements OnInit{
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Invalid file extension`
+        if(format == 'png') extnsWrng =`Png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
@@ -99,7 +100,7 @@ export class InteractiveChatComponent implements OnInit{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `http://localhost:3001/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+        this.srcFile = `${environment.apiUrl}/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -211,7 +212,7 @@ export class InteractiveChatComponent implements OnInit{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `https://localhost:3001/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.apiUrl}/models/${articleId}&&${this.clientId}.glb`;
     link.target = '_blank';
     link.click()
   }
