@@ -25,11 +25,12 @@ app.use(logger('dev'));
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+const staticFiles = express.static(path.join(__dirname, 'public'))
 app.use(fileUpload());
 
 app.use('/api', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api/static',staticFiles);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
