@@ -1,11 +1,13 @@
 import { Component, ElementRef, EventEmitter, OnInit, Renderer2, ViewChild } from '@angular/core';
 import '@google/model-viewer'
 import { environment } from '../../environments/environment';
-
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BackendService } from '../services/backend.service';
 import { ActivatedRoute } from '@angular/router';
-import { TestComponent } from '../test/test.component';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { ToastrService } from 'ngx-toastr';
+import { CorrectionImageComponent } from '../correction-image/correction-image.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-qa-do',
@@ -14,7 +16,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 })
 export class QaDoComponent implements OnInit{
 
-  constructor(private backEndService:BackendService,private route : ActivatedRoute,private renderer:Renderer2){
+  constructor(private backEndService:BackendService,private route : ActivatedRoute,private renderer:Renderer2,private sanitizer:DomSanitizer,private toastr: ToastrService,private openDilog:MatDialog){
 
   }
 
@@ -51,6 +53,9 @@ export class QaDoComponent implements OnInit{
   latestCorrection:Array<any> = [];
   newCorrection:Array<any> = [];
   tabPanels:Array<any> = [];
+  editImgFile!:File;
+  editImg!:SafeUrl;
+  editTxtInput:string = "";
   
   
   ngOnInit(): void {
@@ -67,7 +72,7 @@ export class QaDoComponent implements OnInit{
       }
     })
     this.backEndService.getLatestCorrection(this.clientId,this.articleId).subscribe((res)=>{ 
-      if(!res.status){
+      if(res.status){
         if(!res.update)
       {  
         console.log("old model");
@@ -167,12 +172,8 @@ export class QaDoComponent implements OnInit{
   }
 
   onTabChange(event:MatTabChangeEvent){
-    console.log("check index");
-    
-    console.log(event.index);
-    
     if(event.index >= 2){
-      this.hotspotDenied = false
+      this.hotspotDenied = true;
       this.hotSpotData = [];
       let versiontxt = event.tab.textLabel;
       let version = Number(versiontxt.split(" ")[1]);
@@ -242,13 +243,7 @@ export class QaDoComponent implements OnInit{
   }
  
   addHotspot(event:MouseEvent){
-    console.log("check denied");
-    
-    console.log(this.hotspotDenied);
-    
     if(!this.hotspotDenied){
-      console.log("running");
-      
     const modelViewerElement = this.modelViewerContainer.nativeElement.querySelector('model-viewer');
     const point = modelViewerElement.positionAndNormalFromPoint(event.clientX, event.clientY);
     let hotSpotId = (this.nextHotspotId + 1).toString();
@@ -274,6 +269,9 @@ export class QaDoComponent implements OnInit{
     }else{
        buttonText = this.renderer.createText(hotSpotId)
     }
+    this.renderer.setStyle(hotspot, 'width', '25px');
+    this.renderer.setStyle(hotspot, 'height', '25px');
+    this.renderer.setStyle(hotspot,'font-size', '10px');
     
     this.renderer.appendChild(hotspot, buttonText);
 
@@ -296,16 +294,67 @@ export class QaDoComponent implements OnInit{
   }
 
   addHotspotInitially(normal:string,position:string,name:string,hotSpotId:number){
+    
     const hotspot = this.renderer.createElement('button');
     this.renderer.addClass(hotspot,'hotspot');
     this.renderer.setAttribute(hotspot,'slot',name);
     this.renderer.setAttribute(hotspot,'data-position',position);
     this.renderer.setAttribute(hotspot, 'data-normal',normal);
     const buttonText = this.renderer.createText(`${hotSpotId}`);
+    this.renderer.setStyle(hotspot, 'width', '25px');
+    this.renderer.setStyle(hotspot, 'height', '25px');
+    this.renderer.setStyle(hotspot,'font-size', '10px');
     this.renderer.appendChild(hotspot, buttonText);
     this.renderer.setAttribute(hotspot, 'data-visibility-attribute', 'visible');
     
     this.modelTest.nativeElement.appendChild(hotspot);
   }
+
+  getEditImage(event:Event){
+    let inputElement = event.target as HTMLInputElement;
+    if(inputElement.files && inputElement.files.length > 0){
+      this.editImgFile = inputElement.files[0];
+    }
+  }
+
+  editCorrection(index:number){
+    if(this.editImgFile && this.editTxtInput){
+      const hotSpot = this.hotSpotData[index];
+      const {corrImg,correction} = hotSpot;
+      console.log({hotSpot});
+      
+      hotSpot.correction = this.editTxtInput;
+      hotSpot.corrImg = this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(this.editImgFile));
+      hotSpot.editFlag = false;
+
+      const formData = new FormData();
+      formData.append('image',this.editImgFile);
+      formData.append('text',this.editTxtInput);
+      formData.append('clientId',this.clientId);
+      formData.append('articleId',this.articleId);
+      let version = this.version.toString();
+      formData.append('version',version);
+      formData.append('hotspotId',hotSpot.hotspotId);
+      formData.append('clientName',this.clientName);
+      this.backEndService.editCorrection(formData).subscribe((res)=>{
+        if(!res){
+          this.toastr.error('Error', 'edit disabled')
+          hotSpot.corrImg = corrImg;
+          hotSpot.correction = correction;
+        }
+      })
+    }else{
+
+    }  
+  }
+
+  openCorrectionImg(imgLink:string){
+    let url = imgLink
+   this.openDilog.open(CorrectionImageComponent,{
+      width:"60rem",
+      data:url
+    })
+  }
+
 
 }

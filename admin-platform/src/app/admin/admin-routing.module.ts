@@ -13,22 +13,26 @@ import { AllModelsComponent } from './all-models/all-models.component';
 import { InteractiveChatComponent } from './interactive-chat/interactive-chat.component';
 import { AdminModelerProfileComponent } from './admin-modeler-profile/admin-modeler-profile.component';
 import { ModelerProductListComponent } from './modeler-product-list/modeler-product-list.component';
+import { AdminModelCorrectionComponent } from './admin-model-correction/admin-model-correction.component';
 
-const routes:Routes=[
-{path:"",component:AdminComponent,canActivate:[AuthGuard],
-children:[
-  {path:"",component:AdminLandingPageComponent},
-  {path:"products/:id",component:ProductsComponent},
-  {path:"reviews/:articleId/:clientId/:version",component:AdminReviewComponent},
-  {path:"interactive-section/:articleId/:clientId/:version",component:InteractiveChatComponent},
-  {path:"modeler-status",component:ModelerStatusComponent},
-  {path:"client_modelers/:clientId",component:ClientModelerListComponent},
-  {path:"model-FullScreen/:articleId/:clientId",component:ModelFullscreenComponent},
-  {path:"archive",component:ArchiveClientsComponent},
-  {path:"models/:modelerId",component:AllModelsComponent},
-  {path:"modeler/profile/:email",component:AdminModelerProfileComponent},
-  {path:"modeler/productList/:modelerId",component:ModelerProductListComponent}
-]}
+const routes: Routes = [
+  {
+    path: "", component: AdminComponent, canActivate: [AuthGuard],
+    children: [
+      { path: "", component: AdminLandingPageComponent },
+      { path: "products/:id", component: ProductsComponent },
+      { path: "reviews/:articleId/:clientId/:version", component: AdminReviewComponent },
+      { path: "interactive-section/:articleId/:clientId/:version", component: InteractiveChatComponent },
+      { path: "modeler-status", component: ModelerStatusComponent },
+      { path: "client_modelers/:clientId", component: ClientModelerListComponent },
+      { path: "model-FullScreen/:articleId/:clientId/:version", component: ModelFullscreenComponent },
+      { path: "archive", component: ArchiveClientsComponent },
+      { path: "models/:modelerId", component: AllModelsComponent },
+      { path: "modeler/profile/:email", component: AdminModelerProfileComponent },
+      { path: "modeler/productList/:modelerId", component: ModelerProductListComponent },
+      { path: "model-correction/:articleId/:clientId/:version", component: AdminModelCorrectionComponent }
+    ]
+  }
 ]
 
 
@@ -37,4 +41,4 @@ children:[
   exports: [RouterModule]
 })
 
-export class AdminRoutingModule{}
+export class AdminRoutingModule { }

@@ -97,7 +97,7 @@
                                         <p style="margin-bottom: 0rem;">{{model.productName}}</p>
                                     </td>
                                     <td class="py-6 pe-0">
-                                        <p style="margin-bottom: 0rem;">$ {{model.price}}</p>
+                                        <p style="margin-bottom: 0rem;">€ {{model.price}}</p>
                                     </td>
                                 </tr>    
                             </tbody>
@@ -112,12 +112,12 @@
                 <div class="col-12 col-xl-3 pb-16 hp-print-checkout">
                     <div class="row align-items-center justify-content-between">
                         <p class="hp-badge-text hp-flex-none w-auto">Subtotal</p>
-                        <h5 class="mb-4 hp-flex-none w-auto">$ {{subTotal}}</h5>
+                        <h5 class="mb-4 hp-flex-none w-auto">€ {{subTotal}}</h5>
                     </div>
 
                     <div class="row align-items-center justify-content-between">
                         <p class="hp-badge-text hp-flex-none w-auto">Bonus </p>
-                        <h5 class="mb-4 hp-flex-none w-auto">-$ {{bonus}} </h5>
+                        <h5 class="mb-4 hp-flex-none w-auto">-€ {{bonus}} </h5>
                     </div>
 
                     <!-- <div class="row align-items-center justify-content-between">
@@ -129,7 +129,7 @@
 
                     <div class="row align-items-center justify-content-between">
                         <h5 class="text-primary hp-flex-none w-auto">Total</h5>
-                        <h5 class="text-primary hp-flex-none w-auto">$ {{getSubTotalWithBonus()}}</h5>
+                        <h5 class="text-primary hp-flex-none w-auto">€ {{getSubTotalWithBonus()}}</h5>
                     </div>
                 </div>
             </div>

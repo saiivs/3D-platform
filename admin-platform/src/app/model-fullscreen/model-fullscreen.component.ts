@@ -31,9 +31,11 @@ export class ModelFullscreenComponent implements OnInit{
     this.articleId = this.route.snapshot.params['articleId'];
     this.clientId = this.route.snapshot.params['clientId'];
     this.version = this.route.snapshot.params['version']
-    const regex = /[^a-zA-Z0-9]/g;
-    let clientName = this.clientName?.replace(regex,"_")
-    this.modelSrc = `${environment.staticUrl}/models/${clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+    this.backEnd.AgetClientById(this.clientId).subscribe((client)=>{
+      const regex = /[^a-zA-Z0-9]/g;
+      this.clientName = client.clientName.replace(regex,"_"); 
+      this.modelSrc = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+    })
     this.backEnd.getGlbFileDetails(this.articleId,this.clientId,this.version).subscribe((res)=>{
       this.modelDetail = res;
       this.polygonCount = res.info.totalTriangleCount;

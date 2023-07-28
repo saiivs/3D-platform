@@ -52,18 +52,21 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     let polygonWarng;
     let extnsWrng;
     let imgHieghtWrng;
+    let invalidModel;
     if(modelData.info.totalTriangleCount > 150000){
        polygonWarng = `Polygon Count Exceeded`
+    }else{
+      invalidModel = `Invalid model detected`
     }
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Png files used`
+        if(format == 'png') extnsWrng =`png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
-    if(polygonWarng || extnsWrng || imgHieghtWrng){
-      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng].filter(Boolean).join(', ');
+    if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){
+      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng, invalidModel].filter(Boolean).join(', ');
       localStorage.setItem("ModelWarning",this.warningMsg);
     }else{
       localStorage.removeItem("ModelWarning");
@@ -196,13 +199,13 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   }
 
   fullScreenMode(){
-    this.router.navigate(['admin/model-FullScreen',this.articleId,this.clientId]);
+    this.router.navigate(['admin/model-FullScreen',this.articleId,this.clientName,this.version]);
   }
 
   downloadFile(articleId:string|undefined){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `${environment.staticUrl}/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.staticUrl}/models/${this.clientName}/${articleId}/version-${this.version}/${articleId}.glb`;
     link.target = '_blank';
     link.click()
   }

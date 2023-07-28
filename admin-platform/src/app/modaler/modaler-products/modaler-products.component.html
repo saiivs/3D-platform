@@ -68,6 +68,7 @@
                     <th scope="col">Upload Model</th>
                     <th scope="col">Preview</th>
                     
+                    
 
                   </tr>
                 </thead>
@@ -75,18 +76,18 @@
                   <tr  *ngFor="let pro of products | paginate
                   : {
                       id: 'listing_pagination',
-                      itemsPerPage: 6,
+                      itemsPerPage: 50,
                       currentPage: page,
                       totalItems: totalRecords
                     };let i = index">
-                    <td scope="row">{{i+1}}</td>
+                    <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                     <td>{{pro.articleId}}</td>
                     <td><div class="modalNameContainer">
                       <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
                       <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
                   </div></td>
                   <td>
-                    $ {{pro.price}}
+                    € {{pro.price}}
                   </td>
                     <td *ngIf="pro.productLink;else noLink"><a target="_blank"  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
                     </td>

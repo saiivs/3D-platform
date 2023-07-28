@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Types } from 'mongoose';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { modelerLanding } from 'src/app/models/interface';
@@ -35,8 +34,6 @@ ngOnInit() {
     this.clientId = data[0].clientId
     this.products = [...data[0].assignedPro]; 
     this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
-    console.log(this.products);
-    
     this.totalRecords = this.products.length
   })
 
@@ -50,27 +47,30 @@ isValidZipFile(file: any):boolean{
   }
 
 }
-getIndex(index:number){
-this.index = index
 
+getIndex(index:number){
+  index = (this.page - 1) * 50 + index;
+  this.index = index
 }
 
-acceptFile(event :any){
+acceptFile(event :any){ 
   if(this.isValidZipFile(event.target.files[0])){
      this.uploadedFile = event.target.files[0]
      this.products[this.index].modalFile = true
   }else{
-    this.toaster.error('Error', 'Please select a .zip file')
+    this.toaster.error('Error', 'Please select a .glb file')
 
   }
 }
 
 resetFile(index:number){
+  index = (this.page - 1) * 50 + index;
   this.products[index].modalFile = false
   this.fileInput.nativeElement.value = '';
 }
 
 onUpload(id:string,index:number){
+  index = (this.page - 1) * 50 + index;
   const formData = new FormData();
   formData.append('file',this.uploadedFile,this.uploadedFile.name);
   formData.append('id',id);

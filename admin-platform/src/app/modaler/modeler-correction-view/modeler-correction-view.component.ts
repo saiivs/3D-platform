@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
@@ -6,16 +6,14 @@ import { CorrectionImageComponent } from '../../correction-image/correction-imag
 import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 
-
-
 @Component({
   selector: 'app-modeler-correction-view',
   templateUrl: './modeler-correction-view.component.html',
   styleUrls: ['./modeler-correction-view.component.css'],
 })
+
 export class ModelerCorrectionViewComponent implements OnInit{
   
-
   constructor(private route:ActivatedRoute,private backEndService:BackendService,private renderer:Renderer2,private openDilog:MatDialog){}
 
   articleId:string = "";
@@ -28,8 +26,9 @@ export class ModelerCorrectionViewComponent implements OnInit{
   tabPanels:Array<any> = [];
   clientDetails:any = {};
   clientName:string = "";
+  noCorrections:boolean = false;
   hotspots:Array<any> = [];
-  
+  @ViewChild('modelTest',{ static: false }) modelTest!: ElementRef;
   ngOnInit(): void {
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
@@ -40,7 +39,7 @@ export class ModelerCorrectionViewComponent implements OnInit{
       this.clientName = this.clientDetails.clientName.replace(regex,"_")
       
       this.backEndService.getLatestCorrection(this.clientId,this.articleId).subscribe((res)=>{
-        if(res){
+        if(res.status){
           console.log({res});
           
           this.tabPanels = Array(res.data[0].version).fill(1).map((_, index) => `Version ${index+1}`);
@@ -60,12 +59,15 @@ export class ModelerCorrectionViewComponent implements OnInit{
           this.hotspots.forEach((hotspot,index)=>{
             this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1)
           })
+        }else{
+          this.noCorrections = true;
         }
           
       })
     })
     
   }
+
   onTabChange(event:MatTabChangeEvent){
     let versionTxt= event.tab.textLabel;
     let version = Number(versionTxt.split(" ")[1]);
@@ -96,7 +98,7 @@ export class ModelerCorrectionViewComponent implements OnInit{
     })
   }
 
-  @ViewChild('modelTest',{ static: true }) modelTest!: ElementRef;
+  
   addHotspotInitially(normal:string,position:string,name:string,hotSpotId:number){
     const hotspot = this.renderer.createElement('button');
     this.renderer.addClass(hotspot,'hotspot');
@@ -104,6 +106,9 @@ export class ModelerCorrectionViewComponent implements OnInit{
     this.renderer.setAttribute(hotspot,'data-position',position);
     this.renderer.setAttribute(hotspot, 'data-normal',normal);
     const buttonText = this.renderer.createText(`${hotSpotId}`);
+    this.renderer.setStyle(hotspot, 'width', '25px');
+    this.renderer.setStyle(hotspot, 'height', '25px');
+    this.renderer.setStyle(hotspot,'font-size', '10px');
     this.renderer.appendChild(hotspot, buttonText);
     this.renderer.setAttribute(hotspot, 'data-visibility-attribute', 'visible');
     this.modelTest.nativeElement.appendChild(hotspot);

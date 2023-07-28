@@ -6,6 +6,8 @@ const validator = require('gltf-validator');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
+const { modelerList } = require("../schema/modal");
+
 
 
 const polygonCounter = async(articleId,clientId,clientName,version)=>{
@@ -180,7 +182,6 @@ module.exports = {
             let proListforModeler  =  data.products.map(obj => {
                 return {...obj,QaTeam:QaName,qaRollNo:QaRoll,modRollno:modRoll,modelerName:name,clientId:new ObjectId(data.clientId),date:date,price:0,invoice:false,tag:""}
             })
-
             let modeler  = {
                 modelerName : name ,
                 rollNo:modRoll,
@@ -243,6 +244,48 @@ module.exports = {
             console.log(error);
             return false;
         }   
+    },
+
+    reallocationModel:async(data,modelerName,modelerEmail,QaName,modRoll,QaRoll)=>{
+        try {
+            let date = new Date()
+            date.setHours(0, 0, 0, 0);
+            let proListforModeler  =  data.products.map(obj => {
+                return {...obj,QaTeam:QaName,qaRollNo:QaRoll,modRollno:modRoll,modelerName:modelerName,clientId:new ObjectId(data.clientId),date:date,price:0,invoice:false,tag:""}
+            })
+              data.products.forEach(async(pro)=>{
+              let result = await db.modelerProducts.findOneAndUpdate({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.assigned':modelerName,'assignedPro.$.QaTeam':QaName,'assignedPro.$.modRollNo':modRoll,'assignedPro.$.qaRollNo':QaRoll,'assignedPro.$.price':0}})
+              await db.Products.updateOne({clientId:new ObjectId(data.clientId),'productList.articleId':pro.articleId},{$set:{'productList.$.assigned':modelerName,'productList.$.QaTeam':QaName,'productList.$.modRollNo':modRoll,'productList.$.qaRollNo':QaRoll,'productList.$.price':0}}); 
+              let findModeler = await modelerList.findOne({rollNo:modRoll});
+              if(findModeler){
+                console.log({result});
+                let modeler = result.assignedPro.filter((obj)=>{
+                    return pro.articleId == obj.articleId;
+                })
+                console.log({modeler});
+                console.log({modelerName});
+                if(modeler[0].assigned == modelerName){
+                    await db.modelerList.findOneAndUpdate({rollNo:modRoll,models:{$elemMatch:{articleId:pro.articleId,clientId:new ObjectId(data.clientId)}}},{$set:{'models.$.QaTeam':QaName,'models.$.qaRollNo':QaRoll,'models.$.price':0}});
+                }else{
+                    let a = await db.modelerList.updateOne({rollNo:modeler.rollNo},{$pull:{models:{clientId:data.clientId,articleId:pro.articleId}}})
+                    await db.modelerList.updateOne({rollNo:modRoll},{$push:{models:{$each:proListforModeler}}})
+                }  
+              }else{
+                let modeler  = {
+                    modelerName : modelerName ,
+                    rollNo:modRoll,
+                    email:modelerEmail,
+                    models:[...proListforModeler],
+                    bankDetails:[]
+                }
+                await db.modelerList.create(modeler);
+              }
+            })
+            return true; 
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     },
 
     dbGetClientForModaler:async(modelerRollNo)=>{
@@ -386,7 +429,9 @@ module.exports = {
 
     dbGetQaPro:async(id)=>{
         try {
-            console.log({id});
+            let requirement = false;
+    
+            
             let proList = await db.modelerProducts.aggregate([
                 {
                     $match:{_id:new ObjectId(id)}
@@ -401,9 +446,11 @@ module.exports = {
                 }
             ])
             console.log({proList});
+            let clientRequirement = await db.requirement.findOne({clientId: new ObjectId(proList[0].clientId)});
+            if(clientRequirement) requirement = clientRequirement
             if(proList){
                 if(Array.isArray(proList)){
-                    return proList
+                    return {proList,requirement}
                 }else{
                     let Arr = [];
                     Arr.push(proList);
@@ -963,6 +1010,7 @@ module.exports = {
            let clientDetails = await db.clients.findOne({_id:new ObjectId(clientId)});
            let clientName = clientDetails.clientName;
            let resultNew = await polygonCounter(articleId,clientId,clientName,version);
+           console.log({resultNew});
            if(resultNew) return resultNew; 
            else throw new Error;
         } catch (error) {
@@ -1334,12 +1382,17 @@ module.exports = {
         try {
           let client = await db.clients.findOne({_id:clientId});
           let clientPro = await db.Products.findOne({clientId:clientId});
-          console.log({clientPro});
+          
             if(client){
+                const regex = /[^a-zA-Z0-9]/g;
+                let clientName = client.clientName.replace(regex,"_");
                 let fileCount = 0;
-                if(fs.existsSync(`./public/images/${client.clientName}/${articleId}`));{
-                   let files = fs.readdirSync(`./public/images/${client.clientName}/${articleId}`);
+                if(fs.existsSync(`./public/images/${clientName}/${articleId}`)){
+                    console.log("got it",fileCount);
+                   let files = fs.readdirSync(`./public/images/${clientName}/${articleId}`);
                    fileCount = files.length;
+                }else{
+                    console.log("not found");
                 }
                 clientPro = clientPro.productList.find(obj => obj.articleId == articleId);
                 return {client,fileCount,clientPro}
@@ -1488,13 +1541,13 @@ module.exports = {
           let latest = await db.hotspot.find({clientId:clientId,articleId:articleId,version:maxVersion[0].maxOne});
         if(latest.length != 0){
             console.log({updateAvailable});
-            return {data:latest,update:updateAvailable}
+            return {status:true,data:latest,update:updateAvailable}
         }else{
             console.log("not corrections");
         } 
         }else{
             console.log("aggragation no");
-            return {data:false}
+            return {status:false,data:false}
         }
         
         } catch (error) {
@@ -1613,6 +1666,43 @@ module.exports = {
         } catch (error) {
             console.log(error);
             return {status:false};
+        }
+    },
+
+    AdbGetClientById:async(clientId)=>{
+        try {
+            let client = await db.clients.findOne({_id:new ObjectId(clientId)});
+            console.log({client});
+            if(client) return client;
+            else return false;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbEditCorrection:async(corrData)=>{
+        try {
+            let target = await db.hotspot.findOne({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId});
+            if(target){
+                let targetTime = new Date(target.date);
+                let currTime = new Date();
+                let timeDifferenceInMinutes = Math.floor((currTime - targetTime) / (1000 * 6));
+                if(timeDifferenceInMinutes <= 5){
+                    let updateHotspot = await db.hotspot.findOneAndUpdate({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId},{$set:{correction:corrData.text}});
+                    if(updateHotspot){
+                        let id = updateHotspot._id 
+                        return {status:true,id:id}
+                    }else{
+                        return {status:false};
+                    }
+                }else{
+                    return {status:false,msg:"time exceeded"}
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
         }
     }
 } 

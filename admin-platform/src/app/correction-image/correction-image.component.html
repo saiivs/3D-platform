@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Correction Image</h1>
 <div class="divider my-4"></div>
-<div mat-dialog-content>
-    <img [src]="data" alt="" style="width: 100%;"></div>
+<div mat-dialog-content class="imgContainer">
+    <img [src]="data" alt="" style="object-fit: contain;margin: auto;"></div>
 <div mat-dialog-actions>
   <button mat-dialog-close class="btn btn primary">Close</button>
 </div>

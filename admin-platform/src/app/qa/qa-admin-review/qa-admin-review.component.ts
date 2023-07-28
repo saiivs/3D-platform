@@ -36,6 +36,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
   clientName:string = "";
+  version:number = 0;
   flag:Boolean = true;
   polygonCount!:number;
   warningMsg:string = "";
@@ -56,18 +57,21 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     let polygonWarng;
     let extnsWrng;
     let imgHieghtWrng;
+    let invalidModel;
     if(modelData.info.totalTriangleCount > 150000){
        polygonWarng = `Polygon Count Exceeded`
+    }else{
+      invalidModel = `Invalid model detected`
     }
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Png files used`
+        if(format == 'png') extnsWrng =`png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
-    if(polygonWarng || extnsWrng || imgHieghtWrng){
-      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng].filter(Boolean).join(', ');
+    if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){
+      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng, invalidModel].filter(Boolean).join(', ');
       localStorage.setItem("ModelWarning",this.warningMsg);
     }else{
       localStorage.removeItem("ModelWarning");
@@ -82,11 +86,14 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     }
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
+    this.version = this.route.snapshot.params['version'];
     this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString();
       if(data){
         this.validateGlbFile(data);
         this.clientDetails = data.modelDetails[0].clientDetails;
+        const regex = /[^a-zA-Z0-9]/g;
+        this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
         this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
             if(obj.articleId == this.articleId) return obj
           })
@@ -96,7 +103,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
         if(this.QaCommentArr[0].comments.length == 0){
           this.flag = false;
         }
-        this.srcFile = `${environment.staticUrl}/models/${this.QaCommentArr[0]?.articleId}&&${this.QaCommentArr[0]?.clientId}.glb`
+        this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString();
@@ -188,14 +195,14 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `${environment.staticUrl}/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.staticUrl}/models/${this.clientName}/${articleId}/version-${this.version}/${articleId}.glb`;
     link.target = '_blank';
     link.click()
   }
 
   fullScreenMode(){
     try {
-      this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientId]);
+      this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientName,this.version]);
     } catch (error) {
       console.log(error);  
     } 

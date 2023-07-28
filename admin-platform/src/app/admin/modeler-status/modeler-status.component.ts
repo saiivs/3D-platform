@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BackendService } from 'src/app/services/backend.service';
 import { DatePipe } from '@angular/common';
 import ApexCharts from 'apexcharts';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-modeler-status',
   templateUrl: './modeler-status.component.html',
   styleUrls: ['./modeler-status.component.css']
 })
-export class ModelerStatusComponent implements OnInit {
+export class ModelerStatusComponent implements OnInit , OnDestroy{
 
   modelerArr: Array<string> = [];
   modelCountArr: Array<any> = [];
@@ -22,7 +23,9 @@ export class ModelerStatusComponent implements OnInit {
   budget: number = 0;
   budgetExceeded: string = ""
   noMonthlyStatus: Boolean = false;
-  emptyData:boolean = false;
+  emptyData: boolean = false;
+  subcription1!:Subscription;
+  subcription2!:Subscription;
 
 
   constructor(private backEnd: BackendService, private router: Router) {
@@ -30,7 +33,7 @@ export class ModelerStatusComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.backEnd.getClientandExpense().subscribe((res) => {
+    this.subcription1 = this.backEnd.getClientandExpense().subscribe((res) => {
       if (res.status) {
         this.emptyData = false;
         this.clientList = [...res.clients];
@@ -45,10 +48,8 @@ export class ModelerStatusComponent implements OnInit {
           }
         }
         this.totalExpence += expense;
-        this.backEnd.getModelersStatus().subscribe((data) => {
+        this.subcription2 = this.backEnd.getModelersStatus().subscribe((data) => {
           this.allModelers = [...data.allModelers];
-          console.log(this.allModelers);
-          
           if (this.allModelers.length != 0) {
             this.totalRecords = this.allModelers.length;
             this.allModelers = this.allModelers.map((obj) => {
@@ -61,8 +62,6 @@ export class ModelerStatusComponent implements OnInit {
               completionPercentage = Number(completionPercentage.toFixed(2))
               return { ...obj, percentage: completionPercentage }
             })
-            console.log(this.allModelers);
-            
           }
           if (data.models.length == 0) {
             this.noMonthlyStatus = true;
@@ -162,7 +161,7 @@ export class ModelerStatusComponent implements OnInit {
             chart.render();
           }
         })
-      }else{
+      } else {
         this.emptyData = true;
       }
 
@@ -270,10 +269,7 @@ export class ModelerStatusComponent implements OnInit {
 
         chart.render();
       }
-
-
     })
-
   }
 
   clientModelerList(name: string) {
@@ -283,4 +279,10 @@ export class ModelerStatusComponent implements OnInit {
   sendClientName() {
 
   }
+
+  ngOnDestroy(): void {
+    this.subcription1.unsubscribe();
+    this.subcription2.unsubscribe()
+  }
+
 }

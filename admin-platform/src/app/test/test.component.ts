@@ -40,9 +40,12 @@ export class TestComponent implements OnChanges {
     }
 
   ngOnChanges(changes: SimpleChanges): void {
+    
     const image = new Image();
     image.crossOrigin="anonymous";
     if(this.intitialImgTest != ""){
+      console.log(this.intitialImgTest);
+      
     this.myFullresImage = this.intitialImgTest;
     image.src = this.intitialImgTest
     let canvas = document.createElement('canvas');
@@ -59,6 +62,8 @@ export class TestComponent implements OnChanges {
       let ctx = canvas.getContext('2d');
     
       if(ctx){
+        console.log("drawn");
+        
       ctx.drawImage(image, 0, 0, imgRes.width, imgRes.height);  
       let thumbnailDataURL = canvas.toDataURL('image/jpeg');
       this.myThumbnail = thumbnailDataURL;

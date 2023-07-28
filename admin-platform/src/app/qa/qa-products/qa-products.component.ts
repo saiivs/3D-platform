@@ -21,15 +21,20 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   clientDetails:Array<any> = [];
   totalRecords!:number
   page:number = 1;
+  clientName:string = "";
+  clientRequirement!:string|boolean
   subscription!:Subscription;
   
 
   ngOnInit(){
     this.Id = this.route.snapshot.params['id'];
     this.subscription = this.backEnd.getQaPro(this.Id).subscribe((data)=>{
-      this.clientId = data[0].clientId
-      this.clientDetails = data[0].clientData; 
-      this.products = [...data[0].assignedPro];
+      this.clientRequirement = data.requirement.requirement;
+      this.clientId = data.proList[0].clientId
+      this.clientDetails = data.proList[0].clientData; 
+      const regex = /[^a-zA-Z0-9]/g;
+      this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
+      this.products = [...data.proList[0].assignedPro];
       let qaRollNo = localStorage.getItem("rollNo");
       this.products = this.products.filter(obj => obj.qaRollNo == qaRollNo)
       this.totalRecords = this.products.length;

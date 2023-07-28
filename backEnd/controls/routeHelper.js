@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const  database = require("./dbQueries");
 const fs = require('fs');
-const { type } = require('os');
+
 
 
 
@@ -216,11 +216,18 @@ module.exports = {
             let QaRollNo = req.body.QaRoll
             let modelerName = modelers.find(obj => obj.rollNo == rollNo)
             let QAname = QATeams.find(obj => obj.rollNo == QaRollNo)
-           let resData = await database.assignPro(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo)
+            console.log({QAname});
+            let resData;
+            if(!req.body.reallocation){
+            resData = await database.assignPro(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo)
+            }else{
+            resData = await database.reallocationModel(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo);
+            console.log({resData});
+            }
            if(resData){
             res.status(200).json(true)
            }else{
-                throw new Error
+                throw new Error("something went wrong in product assignment!!")
            }
         } catch (error) {
             console.log(error);
@@ -333,7 +340,6 @@ module.exports = {
             let Id = req.params.id;
             let products = await database.dbGetQaPro(Id)
             if(products){
-                
                 res.status(200).json(products);
             }else{
                 throw new Error
@@ -365,6 +371,7 @@ module.exports = {
         let clientId = req.params.clientId;
         let articleId = req.params.articleId;
         let version = req.params.version;
+        console.log({clientId});
         let getData = await database.dbGetQaComments(clientId,articleId,version);
         console.log({getData});
         if(getData){
@@ -841,7 +848,7 @@ module.exports = {
      scrapeImg:async(req,res)=>{
         try {
             let {link,productName,articleId,clientName} = req.body;
-            let scrapedImg = await database.dbScrapeImg('https://www.elon.se/canvac-cfk5301v','FLAKT Canvac CFK5301V',articleId,clientName);
+            let scrapedImg = await database.dbScrapeImg(link,productName,articleId,clientName);
 
             if(scrapedImg.success && scrapedImg.message == "Complete"){
                 res.status(200).json({status:"success"});
@@ -879,25 +886,49 @@ module.exports = {
             
             console.log(typeof(imageFiles));
             console.log(imageFiles);
-            // const {articleId,clientName} = req.body;
-            let articleId = '56908';
-            let clientName = 'saikrishna'
+            let {articleId,clientName} = req.body;
+            const regex = /[^a-zA-Z0-9]/g;
+            clientName = clientName.replace(regex,'_')
             if(!fs.existsSync(`./public/images/${clientName}/${articleId}`)){
                 fs.mkdirSync(`./public/images/${clientName}/${articleId}`,{ recursive: true });
             }
-            imageFiles.forEach(file => {
-                file.mv(`./public/images/${clientName}/${articleId}/${file.name}`,(err,data)=>{
+            let content = fs.readdirSync(`./public/images/${clientName}/${articleId}`);
+            let count = content.length;
+            let flag = true;
+            if(Array.isArray(imageFiles)){ 
+               imageFiles.forEach(file => {
+                count = count + 1;
+                file.mv(`./public/images/${clientName}/${articleId}/${count}.jpg`,(err,data)=>{
                     if(!err){
                         console.log("uploaded");
-                        res.status(200).json(true);
                     }else{
                         console.log(err);
                         console.log("not uploaded");
-                        res.status(500).json(false);
+                        flag = false;
                     }
                 })
-            });
-
+            }); 
+            }else{
+                count = count + 1;
+                console.log({count});
+                console.log("new");
+                imageFiles.mv(`./public/images/${clientName}/${articleId}/${count}.jpg`,(err,data)=>{
+                    if(!err){
+                        console.log("uploaded");
+                    }else{
+                        console.log(err);
+                        console.log("not uploaded");
+                        flag = false;
+                    }
+                })
+            }
+            
+            if(flag){
+                res.status(200).json(true)
+            }
+            else{
+               throw new Error("some of the images were not uploaded!!")
+            }
         } catch (error) {
             console.log(error);
             res.status(500).json(false)
@@ -994,12 +1025,11 @@ module.exports = {
            let {clientId,articleId} = req.params;
         let result = await database.dbGetLatestHotspots(clientId,articleId);
         if(result){
-            if(!result.data){
-                res.status(200).json({status:true})
+            if(result.status){
+                res.status(200).json(result)
             }else{
-             res.status(200).json(result); 
-            }
-            
+             res.status(200).json(false); 
+            }    
         } else{
             throw new Error("something went wrong while fetching the latest hotspots!")
         }
@@ -1107,6 +1137,47 @@ module.exports = {
         } catch (error) {
             console.log(error);
             res.status(500).json(false);
+        }
+      },
+
+      AgetClientById:async(req,res)=>{
+        try {
+            console.log("Asdfasdfasdfasdfasdf");
+            const {clientId} = req.params;
+            console.log("asdfasdfasdf");
+            console.log({clientId});
+            let result = await database.AdbGetClientById(clientId);
+            if(result) res.status(200).json(result);
+            else throw new Error("something wwent wrong while fetching client!!");
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      editCorrection:async(req,res)=>{
+        try {
+            const imageFile = req.files.image;
+            console.log(imageFile);
+            console.log(req.body);
+            const {text,clientId,articleId,version,hotspotId,clientName} = req.body;
+            let result = await database.dbEditCorrection({text,clientId,articleId,version,hotspotId});
+            if(result.status){
+                imageFile.mv(`./public/corrections/${clientName}/${articleId}/version-${version}/${result.id}.jpg`,(err,data)=>{
+                    if(!err){
+                        res.status(200).json(true);
+                    }else{
+                        throw new Error(err)
+                    }
+                });
+            }else if(result.msg){
+                res.status(200).json(false)
+            }else{
+                throw new Error('edit correction in database went wrong!!')
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false); 
         }
       }
 }

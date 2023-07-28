@@ -30,3 +30,8 @@ label {
     flex-direction: column;
     align-items: center;
   }
+
+  .searchContainer{
+    display: flex;
+    justify-content: flex-end;
+  }

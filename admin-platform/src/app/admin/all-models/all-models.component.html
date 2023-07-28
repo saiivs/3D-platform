@@ -3,98 +3,69 @@
         <div class="col-12">
             <div class="row g-32">
                 <ng-container *ngFor="let model of models;let i = index">
-                  
-                       <div class="col-12 col-md-6 col-xl-4" *ngIf="recieved == ''||model?.productName?.toLowerCase().includes(recieved)||model?.articleId?.toLowerCase().includes(recieved)">
+                    <div class="col-12 col-md-6 col-xl-4"
+                        *ngIf="recieved == ''||model?.productName?.toLowerCase().includes(recieved)||model?.articleId?.toLowerCase().includes(recieved)">
                         <ng-container *ngIf="model.productStatus != 'Not uploaded'">
-                            <div class="card hp-card-6 hp-eCommerceCardOne hp-eCommerceCardOne-wishlist" style="min-height: 350px;">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="row mx-0 align-items-start justify-content-between">
-                                        <span class="badge bg-primary-4 hp-bg-dark-primary border-none w-auto py-8 px-16 fw-medium" [ngStyle]="{color:model.productStatus == 'Approved' ? 'green' : 'red'}">{{model.productStatus}}</span>
+                            <div class="card hp-card-6 hp-eCommerceCardOne hp-eCommerceCardOne-wishlist"
+                                style="min-height: 350px;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="row mx-0 align-items-start justify-content-between">
+                                                <span
+                                                    class="badge bg-primary-4 hp-bg-dark-primary border-none w-auto py-8 px-16 fw-medium"
+                                                    [ngStyle]="{color:model.productStatus == 'Approved' ? 'green' : 'red'}">{{model.productStatus}}</span>
 
-                                        <div class="d-flex w-auto lh-1 hp-wish-button hp-cursor-pointer hp-bg-color-dark-danger rounded-circle remix-icon p-8" [ngStyle]="{color:model.productStatus == 'Approved' ? 'green' : 'red'}" [ngStyle]="{background:model.productStatus  == 'Approved' ? '#00800061' : '#ff000042'}">
-                                            <i *ngIf="model.productStatus == 'Approved';else correction" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill" style="font-size: 1.2em;"></i>
-                                            <ng-template #correction>
-                                                <i class="hp-text-color-dark-0 ri-2x ri-close-circle-fill" style="font-size: 1.3em;"></i>
-                                            </ng-template>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="text-center mb-24">
-                                        <a [routerLink]="['../../interactive-section',model.articleId,model.clientId,model.version]" (click)="nameLoad(modeler[0].modelerName)" class="d-block">
-                                            <img src="{{staticUrl}}/pngFiles/{{model.articleId}}&&{{model.clientId}}.png" alt="">
-                                        </a>
-                                    </div>
-
-                                    <div class="row justify-content-between">
-                                        <div class="col w-auto">
-                                           QA - {{model.QaTeam}}
-                                        </div>
-
-                                        <div class="col w-auto">
-                                            <div class="row align-items-center text-end">
-                                                <p class="mb-0 text-primary fw-medium">${{model.price}}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 mb-16 mt-16">
-                                        <p class="mb-4 text-black-100 hp-text-color-dark-0 hp-p1-body fw-medium">{{model.productName}}</p>
-                                        <p class="mb-0 hp-caption fw-normal text-black-80 hp-text-color-dark-30">{{model.articleId}}</p>
-                                    </div>
-
-                                    <!-- <div class="row g-8">
-                                        <div class="col-6">
-                                            <div class="input-number w-100">
-                                                <div class="input-number-handler-wrap">
-                                                    <span class="input-number-handler input-number-handler-up">
-                                                        <span class="input-number-handler-up-inner">
-                                                            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
-                                                                <path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-
-                                                    <span class="input-number-handler input-number-handler-down input-number-handler-down-disabled">
-                                                        <span class="input-number-handler-down-inner">
-                                                            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
-                                                                <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-                                                </div>
-
-                                                <div class="input-number-input-wrap">
-                                                    <input class="input-number-input" type="number" min="1" max="10" value="1">
+                                                <div class="d-flex w-auto lh-1 hp-wish-button hp-cursor-pointer hp-bg-color-dark-danger rounded-circle remix-icon p-8"
+                                                    [ngStyle]="{color:model.productStatus == 'Approved' ? 'green' : 'red'}"
+                                                    [ngStyle]="{background:model.productStatus  == 'Approved' ? '#00800061' : '#ff000042'}">
+                                                    <i *ngIf="model.productStatus == 'Approved';else correction"
+                                                        class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"
+                                                        style="font-size: 1.2em;"></i>
+                                                    <ng-template #correction>
+                                                        <i class="hp-text-color-dark-0 ri-2x ri-close-circle-fill"
+                                                            style="font-size: 1.3em;"></i>
+                                                    </ng-template>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-6">
-                                            <a href="app-ecommerce-checkout.html">
-                                                <button class="btn btn-primary px-12 w-100">
-                                                    <i class="ri-shopping-bag-line remix-icon"></i>
-                                                    <span>Go to Cart</span>
-                                                </button>
-                                            </a>
+                                        <div class="col-12">
+                                            <div class="text-center mb-24">
+                                                <a [routerLink]="['../../interactive-section',model.articleId,model.clientId,model.version]"
+                                                    (click)="nameLoad(modeler[0].modelerName)" class="d-block">
+                                                    <img src="{{staticUrl}}/pngFiles/{{model.articleId}}&&{{model.clientId}}.png"
+                                                        alt="">
+                                                </a>
+                                            </div>
+
+                                            <div class="row justify-content-between">
+                                                <div class="col w-auto">
+                                                    QA - {{model.QaTeam}}
+                                                </div>
+
+                                                <div class="col w-auto">
+                                                    <div class="row align-items-center text-end">
+                                                        <p class="mb-0 text-primary fw-medium">${{model.price}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 mb-16 mt-16">
+                                                <p
+                                                    class="mb-4 text-black-100 hp-text-color-dark-0 hp-p1-body fw-medium">
+                                                    {{model.productName}}</p>
+                                                <p
+                                                    class="mb-0 hp-caption fw-normal text-black-80 hp-text-color-dark-30">
+                                                    {{model.articleId}}</p>
+                                            </div>
                                         </div>
-                                    </div> -->
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div> 
                         </ng-container>
-                        
-                    
-                   
-                </div>  
-                    
-                    
+                    </div>
                 </ng-container>
-               
             </div>
         </div>
     </div>

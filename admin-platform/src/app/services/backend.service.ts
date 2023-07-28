@@ -95,8 +95,8 @@ export class BackendService {
     return this.http.get<team>(`${this.url}/modelers/Get`).pipe((catchError(this.erroHandler)))
   }
 
-  assignedPro(products:Array<any>,rollNo:string,clientId:Types.ObjectId,QaRoll:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/assignedProducts/post`,{products,rollNo,clientId,QaRoll}).pipe((catchError(this.erroHandler)))
+  assignedPro(products:Array<any>,rollNo:string,clientId:Types.ObjectId,QaRoll:string,reallocation:boolean):Observable<any>{
+    return this.http.post<any>(`${this.url}/assignedProducts/post`,{products,rollNo,clientId,QaRoll,reallocation}).pipe((catchError(this.erroHandler)))
   }
 
   //Behavior Subject for client name
@@ -355,6 +355,14 @@ export class BackendService {
 
   getAllModelListForModeler(modelerId:string):Observable<any>{
     return this.http.get<any>(`${this.url}/getAllModelListForModeler/${modelerId}`)
+  }
+
+  AgetClientById(clientId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/AgetClientById/get/${clientId}`)
+  }
+
+  editCorrection(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${this.url}/editCorrection/post`,formData);
   }
 }
 

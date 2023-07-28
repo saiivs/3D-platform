@@ -178,7 +178,13 @@ router.post('/createAbout/post',auth.authentication,routeHelper.createAbout);
 router.get('/getQAForProfile/get/:email',auth.authentication,routeHelper.getQAForPofile);
 
 //get all models of a specific modeler
-router.get('/getAllModelListForModeler/:modelerId',auth.authentication,routeHelper.getAllModelListForModeler)
+router.get('/getAllModelListForModeler/:modelerId',auth.authentication,routeHelper.getAllModelListForModeler);
+
+//get the client by id, can be used for only fetching the client
+router.get('/AgetClientById/get/:clientId',auth.authentication,routeHelper.AgetClientById);
+
+//check the edit is enabled or not for correction and update
+router.post('/editCorrection/post',auth.authentication,routeHelper.editCorrection)
 
 
 

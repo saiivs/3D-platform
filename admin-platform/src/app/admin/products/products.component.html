@@ -1,156 +1,134 @@
-
 <div class="hp-main-layout-content">
   <div class="col hp-flex-none w-auto mt-24 mt-sm-0 myclass">
     <div class="row align-items-center mb-4">
-        <div class="w-auto pe-0">
-            <ul class="row g-6">
-                <li class="col hp-flex-none w-auto">
-                    Total Models <span class="text-start hp-caption text-black-80 hp-text-color-dark-30" id="count">{{totalRecords}}</span>
-                </li>
-            </ul>
-        </div>
+      <div class="w-auto pe-0">
+        <ul class="row g-6">
+          <li class="col hp-flex-none w-auto">
+            Total Models <span class="text-start hp-caption text-black-80 hp-text-color-dark-30"
+              id="count">{{totalRecords}}</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
   <div class="row mb-32 gy-32">
-    
     <div class="col-12 col-md-6 col-xl-3">
       <div class="card">
-          <div class="card-body">
-              <div class="row g-16">
-                  <div class="col-6 hp-flex-none w-auto">
-                      <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
-                          <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
-                      </div>
-                  </div>
-
-                  <div class="col">
-                      <h3 class="mb-4 mt-8">{{totalCompletedModels}}<span class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
-                      <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Completed</p>
-                  </div>
+        <div class="card-body">
+          <div class="row g-16">
+            <div class="col-6 hp-flex-none w-auto">
+              <div
+                class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
+                <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
               </div>
-          </div>
-      </div>
-  </div>
-    <div class="col-12 col-md-6 col-xl-3">
-      <div class="card">
-          <div class="card-body">
-              <div class="row g-16">
-                  <div class="col-6 hp-flex-none w-auto">
-                      <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
-                          <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
-                      </div>
-                  </div>
+            </div>
 
-                  <div class="col">
-                      <h3 class="mb-4 mt-8">{{totalCorrectionModels}}<span class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
-                      <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Correction</p>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-    <div class="col-12 col-md-6 col-xl-3">
-      <div class="card">
-          <div class="card-body">
-              <div class="row g-16">
-                  <div class="col-6 hp-flex-none w-auto">
-                      <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
-                          <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
-                      </div>
-                  </div>
-
-                  <div class="col">
-                      <h3 class="mb-4 mt-8">{{totalNotUploaded}}<span class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
-                      <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Total Yet To Start</p>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-    <div class="col-12 col-md-6 col-xl-3">
-      <div class="card">
-          <div class="card-body">
-              <div class="row g-16">
-                  <div class="col-6 hp-flex-none w-auto">
-                      <div class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
-                          <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
-                      </div>
-                  </div>
-
-                  <div class="col">
-                      <h3 class="mb-4 mt-8">{{totalUploadedModels}}<span class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
-                      <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Total Uploaded</p>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-    <!-- <div class="col-12">
-      <div
-        class="hp-bg-black-bg py-32 py-sm-64 px-24 px-sm-48 px-md-80 position-relative overflow-hidden hp-page-content"
-        style="border-radius: 32px">
-        <svg width="358" height="336" fill="none" xmlns="http://www.w3.org/2000/svg"
-          class="position-absolute hp-rtl-scale-x-n1" style="bottom: 0px; right: 0px">
-          <path
-            d="M730.404 135.471 369.675-6.641l88.802 164.001-243.179-98.8 246.364 263.281-329.128-126.619 114.698 166.726-241.68-62.446"
-            stroke="url(#a)" stroke-width="40" stroke-linejoin="bevel"></path>
-          <defs>
-            <linearGradient id="a" x1="315.467" y1="6.875" x2="397.957" y2="337.724" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#fff"></stop>
-              <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-            </linearGradient>
-          </defs>
-        </svg>
-
-        <div class="row">
-          <div class="col-sm-6 col-12">
-            <div class="row">
-              <div class="col-12">
-                <h1 class="mb-0 hp-text-color-black-0">Products</h1>
-                <h4 class="mt-2" style="color: white;">{{clinetName}}</h4>
-              </div>
-              <div class="col-12">
-                <p class="h5 mb-0 mt-24 hp-text-color-black-0">
-                  You can view the list of products and assign them to 3D modelers by using the checkboxes provided in the table.
-                </p>
-              </div>
-
+            <div class="col">
+              <h3 class="mb-4 mt-8">{{totalCompletedModels}}<span
+                  class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
+              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Completed</p>
             </div>
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-16">
+            <div class="col-6 hp-flex-none w-auto">
+              <div
+                class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
+                <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
+              </div>
+            </div>
+
+            <div class="col">
+              <h3 class="mb-4 mt-8">{{totalCorrectionModels}}<span
+                  class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
+              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Correction</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-16">
+            <div class="col-6 hp-flex-none w-auto">
+              <div
+                class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
+                <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
+              </div>
+            </div>
+
+            <div class="col">
+              <h3 class="mb-4 mt-8">{{totalNotUploaded}}<span
+                  class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
+              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Total Yet To Start</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-16">
+            <div class="col-6 hp-flex-none w-auto">
+              <div
+                class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
+                <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
+              </div>
+            </div>
+
+            <div class="col">
+              <h3 class="mb-4 mt-8">{{totalUploadedModels}}<span
+                  class="hp-badge-text ms-8 text-primary hp-text-color-dark-primary-2">Models</span></h3>
+              <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">Total Uploaded</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <div class="row mobDev">
         <div class="col-xs-12 col-lg-3">
-            <div class="btn-group" style="width: 100%;">
+          <div class="btn-group" style="width: 100%;">
 
-                  <button type="button" class="btn btn-default dropdown-toggle" style="background-color: lightgray;"  data-bs-toggle="dropdown">{{ModelerName}}<span class="caret"></span></button>
+            <button type="button" class="btn btn-default dropdown-toggle" style="background-color: lightgray;"
+              data-bs-toggle="dropdown">{{ModelerName}}<span class="caret"></span></button>
 
-                  <ul class="dropdown-menu scrollable-menu" role="menu">
-                      <li *ngFor="let modeler of modelersArr;index as i">
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" [(ngModel)]="modeler.isSelected"   (change)="MultiSelectionModeler(i,modeler.rollNo)"  id="flexCheckChecked" >
-                        <label class="form-check-label" for="flexCheckChecked">
-                          {{modeler.name}}
-                        </label>
-                      </div></li>
-                  </ul>
-              </div>
+            <ul class="dropdown-menu scrollable-menu" role="menu">
+              <li *ngFor="let modeler of modelersArr;index as i">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="modeler.isSelected"
+                    (change)="MultiSelectionModeler(i,modeler.rollNo)" id="flexCheckChecked">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    {{modeler.name}}
+                  </label>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="col-xs-12 col-lg-3">
           <div class="btn-group" style="width: 100%;">
-            <button type="button" class="btn btn-default dropdown-toggle" style="background-color: lightgray;" data-bs-toggle="dropdown">{{QAName}}<span class="caret"></span></button>
+            <button type="button" class="btn btn-default dropdown-toggle" style="background-color: lightgray;"
+              data-bs-toggle="dropdown">{{QAName}}<span class="caret"></span></button>
             <ul class="dropdown-menu scrollable-menu" role="menu">
-                <li *ngFor="let person of QATeamArr;index as i">
-                  <div class="form-check">
-                  <input class="form-check-input" type="checkbox" [(ngModel)]="person.isSelected"   (change)="MultiSelectionQA(i,person.rollNo)"  id="flexCheckChecked" >
+              <li *ngFor="let person of QATeamArr;index as i">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="person.isSelected"
+                    (change)="MultiSelectionQA(i,person.rollNo)" id="flexCheckChecked">
                   <label class="form-check-label" for="flexCheckChecked">
                     {{person.name}}
                   </label>
-                </div></li>
+                </div>
+              </li>
             </ul>
-        </div>
+          </div>
         </div>
         <div class="col-xs-12 col-lg-3">
           <div>
@@ -159,51 +137,52 @@
         </div>
         <div class="col-lg-3">
           <div class="input-group mb-16 addTagBox">
-            <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="Tag Name" aria-label="Tag Name" aria-describedby="button-addon2">
-            <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" (click)="getTagName()" type="button" id="button-addon2">Add tag</button>
+            <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="Tag Name" aria-label="Tag Name"
+              aria-describedby="button-addon2">
+            <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" (click)="getTagName()"
+              type="button" id="button-addon2">Add tag</button>
           </div>
         </div>
       </div>
-      <button type="button" *ngIf="requirementData == ''" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add Special Requirements</button>
-      <a class="btn btn-primary" *ngIf="requirementData != ''" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">View Requirement</a>
+      <button type="button" *ngIf="requirementData == ''" class="btn btn-primary" data-bs-toggle="modal"
+        data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add Special Requirements</button>
+      <a class="btn btn-primary" *ngIf="requirementData != ''" data-bs-toggle="collapse" href="#multiCollapseExample1"
+        role="button" aria-expanded="false" aria-controls="multiCollapseExample1">View Requirement</a>
     </div>
     <div class="modal fade" id="varyingModal" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="varyingModalLabel">Add Requirements</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <form>
-                      <div class="mb-3">
-                          <label for="message-text" class="col-form-label">Requirement:</label>
-                          <textarea class="form-control" (input)="checkValue($event)" #requirement id="message-text"></textarea>
-                      </div>
-                  </form>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
-                  <button type="button" (click)="getRequirement()" [attr.data-bs-dismiss]="canClose ? 'modal' : null" class="btn btn-primary">Submit</button>
-              </div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="varyingModalLabel">Add Requirements</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-      </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <div class="collapse multi-collapse" id="multiCollapseExample1">
-        <div class="card card-body mt-16">
-          <p class="hp-p1-body mb-0">
-            {{requirementData}}
-          </p>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Requirement:</label>
+                <textarea class="form-control" (input)="checkValue($event)" #requirement id="message-text"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
+            <button type="button" (click)="getRequirement()" [attr.data-bs-dismiss]="canClose ? 'modal' : null"
+              class="btn btn-primary">Submit</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
-
-  
-
+    <div class="row">
+      <div class="col">
+        <div class="collapse multi-collapse" id="multiCollapseExample1">
+          <div class="card card-body mt-16">
+            <p class="hp-p1-body mb-0">
+              {{requirementData}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="col-12">
       <div class="card">
         <div class="card-body">
@@ -211,10 +190,14 @@
             <div class="col pe-md-9 pe-md-9 tableHead">
               <h4>Products</h4>
               <div>
-                <p class="hp-p1-body budgetStatus"  style="margin-bottom: 0rem;" *ngIf="updatedBudget == budget">Monthly budget - <span>${{budget}}</span></p>
-                 <p class="hp-p1-body budgetStatus" *ngIf="updatedBudget != budget && updatedBudget < budget" style="margin-bottom: 0rem;">Monthly budget remaining-<span>$  {{updatedBudget}}</span></p>
-                 <p class="hp-p1-body budgetStatus" *ngIf="budgetExceeded" style="margin-bottom: 0rem;">Total Expense-<span>$  {{updatedBudget}}</span></p>
-                 <small *ngIf="budgetExceeded" class="text-danger ">{{budgetExceeded}}</small>
+                <p class="hp-p1-body budgetStatus" style="margin-bottom: 0rem;" *ngIf="updatedBudget == budget">Monthly
+                  budget - <span>€{{budget}}</span></p>
+                <p class="hp-p1-body budgetStatus" *ngIf="updatedBudget != budget && updatedBudget < budget"
+                  style="margin-bottom: 0rem;">Monthly budget remaining-<span>€ {{updatedBudget | number:
+                    '.2-2'}}</span></p>
+                <p class="hp-p1-body budgetStatus" *ngIf="budgetExceeded" style="margin-bottom: 0rem;">Total
+                  Expense-<span>€ {{updatedBudget | number: '.2-2'}}</span></p>
+                <small *ngIf="budgetExceeded" class="text-danger ">{{budgetExceeded}}</small>
               </div>
             </div>
             <ng-template #emptyTable>
@@ -224,32 +207,26 @@
               <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
             </ng-template>
             <div class="table-responsive col-12 mt-16">
-              <table  class="table table-bordered text-center">
+              <table class="table table-bordered text-center">
                 <thead>
                   <tr>
-
                     <th scope="col">
                       <div class="myCheckBox">
-                        <input class="form-check-input" type="checkbox"  [(ngModel)]="masterCheckBox" (change)="checkBoxChange()" id="flexCheckDefault">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="masterCheckBox"
+                          (change)="checkBoxChange()" id="flexCheckDefault">
                         <label class="form-check-label" for="flexCheckDefault">
                           {{selectionText}}
                         </label>
                       </div>
-
                     </th>
                     <th scope="col">Sl No</th>
                     <th scope="col">Article Id</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
-                    
-
                     <th scope="col">Assigned Modeler</th>
-                    
-                    
                     <th scope="col">Assigned QA</th>
                     <th scope="col">Product Status</th>
                     <th scope="col">Preview</th>
-                    
                   </tr>
                 </thead>
                 <tbody>
@@ -264,90 +241,104 @@
                         };
                   let i = index
                 ">
-                <ng-container *ngIf="recieved === ''||(pro.tag.toLowerCase().includes(recieved))||(pro.articleId.toLowerCase().includes(recieved))||(pro.productName.toLowerCase().includes(recieved))">
-                  <td *ngIf="!pro.assigned;else done"><input class="form-check-input" [(ngModel)]="pro.isSelected" type="checkbox" id="flexCheckDefault"></td>
-                    <ng-template #done>
-                      <td><i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill" style="font-size: 1.5em;color: green;"></i></td>
-                    </ng-template>
-                    <td scope="row" >{{(page - 1) * 50 + i + 1}}</td>
-                    <td>
-                      <div>
+                    <ng-container
+                      *ngIf="recieved === ''||(pro.tag.toLowerCase().includes(recieved))||(pro.articleId.toLowerCase().includes(recieved))||(pro.productName.toLowerCase().includes(recieved))">
+                      <td *ngIf="!pro.assigned;else done"><input class="form-check-input" [(ngModel)]="pro.isSelected"
+                          type="checkbox" id="flexCheckDefault"></td>
+                      <ng-template #done>
+                        <td>
+                          <div class="reallocateContainer">
+                            <i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"
+                              style="font-size: 1.5em;color: green;"></i>
+                            <p class="hp-badge-text" (click)="reallocateModel(i)"
+                              style="color: #0010f7;cursor: pointer;">Reallocate</p>
+                          </div>
+                        </td>
+                      </ng-template>
+                      <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
+                      <td>
                         <div>
-                          {{pro.articleId}}
+                          <div>
+                            {{pro.articleId}}
+                          </div>
+                          <div class="dropdown">
+                            <a class="dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink"
+                              data-bs-toggle="dropdown" aria-expanded="false">
+                              {{tagNameDrpdown[(page - 1) * 50 + i]}}
+                            </a>
+                            <ul class="dropdown-menu scrollable-dropdown" aria-labelledby="dropdownMenuLink">
+                              <ng-container *ngIf="tagList.length != 0;else notags">
+                                <li *ngFor="let tag of tagList;" (click)="addTag(i,tag.tagName,pro.articleId)"><a
+                                    class="dropdown-item">{{tag.tagName}}</a></li>
+                              </ng-container>
+                              <ng-template #notags>
+                                <li><a class="dropdown-item text-danger text-center">No tags</a></li>
+                              </ng-template>
+                            </ul>
+                          </div>
                         </div>
-                        <div class="dropdown">
-                          <a class="dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{tagNameDrpdown[(page - 1) * 6 + i]}}
-                          </a>
-                        
-                          <ul class="dropdown-menu scrollable-dropdown" aria-labelledby="dropdownMenuLink">
-                            <ng-container *ngIf="tagList.length != 0;else notags">
-                              <li  *ngFor="let tag of tagList;" (click)="addTag(i,tag.tagName,pro.articleId)"><a class="dropdown-item"  >{{tag.tagName}}</a></li>
-                            </ng-container>
-                            <ng-template #notags>
-                              <li><a class="dropdown-item text-danger text-center">No tags</a></li>
-                            </ng-template> 
-                          </ul>
+                      </td>
+                      <td>
+                        <div>
+                          <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above">
+                            {{pro.productName}}</div>
+                          <div *ngIf="!pro.Reff;else ReffUrl" (click)="getRefference(i,pro.articleId,pro.productName)">
+                            <i matTooltip="Add Refference" matTooltipPosition="below"
+                              class="hp-text-color-dark-0 ri-2x ri-upload-cloud-2-fill" style="font-size: 1.3rem;"></i>
+                          </div>
+                          <ng-template #ReffUrl>
+                            <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click here</a></div>
+                          </ng-template>
                         </div>
-                        
-                      </div>
-
-                      
-                    </td>
-                    <td>
-                      <div>
-                        <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
-                        <div *ngIf="!pro.Reff;else ReffUrl" (click)="getRefference(i,pro.articleId,pro.productName)"><i matTooltip="Add Refference" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-upload-cloud-2-fill" style="font-size: 1.3rem;"></i></div> 
-                        <ng-template #ReffUrl>
-                          <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click here</a></div>
+                      </td>
+                      <td *ngIf="pro.productLink;else noLink"><a target="_blank" href="{{pro.productLink}}"
+                          style="cursor: pointer;">Click here</a>
+                      </td>
+                      <ng-template #noLink>
+                        <td class="text-danger">NO LINK</td>
+                      </ng-template>
+                      <td *ngIf="pro.assigned;else notAssigned" style="color: rgb(39, 146, 55);font-weight: bold;">
+                        <span *ngIf="pro.price == '';else price">
+                          {{pro.assigned}}-<span *ngIf="!pro.priceAdded;else addPrice" (click)="addBtnFn(i)"
+                            class="text-primary addPrice">ADD €</span>
+                        </span>
+                        <ng-template #addPrice>
+                          <div class="input-number-input-wrap" *ngIf="pro.priceAdded;else price">
+                            <input class="input-number-input" #priceValue type="number" min="1" max="10" value="1">
+                            <button class="myAddBtn"
+                              (click)="getPrice(priceValue.value,pro.articleId,pro.modRollno,i)">Add</button>
+                          </div>
                         </ng-template>
-                        
-                    </div>
-                  </td>
-                    <td *ngIf="pro.productLink;else noLink"><a target="_blank" href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
-                    </td>
-                    
-                    <ng-template #noLink>
-                      <td class="text-danger">NO LINK</td>
-                    </ng-template>
-                    <td *ngIf="pro.assigned;else notAssigned" style="color: rgb(39, 146, 55);font-weight: bold;">
-                      <span *ngIf="pro.price == '';else price">
-                        {{pro.assigned}}-<span *ngIf="!pro.priceAdded;else addPrice" (click)="addBtnFn(i)" class="text-primary addPrice" >ADD $</span>
-                      </span>
-                      <ng-template #addPrice >
-                        <div class="input-number-input-wrap" *ngIf="pro.priceAdded;else price">
-                          <input class="input-number-input"   #priceValue  type="number" min="1" max="10" value="1">
-                          <button class="myAddBtn" (click)="getPrice(priceValue.value,pro.articleId,pro.modRollno,i)">Add</button>
-                      </div>
+                        <ng-template #price>
+                          {{pro.assigned}}-<span (click)="EditPrice(i)" matTooltip="edit price"
+                            matTooltipPosition="below" class="text-primary editPrice"><span>€</span>{{pro.price}}</span>
+                        </ng-template>
+                      </td>
+                      <td *ngIf="pro.QaTeam;else notAssigned" style="color: rgb(39, 146, 55);font-weight: bold;">
+                        {{pro.QaTeam}}</td>
+                      <ng-template #notAssigned>
+                        <td class="text-danger">Not Assigned</td>
                       </ng-template>
-                      <ng-template #price>
-                        {{pro.assigned}}-<span (click)="EditPrice(i)" matTooltip="edit price" matTooltipPosition="below" class="text-primary editPrice"><span>$</span>{{pro.price}}</span>
+                      <td *ngIf="pro.productStatus == 'Not uploaded';else notApproved" class="text-danger">
+                        {{pro.productStatus}}</td>
+                      <ng-template #notApproved>
+                        <td
+                          [ngStyle]="{color : pro.productStatus != 'Approved' ? 'rgb(255, 157, 0)' : 'rgb(39, 146, 55)'}"
+                          style="font-weight: bold;">{{pro.productStatus}}</td>
                       </ng-template>
-                      
-                    </td>
-                    
-                    
-                    <td *ngIf="pro.QaTeam;else notAssigned" style="color: rgb(39, 146, 55);font-weight: bold;">{{pro.QaTeam}}</td>
-                    <ng-template #notAssigned>
-                      <td class="text-danger">Not Assigned</td>
-                    </ng-template>
-                    <td *ngIf="pro.productStatus == 'Not uploaded';else notApproved" class="text-danger">{{pro.productStatus}}</td>
-                    <ng-template #notApproved>
-                      <td [ngStyle]="{color : pro.productStatus != 'Approved' ? 'rgb(255, 157, 0)' : 'rgb(39, 146, 55)'}" style="font-weight: bold;">{{pro.productStatus}}</td>
-                    </ng-template>
-                    <td>
-                      <button class="btn btn-sm btn-outline-primary" *ngIf="pro.productStatus != 'Not uploaded';else NoData">
-                        <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]"
-                          >View model</a>
-                      </button>
-                      <ng-template #NoData>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary"
+                          *ngIf="pro.productStatus != 'Not uploaded';else NoData">
+                          <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover"
+                            [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]">View model</a>
+                        </button>
+                        <ng-template #NoData>
                           <button class="btn btn-sm btn-danger">
-                          <a  style="color:white"
-                            >No Data</a>
-                        </button>  
-                      </ng-template>
-                    </td>
-                </ng-container> 
+                            <a style="color:white">No Data</a>
+                          </button>
+                        </ng-template>
+                      </td>
+                    </ng-container>
                   </tr>
                 </tbody>
               </table>

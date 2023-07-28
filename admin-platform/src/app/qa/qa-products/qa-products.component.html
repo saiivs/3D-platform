@@ -1,6 +1,20 @@
 
 <div class="hp-main-layout-content">
   <div class="row mb-32 gy-32">
+    <div class="col-6">
+      <a class="btn btn-primary" *ngIf="clientRequirement"  data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">View Requirement</a>
+    </div> 
+    <div class="row">
+      <div class="col">
+        <div class="collapse multi-collapse" id="multiCollapseExample1">
+          <div class="card card-body mt-16">
+            <p class="hp-p1-body mb-0">
+              {{clientRequirement}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- <div class="col-12">
       <div
         class="hp-bg-black-bg py-32 py-sm-64 px-24 px-sm-48 px-md-80 position-relative overflow-hidden hp-page-content"
@@ -61,6 +75,7 @@
                     <th scope="col">Article Id</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Product Status</th>
                     <th scope="col">Preview</th>
                     <th scope="col">Admin Status</th>
@@ -77,8 +92,8 @@
                     <td scope="row">{{i+1}}</td>
                     <td>{{pro.articleId}}</td>
                     <td>
-                      <div>
-                      <div>{{pro.productName}}</div>
+                      <div class="modalNameContainer">
+                      <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
                       <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
                       </div>
                       
@@ -87,6 +102,7 @@
                     <ng-template #noLink>
                       <td class="text-danger">NO LINK</td>
                     </ng-template>
+                    <td>€ {{pro.price}}</td>
                     <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
                     <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                     <td >
@@ -98,10 +114,7 @@
                     <ng-template #NoData>
                         <p class="NoData" style="font-weight: 600;color: red;">
                            No Data
-                        </p>
-                       
-                     
-                      
+                        </p>  
                     </ng-template>
                     <td [ngStyle]="{color : pro.adminStatus == 'Approved' ? 'green':'red', 'font-weight' : 600}">
                       {{pro.adminStatus}}

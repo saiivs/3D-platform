@@ -58,18 +58,20 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     let polygonWarng;
     let extnsWrng;
     let imgHieghtWrng;
-    if(modelData.info.totalTriangleCount > 150000){
+    let invalidModel;
+    if(modelData?.info?.totalTriangleCount > 150000){
        polygonWarng = `Polygon Count Exceeded`
     }
+    if(!modelData.info.totalTriangleCount) invalidModel = `Invalid model detected`
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Png files used`
+        if(format == 'png') extnsWrng =`png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
-    if(polygonWarng || extnsWrng || imgHieghtWrng){
-      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng].filter(Boolean).join(', ');
+    if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){
+      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng, invalidModel].filter(Boolean).join(', ');
       localStorage.setItem("ModelWarning",this.warningMsg);
     }else{
       localStorage.removeItem("ModelWarning");
@@ -103,10 +105,10 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
           this.flag = false;
         }
         const regex = /[^a-zA-Z0-9]/g;
-        let clientName = this.clientDetails[0].clientName.replace(regex,"_")
-        console.log({clientName});
+        this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
         
-        this.srcFile = `${environment.staticUrl}/models/${clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
+        
+        this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -222,14 +224,14 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   downloadFile(articleId:string){
     let link = document.createElement('a');
     link.download = `file.zip`
-    link.href = `${environment.staticUrl}/models/${articleId}&&${this.clientId}.glb`;
+    link.href = `${environment.staticUrl}/models/${this.clientName}/${articleId}/version-${this.version}/${articleId}.glb`;
     link.target = '_blank';
     link.click()
   }
 
   fullScreenMode(){
     try {
-      this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientId]);
+      this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientId,this.version]);
     } catch (error) {
       console.log(error);  
     } 

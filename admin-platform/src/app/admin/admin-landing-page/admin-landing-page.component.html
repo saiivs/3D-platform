@@ -1,4 +1,3 @@
-
 <div class="hp-main-layout-content">
   <div class="row mb-32 gy-32">
     <div class="col-12">
@@ -36,11 +35,10 @@
               <div>
                 <ng-container>
                   <p class="text-white hp-p1-body " *ngIf="budget != 0">Monthly Budget - ${{budget}}</p>
-                  <input  type="text" placeholder="$" class="text-center budgetInput" #budgetPrice>
-                  <button class="btn btn-sm btn-primary" (click)="addBudget()" style="margin-left: 4px;">Add Budget</button>
+                  <input type="text" placeholder="$" class="text-center budgetInput" #budgetPrice>
+                  <button class="btn btn-sm btn-primary" (click)="addBudget()" style="margin-left: 4px;">Add
+                    Budget</button>
                 </ng-container>
-                
-                
               </div>
             </div>
           </div>
@@ -53,7 +51,6 @@
           <div class="row justify-content-between">
             <div class="col pe-md-32 pe-md-120" *ngIf="clientTableData.length != 0; else emptyTable">
               <h4>Client Details</h4>
-
               <p class="hp-p1-body">
                 You can view a specific client's product list by clicking the
                 'view' button in the table below, which provides details about
@@ -65,9 +62,8 @@
                 No data to view. Try adding a new client.
               </p>
               <div class="emptyImg">
-                <img  src="assets/myImg/empty-folder.png" alt="empty" />
+                <img src="assets/myImg/empty-folder.png" alt="empty" />
               </div>
-
             </ng-template>
 
             <div class="table-responsive col-12 mt-16">
@@ -101,32 +97,39 @@
                     <td>{{ client.clientName }}</td>
                     <td>{{ client.productCount }}</td>
                     <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.per }}%</td>
-                    <td><div class="dropdown" *ngIf="client.account_Manager == '';else manager">
-                      <a class="btn btn-primary dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                        Add
-                      </a>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li><a class="dropdown-item" href="javascript:;" (click)="AddManager('Emil',client._id,i)">Emil</a></li>
-                        <li><a class="dropdown-item" href="javascript:;" (click)="AddManager('Carl',client._id,i)">Carl</a></li>
-                        <li><a class="dropdown-item" href="javascript:;" (click)="AddManager('Lukas',client._id,i)">Lukas</a></li>
-                       
-                      </ul>
-                    </div>
-                    <ng-template #manager>
-                      <strong>{{client.account_Manager}}</strong>  
-                    </ng-template>
+                    <td>
+                      <div class="dropdown" *ngIf="client.account_Manager == '';else manager">
+                        <a class="btn btn-primary dropdown-toggle" href="javascript:;" role="button"
+                          id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                          Add
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                          <li><a class="dropdown-item" href="javascript:;"
+                              (click)="AddManager('Emil',client._id,i)">Emil</a></li>
+                          <li><a class="dropdown-item" href="javascript:;"
+                              (click)="AddManager('Carl',client._id,i)">Carl</a></li>
+                          <li><a class="dropdown-item" href="javascript:;"
+                              (click)="AddManager('Lukas',client._id,i)">Lukas</a></li>
+                        </ul>
+                      </div>
+                      <ng-template #manager>
+                        <strong>{{client.account_Manager}}</strong>
+                      </ng-template>
                     </td>
                     <td>
                       <button class="btn btn-sm btn-outline-primary">
-                        <a class="myhover" (click)="sendClientName(client.clientName)" [routerLink]="['products',client._id]"
-                          >View Here</a>
+                        <a class="myhover" (click)="sendClientName(client.clientName)"
+                          [routerLink]="['products',client._id]">View Here</a>
                       </button>
                     </td>
-                    <td><input *ngIf="client.project_deadline ==  '';else proDeadline" type="date" name="" class="calenderClass" id="project" (input)="setProjectDeadline($event,client._id)">
-                    <ng-template #proDeadline>
-                      {{client.project_deadline}}
-                    </ng-template></td>
-                    <td><input *ngIf="client.internal_deadline == '';else internalDeadline" type="date" name="" class="calenderClass" id="internal" (input)="setInternalDeadline($event,client._id)">
+                    <td><input *ngIf="client.project_deadline ==  '';else proDeadline" type="date" name=""
+                        class="calenderClass" id="project" (input)="setProjectDeadline($event,client._id)">
+                      <ng-template #proDeadline>
+                        {{client.project_deadline}}
+                      </ng-template>
+                    </td>
+                    <td><input *ngIf="client.internal_deadline == '';else internalDeadline" type="date" name=""
+                        class="calenderClass" id="internal" (input)="setInternalDeadline($event,client._id)">
                       <ng-template #internalDeadline>
                         {{client.internal_deadline}}
                       </ng-template>
@@ -135,15 +138,15 @@
                 </tbody>
               </table>
               <div>
-                <pagination-controls *ngIf="clientTableData.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
-                  (pageChange)="page = $event"></pagination-controls>
+                <pagination-controls *ngIf="clientTableData.length != 0;" id="listing_pagination" [maxSize]="5"
+                  [directionLinks]="true" (pageChange)="page = $event"></pagination-controls>
               </div>
             </div>
 
             <div class="col-12 mt-24 hljs-container">
               <pre>
-        <code class="html" data-component='table' data-code='overview'></code>
-    </pre>
+                <code class="html" data-component='table' data-code='overview'></code>
+              </pre>
             </div>
           </div>
         </div>

@@ -18,6 +18,11 @@
   cursor: pointer;
 }
 
+.reallocateContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
 
 .assignBtn{
   display: flex;

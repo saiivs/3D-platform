@@ -99,11 +99,6 @@ createCorrection()
   this.setTabPanelInvokeEvent.emit()
   this.noCorrectionForm = !this.noCorrectionForm
   this.backEndService.updateHotspotCorrectionImg(formData).subscribe(()=>{
-    })
-  
-  
+    }) 
 }
-
-
-
 }

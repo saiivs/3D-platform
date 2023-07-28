@@ -20,3 +20,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     justify-content: center;
     align-items: center;
   }
+
+  @media(min-width : 2560px){
+    .hp-main-layout-content{
+      max-width: 100%;
+      width: 100%;
+    }
+  }

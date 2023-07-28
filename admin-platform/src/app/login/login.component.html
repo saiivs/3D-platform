@@ -67,20 +67,6 @@
                       <input type="password" class="form-control" id="loginPassword" formControlName="password" placeholder="*****">
                       <small class="text-danger" *ngIf="!reactiveForm.get('password')?.valid&&reactiveForm.get('password')?.touched">Required</small>
                   </div>
-
-                  <!-- <div class="row align-items-center justify-content-between mb-16">
-                      <div class="col hp-flex-none w-auto">
-                          <div class="form-check">
-                              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                              <label class="form-check-label ps-4" for="exampleCheck1">Remember me</label>
-                          </div>
-                      </div>
-
-                      <div class="col hp-flex-none w-auto">
-                          <a class="hp-button text-black-80 hp-text-color-dark-40" href="auth-recover.html">Forgot Password?</a>
-                      </div>
-                  </div> -->
-
                   <button type="submit" class="btn btn-primary w-100" [disabled]="!reactiveForm.valid">
                      LOGIN
                   </button>

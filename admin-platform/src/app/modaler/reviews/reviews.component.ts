@@ -50,7 +50,8 @@ export class ReviewsComponent implements OnInit,OnDestroy{
 
   // functions
   validateGlbFile(data:any){
-    let modelData = data.gltfData;
+    try {
+      let modelData = data.gltfData;
     function getFileExtension(fileName:string) {
       const extension = fileName.substring(fileName.lastIndexOf('/') + 1).toLowerCase();
       return extension;
@@ -58,22 +59,32 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     let polygonWarng;
     let extnsWrng;
     let imgHieghtWrng;
-    if(modelData.info.totalTriangleCount > 150000){
+    let invalidModel;
+    console.log(modelData?.info?.totalTriangleCount);
+    
+    if(modelData?.info?.totalTriangleCount > 150000){
        polygonWarng = `Polygon Count Exceeded`
     }
-    modelData.info.resources.forEach((obj:any) =>{
+    if(!modelData?.info?.totalTriangleCount) invalidModel =`Invalid model detected`
+    modelData?.info?.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`Png files used`
+        if(format == 'png') extnsWrng =`png files used`
         if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
       }
     })
-    if(polygonWarng || extnsWrng || imgHieghtWrng){
-      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng].filter(Boolean).join(', ');
+    if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){ 
+      this.warningMsg = [polygonWarng, extnsWrng, imgHieghtWrng, invalidModel].filter(Boolean).join(', ');
       localStorage.setItem("ModelWarning",this.warningMsg);
     }else{
       localStorage.removeItem("ModelWarning");
     }
+    } catch (error) {
+      console.log(error);
+
+      
+    }
+    
   }
 
   ngOnInit() {
@@ -91,16 +102,16 @@ export class ReviewsComponent implements OnInit,OnDestroy{
           this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
             if(obj.articleId == this.articleId) return obj
           })
-          this.polygonCount = data.gltfData.info.totalTriangleCount;
+          this.polygonCount = data.gltfData?.info?.totalTriangleCount;
           this.QaCommentArr = [...data.Arr]
           
           if(this.QaCommentArr[0]?.comments.length == 0){
             this.flag = false;
           }
           const regex = /[^a-zA-Z0-9]/g;
-          let clinetName = this.clientDetails[0].clientName.replace(regex,"_")
+           this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
           const cacheBuster = new Date().getTime();
-          this.srcFile = `${environment.staticUrl}/models/${clinetName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb?cache=${cacheBuster}`
+          this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb?cache=${cacheBuster}`
           this.QaCommentArr[0]?.comments.forEach((message: any) => {
             const conDate = new Date(message.date)
             const date = new Date(conDate).toLocaleDateString('en-GB');

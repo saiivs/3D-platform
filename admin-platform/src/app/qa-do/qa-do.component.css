@@ -63,7 +63,7 @@ model-viewer {
   :host /deep/ mat-tab-header {
     margin-bottom: 1rem;
   }
-
+  
   .imageEnlarge:hover{
     cursor: pointer;
   }
@@ -87,6 +87,30 @@ model-viewer {
   .EditCorrection:hover{
     cursor: pointer;
   }
+
+  .editContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+  }
+
+  .listContainer{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-around;
+    gap: 1rem;
+}
+
+.listContainer{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.editUl{
+  width: 100%;
+}
 
   
 

@@ -1,49 +1,48 @@
-.myborder{
-    border: 1px solid #b2bec3;
-  }
+.myborder {
+  border: 1px solid #b2bec3;
+}
 
-  .onHover:hover{
-    cursor: pointer;
-  }
+.onHover:hover {
+  cursor: pointer;
+}
 
-  .active{
-    border:2px solid blue!important;
-  }
+.active {
+  border: 2px solid blue !important;
+}
 
-  .empty{
-    width: 5rem;
-    height: 5rem;
-  }
-  
-  .emptyContainer{
-    text-align: center;
-  }
+.empty {
+  width: 5rem;
+  height: 5rem;
+}
 
-  .uploadRefe{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 3rem;
-  }
+.emptyContainer {
+  text-align: center;
+}
 
-  .myPagination{
-    margin-top: 1rem;
-  }
+.uploadRefe {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 3rem;
+}
 
-  .uploadRefe span {
-    font-weight: 500;
-  }
-  
-  .inspectInfo {
-    margin-top: 2.5rem;
-  }
-  
-  ul, ol {
-    list-style: initial;
-  }
+.myPagination {
+  margin-top: 1rem;
+}
 
-  .thumbPos{
-    height: 25rem;
-  }
+.uploadRefe span {
+  font-weight: 500;
+}
 
-  
+.inspectInfo {
+  margin-top: 2.5rem;
+}
+
+ul,
+ol {
+  list-style: initial;
+}
+
+.thumbPos {
+  height: 25rem;
+}

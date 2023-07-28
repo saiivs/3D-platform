@@ -8,40 +8,40 @@ import { BackendService } from 'src/app/services/backend.service';
   templateUrl: './admin-modeler-profile.component.html',
   styleUrls: ['./admin-modeler-profile.component.css']
 })
-export class AdminModelerProfileComponent implements OnInit{
+export class AdminModelerProfileComponent implements OnInit {
 
-  constructor(private backEndService:BackendService,private route:ActivatedRoute){};
+  constructor(private backEndService: BackendService, private route: ActivatedRoute) { };
 
-  userData: userInfo = { email: '', name: '', password: '', role: '', phone: '', address: '', about: "" , aboutStatus:false};
-  bankInfo:any = {};
-  aboutTxt:string = "";
-  modeler:any = {};
-  modelerEmail:string = ""
+  userData: userInfo = { email: '', name: '', password: '', role: '', phone: '', address: '', about: "", aboutStatus: false };
+  bankInfo: any = {};
+  aboutTxt: string = "";
+  modeler: any = {};
+  modelerEmail: string = ""
 
 
   ngOnInit(): void {
     this.modelerEmail = this.route.snapshot.params["email"]
-    this.backEndService.getUserDetailsForProfile(this.modelerEmail).subscribe((res)=>{
-      if(res){
+    this.backEndService.getUserDetailsForProfile(this.modelerEmail).subscribe((res) => {
+      if (res) {
         this.userData = res.userData;
         this.modeler = res.modeler;
-        if(!this.modeler?.about){
+        if (!this.modeler?.about) {
           this.userData.aboutStatus = false
-        }else{
+        } else {
           this.userData.about = this.modeler.about;
         }
         this.bankInfo = res.data ? res.data : false;
-      }else{
-        
-      }  
+      } else {
+
+      }
     })
   }
 
-  getAboutTxt(){
-    if(this.aboutTxt != ""){
+  getAboutTxt() {
+    if (this.aboutTxt != "") {
       this.userData.about = this.aboutTxt;
       this.userData.aboutStatus = false;
-      this.backEndService.createAboutforModeler(this.modelerEmail,this.aboutTxt).subscribe(()=>{})
+      this.backEndService.createAboutforModeler(this.modelerEmail, this.aboutTxt).subscribe(() => { })
     }
   }
 }
