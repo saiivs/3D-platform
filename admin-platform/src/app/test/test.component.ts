@@ -16,23 +16,27 @@ export class TestComponent implements OnChanges {
   thumbnailHeight:number = 400;
   thumbnailWidth:number = 400;
   @Input() intitialImgTest="";
+  fullScreenThumb:string = "";
+  tempThumbHolder:string = "";
   maxThumbnailSize:number = 400;
+  horizontalThumbValue:number = 500;
+  potraitThumbValue:number = 400;
 
-  imgType(originalHeight:number,originalWidth:number,maxThumbnailSize:number){
+  imgType(originalHeight:number,originalWidth:number,horizontal:number,potrait:number,maximum:number){
     let thumbnailWidth: number;
     let thumbnailHeight: number;
 
   if (originalWidth > originalHeight) {
    
     thumbnailWidth = 500;
-    thumbnailHeight = Math.round((originalHeight / originalWidth) * 500);
+    thumbnailHeight = Math.round((originalHeight / originalWidth) * horizontal);
   } else if (originalHeight > originalWidth) {
     // Portrait image
-    thumbnailWidth = Math.round((originalWidth / originalHeight) * 400);
+    thumbnailWidth = Math.round((originalWidth / originalHeight) * potrait);
     thumbnailHeight = 400;
   } else {
     // Square image
-    thumbnailWidth = thumbnailHeight = maxThumbnailSize;
+    thumbnailWidth = thumbnailHeight = maximum;
   }
 
   return { width: thumbnailWidth, height: thumbnailHeight };
@@ -40,10 +44,10 @@ export class TestComponent implements OnChanges {
     }
 
   ngOnChanges(changes: SimpleChanges): void {
-    
-    const image = new Image();
-    image.crossOrigin="anonymous";
     if(this.intitialImgTest != ""){
+      const image = new Image();
+    image.crossOrigin="anonymous";
+  
       console.log(this.intitialImgTest);
       
     this.myFullresImage = this.intitialImgTest;
@@ -51,7 +55,7 @@ export class TestComponent implements OnChanges {
     let canvas = document.createElement('canvas');
     image.onload = ()=> {
       // Set the canvas dimensions to match the thumbnail size
-      let imgRes = this.imgType(image.height,image.width,this.maxThumbnailSize);
+      let imgRes = this.imgType(image.height,image.width,this.horizontalThumbValue,this.potraitThumbValue,this.maxThumbnailSize);
       console.log({imgRes});
       
 
@@ -67,9 +71,44 @@ export class TestComponent implements OnChanges {
       ctx.drawImage(image, 0, 0, imgRes.width, imgRes.height);  
       let thumbnailDataURL = canvas.toDataURL('image/jpeg');
       this.myThumbnail = thumbnailDataURL;
+     
       }
     }
-    };
+    }
+    
+  }
+
+  setThumbnail(potrait:number,horizontal:number,maximum:number){
+    const image = new Image();
+    image.crossOrigin="anonymous";
+  
+      console.log(this.intitialImgTest);
+      
+    this.myFullresImage = this.intitialImgTest;
+    image.src = this.intitialImgTest
+    let canvas = document.createElement('canvas');
+    image.onload = ()=> {
+      // Set the canvas dimensions to match the thumbnail size
+      let imgRes = this.imgType(image.height,image.width,horizontal,potrait,maximum);
+      console.log({imgRes});
+      
+
+      canvas.width = imgRes.width;
+      canvas.height = imgRes.height;
+    
+      // Get the 2D rendering context of the canvas
+      let ctx = canvas.getContext('2d');
+    
+      if(ctx){
+        console.log("drawn");
+        
+      ctx.drawImage(image, 0, 0, imgRes.width, imgRes.height);  
+      let thumbnailDataURL = canvas.toDataURL('image/jpeg');
+      this.tempThumbHolder = this.myThumbnail;
+       this.myThumbnail = thumbnailDataURL; 
+      }
+    }
+    
   }
 
   adjustImg(){
@@ -91,6 +130,14 @@ export class TestComponent implements OnChanges {
     this.renderer.setStyle(ngxEle,'width','400px');
     this.renderer.setStyle(ngxEle,'height','400px');
     this.renderer.setStyle(thumbImg,'height','25rem')
+  }
+
+  setFullScreenThumbnail(status:boolean){
+    if(status){
+      this.setThumbnail(600,600,600)
+    }else{
+      this.myThumbnail = this.tempThumbHolder;
+    }
   }
   
 }

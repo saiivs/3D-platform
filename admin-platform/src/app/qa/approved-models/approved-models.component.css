@@ -1,0 +1,115 @@
+.searchContainer{
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .myCheckBox{
+    display: flex;
+    justify-content: center;
+    column-gap: 0.5rem;
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+}
+
+.text-with-dots {
+  width: 150px; /* Set the desired width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.reallocateContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.assignBtn{
+  display: flex;
+  column-gap: 2rem;
+}
+
+.myhover{
+  cursor: pointer;
+  
+}
+.myhover:hover{
+  color: white;
+}
+@media only screen and (max-width: 913px){
+  .mobDev{
+    row-gap: 1rem;
+  }
+}
+
+.myclass{
+  padding-left: 8px;
+  padding-bottom: 8px;
+}
+
+#count{
+  font-size: 19px;
+}
+
+.addPrice{
+  cursor: pointer;
+}
+
+.myAddBtn{
+  margin-left: 3px;
+  border-radius: 3px;
+  background: #0010f7;
+  border: none;
+  color: white;
+}
+
+.my-swal-title {
+  font-size: 1rem !important;
+}
+
+.budgetStatus{
+  text-align: end;
+  padding-right: 6px;
+}
+
+.budgetStatus span {
+  font-size: x-large;
+}
+
+.tableHead{
+  display: flex;
+  justify-content: space-between;
+}
+
+.editPrice{
+  cursor: pointer;
+}
+
+.addTagBox{
+  margin-left: auto;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+
+.scrollable-dropdown{
+  height: auto;
+  max-height: 200px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden;
+  min-width: 7rem;
+}
+
+
+
+
+
+
+

@@ -27,9 +27,13 @@ export class AllModelsComponent implements OnInit{
   ngOnInit(){
     this.modelerId = this.route.snapshot.params[('modelerId')];
     this.searchService.checkUrlForSearchBtn(true);
-    this.backEndService.getAllModelsOfModeler(this.modelerId).subscribe((res)=>{      
+    this.backEndService.getAllModelsOfModeler(this.modelerId).subscribe((res)=>{   
+      console.log(res);
+         
       this.modeler = [...res];
-      this.models = [...res[0].models]; 
+      this.modeler[0].models.forEach((client:any)=>{
+        this.models = [...client.models]
+      })
       console.log(this.models);
       
     }) 

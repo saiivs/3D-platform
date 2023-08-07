@@ -35,36 +35,60 @@ export class InvoiceComponent implements OnInit{
   ngOnInit() {
     this.invoiceNumber = `#${this.curDate.getTime()}-${Math.random().toString(36).substring(2, 7)}-${localStorage.getItem('rollNo')}`
     this.backEnd.generateInvoice(localStorage.getItem('rollNo')).subscribe((res)=>{
+      
+      
       this.modelerObjectId = res[0]._id
       this.modelerName = res[0].modelerName;
-      this.clients = res[0].clientDetails;
+      // this.clients = res[0].clientDetails;
       this.approvedModels = res[0].models;
       this.bankDetails = res[0].bankDetails;
 
-      
-      this.approvedModels = this.approvedModels.filter(obj =>{
-        this.totalPrice += obj.productStatus == 'Approved' ? obj.price : this.totalPrice;
-        return obj.productStatus == 'Approved'
-      });
-      this.clients.forEach((client)=>{
-        let name = ""
-       for(let model of this.approvedModels){
-        this.subTotal += model.price;
-        if(model.clientId == client._id){
-          if(name != client.clientName){
-            model.clientName = client.clientName;
-            name = client.clientName;
+      this.approvedModels.forEach((client)=>{
+        client.models = client.models.filter((model:any)=>{
+          this.totalPrice += model.productStatus == 'Approved' ? model.price : 0;
+          return model.productStatus == 'Approved'
+        })
+        if(client.complete){
+          let completeDate = new Date(client.completeDate);
+          let deadLineOne = new Date(client.deadLineOne);
+          let deadLineTwo = new Date(client.deadLineTwo);
+          if(completeDate<=deadLineOne){
+            client.bonus = 30;
+          }else if(completeDate <= deadLineTwo){
+            client.bonus = 50;
           }else{
-            model.clientName = ""
-          } 
-        } 
-       }
+            console.log("no bonus");
+            client.bonus = 0;
+          }
+        }else{
+          client.bonus = 0;
+        }
+        if(client.bonus != 0){
+          let percentageAmount = this.totalPrice * (client.bonus/100);
+          console.log(percentageAmount);
+          this.bonus += percentageAmount;
+        }
+
       })
+      // this.clients.forEach((client)=>{
+      //   let name = ""
+      //  for(let model of this.approvedModels){
+      //   this.subTotal += model.price;
+      //   if(model.clientId == client._id){
+      //     if(name != client.clientName){
+      //       model.clientName = client.clientName;
+      //       name = client.clientName;
+      //     }else{
+      //       model.clientName = ""
+      //     } 
+      //   } 
+      //  }
+      // })
     })
   }
 
   getSubTotalWithBonus(){
-    return this.subTotal + this.bonus;
+    return this.totalPrice + this.bonus;
   }
 
   @ViewChild('invoiceContent') content!:ElementRef;

@@ -33,7 +33,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let modelObj of modelList | paginate
+                  <ng-container *ngFor="let modeler of modelList">
+                    <ng-container *ngFor="let client of modeler.models">
+                       <tr *ngFor="let modelObj of client.models | paginate
                     : {
                         id: 'listing_pagination',
                         itemsPerPage: 6,
@@ -41,39 +43,39 @@
                         totalItems: totalRecords
                       };let i = index">
                     <ng-container
-                      *ngIf="serachForModel == ''||(modelObj.models?.tag.toLowerCase().includes(serachForModel))||(modelObj.models?.articleId.toLowerCase().includes(serachForModel))||(modelObj.models?.productName.toLowerCase().includes(serachForModel))">
+                      *ngIf="serachForModel == ''||(modelObj?.tag.toLowerCase().includes(serachForModel))||(modelObj?.articleId.toLowerCase().includes(serachForModel))||(modelObj?.productName.toLowerCase().includes(serachForModel))">
                       <td scope="row">{{i+1}}</td>
-                      <td>{{modelObj.clientData.clientName}}</td>
-                      <td>{{modelObj.models.articleId}}</td>
+                      <td>{{client.clientDetails.clientName}}</td>
+                      <td>{{modelObj.articleId}}</td>
                       <td>
                         <div class="modalNameContainer">
-                          <div class="text-with-dots" matTooltip="{{modelObj.models.productName}}"
-                            matTooltipPosition="above">{{modelObj.models.productName}}</div>
-                          <div *ngIf="modelObj.models.Reff"><a href="{{modelObj.models.Reff}}" target="_blank"
+                          <div class="text-with-dots" matTooltip="{{modelObj.productName}}"
+                            matTooltipPosition="above">{{modelObj.productName}}</div>
+                          <div *ngIf="modelObj.Reff"><a href="{{modelObj.Reff}}" target="_blank"
                               style="font-size: smaller;">Reference</a></div>
                         </div>
                       </td>
                       <td>
-                        $ {{modelObj.models.price}}
+                        $ {{modelObj.price}}
                       </td>
-                      <td *ngIf="modelObj.models.productLink;else noLink"><a target="_blank"
-                          href="{{modelObj.models.productLink}}" style="cursor: pointer;">Click here</a>
+                      <td *ngIf="modelObj.productLink;else noLink"><a target="_blank"
+                          href="{{modelObj.productLink}}" style="cursor: pointer;">Click here</a>
                       </td>
                       <ng-template #noLink>
                         <td class="text-danger">NO LINK</td>
                       </ng-template>
-                      <td>{{modelObj.models.QaTeam}}</td>
-                      <td *ngIf="modelObj.models.productStatus == 'Not uploaded' ;else pending"
-                        style="color: rgb(252, 11, 51);font-weight: 600;">{{modelObj.models.productStatus}}</td>
+                      <td>{{modelObj.QaTeam}}</td>
+                      <td *ngIf="modelObj.productStatus == 'Not uploaded' ;else pending"
+                        style="color: rgb(252, 11, 51);font-weight: 600;">{{modelObj.productStatus}}</td>
                       <ng-template #pending>
                         <td style="font-weight: bold;"
-                          [ngStyle]="{color : modelObj.models.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)' }">
-                          {{modelObj.models.productStatus}}</td>
+                          [ngStyle]="{color : modelObj.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)' }">
+                          {{modelObj.productStatus}}</td>
                       </ng-template>
-                      <td *ngIf="modelObj.models.productStatus != 'Not uploaded';else NoData">
+                      <td *ngIf="modelObj.productStatus != 'Not uploaded';else NoData">
                         <button class="btn btn-sm btn-outline-primary">
                           <a class="myhover"
-                            [routerLink]="['../../reviews',modelObj.models.articleId,modelObj.clientData._id,modelObj.models.version]">View
+                            [routerLink]="['../../reviews',modelObj.articleId,modelObj.clientData._id,modelObj.version]">View
                             Model</a>
                         </button>
                       </td>
@@ -86,10 +88,13 @@
                       </ng-template>
                     </ng-container>
                   </tr>
+                    </ng-container>
+                  </ng-container>
+                 
                 </tbody>
               </table>
               <div>
-                <pagination-controls *ngIf="modelList.length != 0;" id="listing_pagination" [maxSize]="5"
+                <pagination-controls *ngIf="totalRecords != 0;" id="listing_pagination" [maxSize]="5"
                   [directionLinks]="true" (pageChange)="page = $event"></pagination-controls>
               </div>
             </div>

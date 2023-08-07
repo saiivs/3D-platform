@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChange, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChange, SimpleChanges, ViewChildren } from '@angular/core';
 import { BackendService } from '../services/backend.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -10,7 +10,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class HotspotCorrectionComponent implements OnInit,OnChanges{
 formBuilder: any;
 
-constructor(private backEndService:BackendService){}
+constructor(private backEndService:BackendService,private cdr: ChangeDetectorRef){}
 
 correctionArr:Array<any> = []
 @Input() hotspotDataCorrection!:Array<any>;
@@ -19,6 +19,7 @@ correctionArr:Array<any> = []
 @Input() articleId!:string;
 @Input() clientId!:string;
 @Input() version:number = 0;
+productLink!:string
 emptyField:string = "";
 imgFile!:File;
 reactiveForm!:FormGroup;
@@ -27,19 +28,21 @@ formData = new FormData();
 latest:Array<any> = [];
 noCorrectionForm:Boolean = true;
 tabPanels = Array(3).fill(1).map((_, index) => `version ${index+1}`);
+labels:Array<any> = [];
 
 ngOnInit(): void {
-  this.backEndService.checkForHotspots(this.clientId,this.articleId).subscribe((res)=>{     
+  this.backEndService.checkForHotspots(this.clientId,this.articleId).subscribe((res)=>{ 
+    this.productLink = this.backEndService.getProductLink();   
    if(res.status){
-    console.log(res.msg);
     this.noCorrectionForm = res.msg == "no updates" ? false : true;
    }       
   })
 }
 
-ngOnChanges (): void {
+ngOnChanges (changes:SimpleChanges): void {
+if(changes['hotspotDataCorrection']){
   this.correctionArr = this.hotspotDataCorrection;  
-  
+}  
 }
 
 emitChildEvent(hotspotId:number){
@@ -66,10 +69,21 @@ getCorrection(event:Event,index:number){
   
 }
 
+checkImgFile(event:Event,index:number){
+  let inputElement = event.target as HTMLInputElement;
+  if(inputElement.files && inputElement.files.length > 0){
+    this.labels[index] = "Selected";
+  }else{
+    this.labels[index] = "Image"
+  }
+}
+
 @ViewChildren('correctionItem') correctionItems!: QueryList<ElementRef<HTMLLIElement>>;
 
 createCorrection()
 {
+  console.log(this.hotspotDataCorrection);
+  
   const formData = new FormData();
   this.correctionItems.forEach((itemRef:ElementRef<HTMLElement>,index:number)=>{
     const listItem = itemRef.nativeElement;  
@@ -79,11 +93,13 @@ createCorrection()
       this.emptyField = "error"
     }else{
       this.emptyField = ""
-      let findItem = this.hotspotDataCorrection.find(obj => obj.hotspotId == `${index+1}`)
+      let findItem = this.hotspotDataCorrection[index]
+      console.log(findItem);
+      
      let obj = {
       correction : inputTxt.value,
       hotspotId : index+1,
-      hotspotName : `hotspot-${index+1}`,
+      hotspotName : findItem.hotspotName,
       normalValue: findItem.normalValue,
       positionValue:findItem.positionValue,
       clientId:this.clientId,
@@ -96,9 +112,11 @@ createCorrection()
      if(inputImg?.files?.[0]) formData.append(`image${index+1}`,inputImg?.files?.[0])
     }
   })
-  this.setTabPanelInvokeEvent.emit()
+  this.setTabPanelInvokeEvent.emit(this.latest)
+  console.log("hotsPot submit");
+  
   this.noCorrectionForm = !this.noCorrectionForm
-  this.backEndService.updateHotspotCorrectionImg(formData).subscribe(()=>{
+  this.backEndService.updateHotspotCorrectionImg(formData).subscribe((res)=>{
     }) 
 }
 }

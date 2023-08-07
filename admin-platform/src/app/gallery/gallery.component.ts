@@ -21,7 +21,7 @@ export class GalleryComponent implements OnInit {
   clientId: string = "";
   src: string = "";
   noImgForGallery = "";
-  preImgHeight: number = 25;
+  preImgHeight: number = 26;
   product: any = {};
   clientDetails: any = {};
   totalRecords!: number
@@ -43,6 +43,9 @@ export class GalleryComponent implements OnInit {
       this.backEndService.getClientDetailsById(clientId, articleId).subscribe((res) => {
         this.clientDetails = res.client;
         this.product = res.clientPro
+        console.log("galleryy");
+        
+        this.backEndService.setProductLink(this.product.productLink);
         this.fileCount = true
 
         if (res.fileCount != 0) {
@@ -86,16 +89,19 @@ export class GalleryComponent implements OnInit {
 
   @ViewChild('pre', { static: false }) preImg!: ElementRef;
   @ViewChild(TestComponent) testComponent!: TestComponent;
+  
 
   fullScreen() {
     this.fullScreenIcon = !this.fullScreenIcon
     if (!this.display) {
+      this.testComponent.setFullScreenThumbnail(true);
       this.renderer.setStyle(this.preImg.nativeElement, 'height', '39rem')
       this.mode = 'Exit Full Screen'
       this.display = true;
     }
     else {
-      this.renderer.setStyle(this.preImg.nativeElement, 'height', '25rem')
+      this.testComponent.setFullScreenThumbnail(false);
+      this.renderer.setStyle(this.preImg.nativeElement, 'height', '26rem')
       this.mode = 'Full Screen'
       this.display = false;
     }
@@ -159,4 +165,6 @@ export class GalleryComponent implements OnInit {
     })
 
   }
+
+  
 }

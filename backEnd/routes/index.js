@@ -33,7 +33,7 @@ router.post('/assignedProducts/post',auth.authentication,routeHelper.assignProdu
 router.get('/clientsForModalers/Get/:email',auth.authentication,routeHelper.getClientForModaler);
 
 //get the assigned products for modelers
-router.get('/modeler-products/Get/:id',auth.authentication,routeHelper.getModalerPro);
+router.get('/modeler-products/Get/:id/:modRollNo',auth.authentication,routeHelper.getModalerPro);
 
 //save the modeler uploaded file
 router.post('/upload-modal/post',auth.authentication,routeHelper.savemodalFile);
@@ -160,6 +160,9 @@ router.get('/getClientForQADo/get/:clientId',auth.authentication,routeHelper.get
 
 router.get('/getLatestCorrection/get/:clientId/:articleId',auth.authentication,routeHelper.getLatestHotspots);
 
+//get latest correction for the modeler with time validation
+router.get('/getLatestCorrectionForModeler/get/:clientId/:articleId',auth.authentication,routeHelper.getLatestCorrectionForModeler)
+
 router.get('/getHotspotWithId/get/:version/:clientId/:articleId',auth.authentication,routeHelper.getHotspotById);
 
 //update the model under the Qa to restrict the modeler
@@ -184,7 +187,22 @@ router.get('/getAllModelListForModeler/:modelerId',auth.authentication,routeHelp
 router.get('/AgetClientById/get/:clientId',auth.authentication,routeHelper.AgetClientById);
 
 //check the edit is enabled or not for correction and update
-router.post('/editCorrection/post',auth.authentication,routeHelper.editCorrection)
+router.post('/editCorrection/post',auth.authentication,routeHelper.editCorrection);
+
+//edit the existing correction
+router.post("/editExistingCorrection/post",auth.authentication,routeHelper.editExistingCorrection);
+
+//delete correction from database and directory
+router.post("/deleteCorrection/post",auth.authentication,routeHelper.deleteCorrection)
+
+//create the deadline for the modeler
+router.post('/createModelerDeadLine/post',auth.authentication,routeHelper.createDeadLineForModeler);
+
+//update the bonus array for the modeler
+router.post('/updateBonus/post',auth.authentication,routeHelper.updateBonusForModeler);
+
+//get all the approved models for the QA
+router.get('/getApprovedModelsForQa/get/:qaRollNo',auth.authentication,routeHelper.getApprovedModelsForQa)
 
 
 

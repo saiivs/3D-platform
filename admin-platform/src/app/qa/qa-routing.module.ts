@@ -8,6 +8,7 @@ import { QaReviewsComponent } from './qa-reviews/qa-reviews.component';
 import { QaComponent } from './qa.component';
 import { ModelFullscreenComponent } from '../model-fullscreen/model-fullscreen.component';
 import { QaProfileComponent } from './qa-profile/qa-profile.component';
+import { ApprovedModelsComponent } from './approved-models/approved-models.component';
 
 
 
@@ -19,6 +20,7 @@ children:[
   {path:"reviews/:articleId/:clientId/:version",component:QaReviewsComponent},
   {path:"admin/:articleId/:clientId/:version",component:QaAdminReviewComponent},
   {path:"model-FullScreen/:articleId/:clientId/:version",component:ModelFullscreenComponent},
+  {path:"approved-models",component:ApprovedModelsComponent},
   {path:"profile",component:QaProfileComponent}
 ]}
 ]

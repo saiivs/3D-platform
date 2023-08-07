@@ -22,6 +22,7 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   totalRecords!:number
   page:number = 1;
   clientName:string = "";
+  serachForModel:string = "";
   clientRequirement!:string|boolean
   subscription!:Subscription;
   

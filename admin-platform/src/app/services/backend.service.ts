@@ -9,13 +9,15 @@ import { Types } from 'mongoose';
 import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
 
   constructor(private http:HttpClient,private router:Router) {   }
+
+  private productLink!:string
+
 
   readonly url = environment.apiUrl;
 
@@ -137,13 +139,25 @@ export class BackendService {
     localStorage.setItem('ProductName',proName)
   }
 
+  setProductLink(link:string){
+    console.log(link);
+    
+    this.productLink = link;
+  }
+
+  getProductLink():string{
+    console.log("calld ");
+    
+    return this.productLink;
+  }
+
   getClientsForModaler():Observable<modelerLanding[]>{
     let userEmail = localStorage.getItem('userEmail')
     return this.http.get<modelerLanding[]>(`${this.url}/clientsForModalers/Get/${userEmail}`).pipe((catchError(this.erroHandler)))
   }
 
-  getModalerPro(id:any):Observable<modelerLanding[]>{
-    return this.http.get<modelerLanding[]>(`${this.url}/modeler-products/Get/${id}`).pipe((catchError(this.erroHandler)))
+  getModalerPro(id:any,modRollNo:string|null):Observable<modelerLanding[]>{
+    return this.http.get<modelerLanding[]>(`${this.url}/modeler-products/Get/${id}/${modRollNo}`).pipe((catchError(this.erroHandler)))
   }
 
   uploadModal(formData:FormData):Observable<any>{
@@ -317,6 +331,10 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/getLatestCorrection/get/${clientId}/${articleId}`)
   }
 
+  getLatestCorrectionForModeler(clientId:string,articleId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getLatestCorrectionForModeler/get/${clientId}/${articleId}`)
+  }
+
   updateHotspotCorrections(correctionData:Array<any>):Observable<any>{
     return this.http.post<any>(`${this.url}/updateHotspot/post`,correctionData)
   }
@@ -363,6 +381,26 @@ export class BackendService {
 
   editCorrection(formData:FormData):Observable<any>{
     return this.http.post<any>(`${this.url}/editCorrection/post`,formData);
+  }
+
+  EditExistingCorrection(formData:FormData):Observable<any>{
+    return this.http.post<any>(`${this.url}/editExistingCorrection/post`,formData)
+  }
+
+  createModelerDeadLine(date:Date,status:String,modRoll:string,clientId:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/createModelerDeadLine/post`,{date,status,modRoll,clientId})
+  }
+
+  updateBonus(flag:boolean,modelerId:string,clientId:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateBonus/post`,{flag,modelerId,clientId})
+  }
+
+  getApprovedModelsForQa(qaRollNo:string|null):Observable<any>{
+    return this.http.get<any>(`${this.url}/getApprovedModelsForQa/get/${qaRollNo}`);
+  }
+
+  deleteCorrection(hotspotName:string,clientName:string,articleId:string,version:number):Observable<any>{
+    return this.http.post<any>(`${this.url}/deleteCorrection/post`,{hotspotName,clientName,articleId,version})
   }
 }
 

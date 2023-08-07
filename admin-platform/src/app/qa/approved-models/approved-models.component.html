@@ -1,0 +1,105 @@
+
+<div class="hp-main-layout-content">
+    <div class="row mb-32 gy-32">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row justify-content-between">
+              <div class="col pe-md-32 pe-md-120" >
+                <h4>Products</h4>
+  
+                
+              </div>
+              <div class="hp-header-search searchContainer col">
+                <input type="text" style="width: 40%;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
+            </div>
+              <ng-template #emptyTable>
+                <p class="hp-p1-body emptyTable">
+                  No data to view. Try adding new client.
+                </p>
+                <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
+              </ng-template>
+              <div class="table-responsive col-12 mt-16">
+                <table  class="table table-bordered text-center">
+                  <thead>
+                    <tr>
+                      <th scope="col">Sl No</th>
+                      <th scope="col">Client Name</th>
+                      <th scope="col">Article Id</th>
+                      <th scope="col">Product Name</th>
+                      <th scope="col">Product Link</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Product Status</th>
+                      <th scope="col">Preview</th>
+                      <th scope="col">Admin Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let client of clients">
+                       <tr *ngFor="let pro of client.assignedPro| paginate
+                    : {
+                        id: 'listing_pagination',
+                        itemsPerPage: 6,
+                        currentPage: page,
+                        totalItems: totalRecords
+                      };let i = index">
+                      <ng-container *ngIf="pro.productStatus == 'Approved'">
+                        <ng-container *ngIf="serachForModel === ''||(pro.tag.toLowerCase().includes(serachForModel))||(pro.articleId.toLowerCase().includes(serachForModel))||(pro.productName.toLowerCase().includes(serachForModel))">
+                        <td scope="row">{{i+1}}</td>
+                        <td>{{client.clientName}}</td>
+                      <td>{{pro.articleId}}</td>
+                      <td>
+                        <div class="modalNameContainer">
+                        <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
+                        <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
+                        </div>
+                        
+                      </td>
+                      <td *ngIf="pro.productLink;else noLink" ><a href="{{pro.productLink}}" target="_blank" style="cursor: pointer;">click here</a></td>
+                      <ng-template #noLink>
+                        <td class="text-danger">NO LINK</td>
+                      </ng-template>
+                      <td>€ {{pro.price}}</td>
+                      <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
+                      <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
+                      <td >
+                        <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" class="btn btn-sm btn-outline-primary">
+                          <a class="myhover" (click)="scrapeImages(pro.productLink,pro.productName,pro.articleId)" [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]"
+                            >View Model</a>
+                        </button>
+                      </td>
+                      <ng-template #NoData>
+                          <p class="NoData" style="font-weight: 600;color: red;">
+                             No Data
+                          </p>  
+                      </ng-template>
+                      <td [ngStyle]="{color : pro.adminStatus == 'Approved' ? 'green':'red', 'font-weight' : 600}">
+                        {{pro.adminStatus}}
+                      </td>
+                      </ng-container>
+                      </ng-container>
+                      
+                      
+                    </tr> 
+                    </ng-container>
+                    
+                  </tbody>
+                </table>
+                <div>
+                  <pagination-controls *ngIf="products.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                    (pageChange)="page = $event"></pagination-controls>
+                </div>
+              </div>
+  
+              <div class="col-12 mt-24 hljs-container">
+                <pre>
+          <code class="html" data-component='table' data-code='overview'></code>
+      </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

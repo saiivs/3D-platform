@@ -33,6 +33,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
   AddBtn: Boolean = true;
   Acc_Manager: string = ""
   budget: number = 0;
+  bonus:number = 0;
   subscription!: Subscription;
 
   ngOnInit() {

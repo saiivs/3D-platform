@@ -24,8 +24,11 @@ export class ModelerProductListComponent implements OnInit,OnDestroy{
   ngOnInit(): void {
     this.modelerId = this.route.snapshot.params['modelerId'];
     this.subscriptionModelList = this.backEndService.getAllModelListForModeler(this.modelerId).subscribe((res)=>{
-      this.modelList = res;
-      this.totalRecords = this.modelList.length;
+      console.log(res);
+      this.modelList = res
+      res[0].models.forEach((obj:any)=>{
+        this.totalRecords = obj.models.length + this.totalRecords
+      })
     })
   }
 

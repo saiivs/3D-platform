@@ -3,10 +3,6 @@ require('dotenv').config();
 const  database = require("./dbQueries");
 const fs = require('fs');
 
-
-
-
-
 let credentials = [
     {
         email:"admin@charpstar.com",
@@ -253,9 +249,9 @@ module.exports = {
 
     getModalerPro:async(req,res)=>{
         try {
-            let id = req.params.id;
+            let {id,modRollNo} = req.params;
             console.log(id);
-            let assignedPro = await database.dbGetAssignedPro(id);
+            let assignedPro = await database.dbGetAssignedPro(id,modRollNo);
             console.log({assignedPro});
             if(assignedPro){
                 res.status(200).json(assignedPro)
@@ -1002,7 +998,7 @@ module.exports = {
                 fs.mkdirSync(`./public/corrections/${saveCorrection.client.clientName}/${item.articleId}/version-${saveCorrection.version}`,{recursive:true});
                 let image = images[`image${count}`];
                 if(image){
-                  image.mv(`./public/corrections/${saveCorrection.client.clientName}/${item.articleId}/version-${saveCorrection.version}/${saveCorrection.correction}.jpg`,(err,data)=>{
+                  image.mv(`./public/corrections/${saveCorrection.client.clientName}/${item.articleId}/version-${saveCorrection.version}/${item.hotspotName}.jpg`,(err,data)=>{
                     if(!err){
                         console.log("uploaded");
                     }else{
@@ -1037,6 +1033,29 @@ module.exports = {
             console.log(error);
             res.status(500).json(false);
         }  
+      },
+
+      getLatestCorrectionForModeler:async(req,res)=>{
+        try {
+            const {clientId,articleId} = req.params;
+            let result = await database.dbGetLatestHotspotsForModeler(clientId,articleId);
+            console.log(result);
+            if(result.status){
+                console.log(result.msg);
+                if(result.msg == "under QA" || result.msg === "No correction is created"){
+                    console.log("asdfadfasdfasdfasdfasdf");
+                    console.log(result.data);
+                    res.status(200).json(false);
+                }else{
+                    res.status(200).json(result.data)
+                }
+            }else{
+                throw new Error("hotspot not found!!")
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false)
+        }
       },
 
       getHotspotById:async(req,res)=>{
@@ -1157,19 +1176,21 @@ module.exports = {
 
       editCorrection:async(req,res)=>{
         try {
-            const imageFile = req.files.image;
-            console.log(imageFile);
-            console.log(req.body);
+            const imageFile = req.files?.image;
             const {text,clientId,articleId,version,hotspotId,clientName} = req.body;
             let result = await database.dbEditCorrection({text,clientId,articleId,version,hotspotId});
             if(result.status){
-                imageFile.mv(`./public/corrections/${clientName}/${articleId}/version-${version}/${result.id}.jpg`,(err,data)=>{
+                if(imageFile != null){
+                  imageFile.mv(`./public/corrections/${clientName}/${articleId}/version-${version}/${result.id}.jpg`,(err,data)=>{
                     if(!err){
                         res.status(200).json(true);
                     }else{
                         throw new Error(err)
                     }
-                });
+                });  
+                } else{
+                    res.status(200).json(true)
+                }
             }else if(result.msg){
                 res.status(200).json(false)
             }else{
@@ -1178,6 +1199,123 @@ module.exports = {
         } catch (error) {
             console.log(error);
             res.status(500).json(false); 
+        }
+      },
+
+      editExistingCorrection:async(req,res)=>{
+        try {
+            let data = req.body;
+            console.log(data);
+            let count = 0;
+            let firstElement = 0;
+            let images = req.files
+            let shouldBreak = false;
+            console.log(images);
+            for(let key in data){
+                if(!shouldBreak){
+                    count ++
+                    console.log({key});
+                    let objString = data[key];
+                    let item = JSON.parse(objString); 
+                    if(count == 1){
+                        firstElement = item
+                    }
+                    console.log({item});
+                    if(item.edited){
+                    let saveCorrection = await database.dbEditExistingCorrection(item,count,firstElement);
+                    if(saveCorrection.status){
+                    if(images != null){
+                        fs.mkdirSync(`./public/corrections/${item.clientName}/${item.articleId}/version-${item.version}`,{recursive:true});
+                        let image = images[`image${count}`];
+                        if(image != null){
+                        image.mv(`./public/corrections/${item.clientName}/${item.articleId}/version-${item.version}/${item.hotspotName}.jpg`,(err,data)=>{
+                            if(!err){
+                                console.log("uploaded");
+                            }else{
+                                throw new Error('correction image uploading failed')
+                            }
+                        })   
+                        }  
+                    }   
+                    } else if(saveCorrection.msg == "time exceeded"){
+                        shouldBreak = true;
+                    }
+                    }  
+                }    
+            }
+            if(shouldBreak){
+               res.status(200).json(false); 
+            }else{
+                res.status(200).json(true);
+            } 
+            } catch (error) {
+                console.log(error);
+                res.status(500).json(false)
+            }
+      },
+
+      deleteCorrection:async(req,res)=>{
+        try {
+            const {hotspotName,clientName,articleId,version} = req.body;
+            let result = await database.dbDeleteHotspot(hotspotName)
+            if(result.msg == 'Deleted'){
+                let filePath = `./public/corrections/${clientName}/${articleId}/version-${version}/${hotspotName}.jpg`;
+                fs.unlinkSync(filePath,(err,data)=>{
+                    if(!err){
+                        console.log("correction deleted from direcotry");
+                    }else{
+                        console.log(err);
+                    }
+                })
+            }
+            if(result.status){
+                res.status(200).json(result.msg)
+            }else{
+                throw new Error("Hotsopt was not deleted!!")
+            }
+        } catch (error) {
+           console.log(error);
+           res.status(500).json(false); 
+        }
+      },
+
+      createDeadLineForModeler:async(req,res)=>{
+        try {
+            console.log("reached");
+            let {date,status,modRoll,clientId} = req.body;
+            const result = await database.dbCreateDeadLineForModeler({date,status,modRoll,clientId});
+        } catch (error) {
+            
+        }
+      },
+
+      updateBonusForModeler:async(req,res)=>{
+        try {
+            let {flag,modelerId,clientId} = req.body;
+            let result = await database.dbUpdateBonusForModeler(flag,modelerId,clientId);
+            if(result){
+                res.status(200).json(true)
+            }else{
+                throw new Error("bonus was not updated for modeler!!")
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      getApprovedModelsForQa:async(req,res)=>{
+        try {
+            let {qaRollNo} = req.params;
+            let models = await database.dbGetApprovedModelsForQa(qaRollNo);
+            if(models){
+                res.status(200).json(models);
+            }else{
+                throw new Error;
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
         }
       }
 }

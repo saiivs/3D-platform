@@ -22,16 +22,24 @@ uploadedFile!:File;
 clientId : string = "";
 version:number = 0;
 index!:number;
-totalRecords!:number
+totalRecords!:number;
+bonus:Array<any> = [];
 page:number = 1;
+deadLineOne!:string|null
+deadLineTwo!:string|null
 subscription!:Subscription;
 
 
 
 ngOnInit() {
   this.productId = this.route.snapshot.params['id'];
-  this.subscription = this.backEndService.getModalerPro(this.productId).subscribe((data:modelerLanding[])=>{
+  this.subscription = this.backEndService.getModalerPro(this.productId,localStorage.getItem('rollNo')).subscribe((data:any)=>{ 
+    console.log(data);
+    
     this.clientId = data[0].clientId
+    this.bonus = data[1].bonus;
+    this.deadLineOne = data[1]?.deadLineOne;
+    this.deadLineTwo = data[1]?.deadLineTwo;
     this.products = [...data[0].assignedPro]; 
     this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
     this.totalRecords = this.products.length

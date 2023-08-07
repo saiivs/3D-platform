@@ -1,7 +1,7 @@
 model-viewer {
     position: relative;
     float: left;
-    height: 46vw;
+    height: 100vh;
     width: 80%;
   }
 
@@ -112,5 +112,32 @@ model-viewer {
   width: 100%;
 }
 
+.listContainer{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.submit-btn{
+  width: 100%;
+  background-color: black;
+  color: white;
+}
+
+.noUpdates{    
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+}
+
+.fullScreen{
+  position: absolute;
+  top: 2.6rem;
+  right: 2rem;
   
+}
+
+
 

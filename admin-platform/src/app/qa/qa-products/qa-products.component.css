@@ -19,3 +19,9 @@
   text-overflow: ellipsis;
   cursor: pointer;
 }
+
+.searchContainer{
+  display: flex;
+  justify-content: flex-end;
+}
+

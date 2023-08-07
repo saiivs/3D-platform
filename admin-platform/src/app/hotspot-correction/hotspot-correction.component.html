@@ -1,13 +1,15 @@
 <ng-container *ngIf="noCorrectionForm;else noCorrectionMsg">
+    
     <ng-container *ngIf="correctionArr.length != 0;else addHotspotMsg">
+        <span class="ms-4 text-black-80 hp-text-color-dark-30"><a href="{{productLink}}" target="_blank">Click here</a> to visit the product page</span>
          <h5>Fill down the corrections</h5>
    <ul>
        <li *ngFor="let correction of correctionArr;let i = index" #correctionItem>
         <div class="listContainer">
             <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{i+1}}</span> 
         <input style="width: 70%;" (input)="getCorrection($event,i)" type="text" class="form-control mb-16" placeholder="type here.." aria-label="Username" aria-describedby="basic-addon1">
-        <input type="file" (input)="getCorrectionImg($event,i)" id="{{correction.hotspotName}}" hidden>
-        <label for="{{correction.hotspotName}}" class="btn btn-sm btn-primary">Image</label>
+        <input type="file" (change)="checkImgFile($event,i)" (input)="getCorrectionImg($event,i)" id="{{correction.hotspotName}}" hidden>
+        <label for="{{correction.hotspotName}}" class="btn btn-sm btn-primary">{{labels[i] || "Image"}}</label>
         <button matTooltip="Delete" (click)="emitChildEvent(correction.hotspotId)" matTooltipPosition="right" class="btn btn-sm btn-danger"><i class="hp-text-color-dark-0 ri-1x ri-delete-bin-2-line"></i></button> 
         </div>
     </li>  
@@ -19,6 +21,7 @@
     </ng-container>
     <ng-template #addHotspotMsg>
         <div class="noUpdates">
+            <span><a href="{{productLink}}" target="_blank">click here</a> to visit the product page</span>
             <span>
                Please add the hotspots over the model and move forward. 
             </span>  

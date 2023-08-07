@@ -20,6 +20,8 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
   totalExpence: number = 0;
   serachForModel: string = "";
   page: number = 1;
+  totalModels:number=0;
+  modelerPercentage !:number
   budget: number = 0;
   budgetExceeded: string = ""
   noMonthlyStatus: Boolean = false;
@@ -54,14 +56,17 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
             this.totalRecords = this.allModelers.length;
             this.allModelers = this.allModelers.map((obj) => {
               let approvedCnt = 0;
-              let totalModel = obj.models.length;
-              obj.models.forEach((model: any) => {
+              obj.models.forEach((client:any)=>{
+                this.totalModels = this.totalModels + client.models.length;
+                client.models.forEach((model: any) => {
                 approvedCnt += model.productStatus == 'Approved' ? 1 : 0;
               })
-              let completionPercentage = (approvedCnt / totalModel) * 100;
-              completionPercentage = Number(completionPercentage.toFixed(2))
-              return { ...obj, percentage: completionPercentage }
+                this.modelerPercentage = (approvedCnt / this.totalModels) * 100;
+                this.modelerPercentage = Number(this.modelerPercentage.toFixed(2))
+              }) 
+              return { ...obj,totalModal:this.totalModels,percentage:this.modelerPercentage}
             })
+            console.log(this.allModelers); 
           }
           if (data.models.length == 0) {
             this.noMonthlyStatus = true;

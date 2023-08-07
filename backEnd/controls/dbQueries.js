@@ -6,9 +6,7 @@ const validator = require('gltf-validator');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
-const { modelerList } = require("../schema/modal");
-
-
+const { time } = require("console");
 
 const polygonCounter = async(articleId,clientId,clientName,version)=>{
     try {
@@ -178,22 +176,35 @@ module.exports = {
     assignPro:async(data,name,email,QaName,modRoll,QaRoll)=>{
         try {
             let date = new Date()
-            date.setHours(0, 0, 0, 0);
+            
             let proListforModeler  =  data.products.map(obj => {
                 return {...obj,QaTeam:QaName,qaRollNo:QaRoll,modRollno:modRoll,modelerName:name,clientId:new ObjectId(data.clientId),date:date,price:0,invoice:false,tag:""}
             })
+            let obj = {
+                clientId:data.clientId,
+                models:[...proListforModeler],
+                bonus:[30]
+            }
             let modeler  = {
                 modelerName : name ,
                 rollNo:modRoll,
                 email:email,
-                models:[...proListforModeler],
-                bankDetails:[]
+                models:[],
+                bankDetails:[],
             }
+            modeler.models.push(obj)
             let modelerExist = await db.modelerList.find({rollNo:modRoll});
             console.log({modelerExist});
             if(modelerExist.length != 0){
-                await db.modelerList.updateOne({rollNo:modRoll},{$push:{models:{$each:proListforModeler}}})
+                let clientListExist = modelerExist.models.find(obj => obj.clientId == data.clientId);
+                if(clientListExist){
+                  await db.modelerList.updateOne({rollNo:modRoll,'models.clientId':data.clientId},{$push:{'models.$.models':{$each:proListforModeler}}})      
+                }else{
+                  await db.modelerList.updateOne({rollNo:modRoll},{$push:{models:obj}});
+                }
+                
             }else{
+                console.log("new modeler");
                 await db.modelerList.create(modeler)
             }
             for(let item of data.products){
@@ -253,6 +264,11 @@ module.exports = {
             let proListforModeler  =  data.products.map(obj => {
                 return {...obj,QaTeam:QaName,qaRollNo:QaRoll,modRollno:modRoll,modelerName:modelerName,clientId:new ObjectId(data.clientId),date:date,price:0,invoice:false,tag:""}
             })
+            let obj = {
+                clientId:data.clientId,
+                models:[...proListforModeler],
+                bonus:[30]
+            }
               data.products.forEach(async(pro)=>{
               let result = await db.modelerProducts.findOneAndUpdate({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.assigned':modelerName,'assignedPro.$.QaTeam':QaName,'assignedPro.$.modRollNo':modRoll,'assignedPro.$.qaRollNo':QaRoll,'assignedPro.$.price':0}})
               await db.Products.updateOne({clientId:new ObjectId(data.clientId),'productList.articleId':pro.articleId},{$set:{'productList.$.assigned':modelerName,'productList.$.QaTeam':QaName,'productList.$.modRollNo':modRoll,'productList.$.qaRollNo':QaRoll,'productList.$.price':0}}); 
@@ -265,19 +281,49 @@ module.exports = {
                 console.log({modeler});
                 console.log({modelerName});
                 if(modeler[0].assigned == modelerName){
-                    await db.modelerList.findOneAndUpdate({rollNo:modRoll,models:{$elemMatch:{articleId:pro.articleId,clientId:new ObjectId(data.clientId)}}},{$set:{'models.$.QaTeam':QaName,'models.$.qaRollNo':QaRoll,'models.$.price':0}});
+                    await db.modelerList.findOneAndUpdate(
+                        {
+                          rollNo: modRoll,
+                          "models.clientId": data.clientId,
+                          "models.models.articleId": pro.articleId
+                        },
+                        {
+                          $set: {
+                            "models.$.models.$[inner].QaTeam": QaName,
+                            "models.$.models.$[inner].qaRollNo": QaRoll
+                          }
+                        },
+                        {
+                          arrayFilters: [{ "inner.articleId": pro.articleId }]
+                        }
+                      );
                 }else{
-                    let a = await db.modelerList.updateOne({rollNo:modeler.rollNo},{$pull:{models:{clientId:data.clientId,articleId:pro.articleId}}})
-                    await db.modelerList.updateOne({rollNo:modRoll},{$push:{models:{$each:proListforModeler}}})
+                    await db.modelerList.updateOne( {
+                        rollNo: modRoll,
+                        "models.clientId": data.clientId,
+                      },
+                      {
+                        $pull: {
+                          "models.$.models.articleId": pro.articleId,
+                        }
+                      })
+                    let clientListExist = findModeler.models.find(obj => obj.clientId == data.clientId);
+                    if(clientListExist){
+                      await db.modelerList.updateOne({rollNo:modRoll,'models.clientId':data.clientId},{$push:{'models.$.models':{$each:proListforModeler}}})  
+                    }else{
+                      await db.modelerList.updateOne({rollNo:modRoll},{$push:{models:obj}});
+                    }
+                    
                 }  
               }else{
                 let modeler  = {
                     modelerName : modelerName ,
                     rollNo:modRoll,
                     email:modelerEmail,
-                    models:[...proListforModeler],
-                    bankDetails:[]
+                    models:[],
+                    bankDetails:[],
                 }
+                modeler.models.push(obj)
                 await db.modelerList.create(modeler);
               }
             })
@@ -326,16 +372,22 @@ module.exports = {
         }
     } ,
     
-    dbGetAssignedPro:async(id)=>{
+    dbGetAssignedPro:async(id,modRollNo)=>{
 
         try {
            let proData = await db.modelerProducts.findOne({_id:id});
+           let modeler = await db.modelerList.findOne({rollNo:modRollNo})
+           let deadLineBonus;
+           if(modeler){
+            deadLineBonus = modeler.models.find(obj => obj.clientId == proData.clientId);
+           }
             console.log(proData); 
             if(proData){
                 if(Array.isArray(proData))return proData;
                 else {
                     let arr = [];
                     arr.push(proData);
+                    arr.push(deadLineBonus)
                     return arr;
                 }
             }else{
@@ -369,7 +421,19 @@ module.exports = {
             {
             let updateRes = await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.productStatus": status}});
             await db.Products.updateOne({clientId:clientId,"productList.articleId":id},{$set:{"productList.$.productStatus":status}})
-            await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.productStatus':status}});
+            await db.modelerList.findOneAndUpdate( {
+                rollNo: modRollNo,
+                "models.clientId": clientId,
+                "models.models.articleId": id
+              },
+              {
+                $set: {
+                  "models.$.models.$[inner].productStatus": status,
+                }
+              },
+              {
+                arrayFilters: [{ "inner.articleId": id }]
+              });
             await db.QaReviews.updateOne({clientId:clientId,articleId:id},{$set:{modalStatus:status}});
             let clientDetails = await db.clients.findOne({_id:clientId});
             if(updateRes){
@@ -389,7 +453,19 @@ module.exports = {
 
     dbupdateVersion:async(data,status,count)=>{
         let {id,clientId,modRollNo}  = data;
-        let updateModelerListModel = await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:id,clientId:new ObjectId(clientId)}}},{$set:{'models.$.version':count}});
+        let updateModelerListModel = await db.modelerList.findOneAndUpdate( {
+            rollNo: modRollNo,
+            "models.clientId": clientId,
+            "models.models.articleId": id
+          },
+          {
+            $set: {
+              "models.$.models.$[inner].version": count,
+            }
+          },
+          {
+            arrayFilters: [{ "inner.articleId": id }]
+          });
         await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": id},{$set:{"assignedPro.$.version": count}});
         await db.Products.updateOne({clientId:clientId,"productList.articleId":id},{$set:{"productList.$.version":count}})
         console.log({updateModelerListModel});
@@ -541,7 +617,32 @@ module.exports = {
             console.log({clientId,articleId,modRollNo});
             await db.QaReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{modalStatus:status}});
             await db.AdminReviews.updateOne({clientId:clientId,articleId:articleId},{$set:{modalStatus:status}});
-            await db.modelerList.findOneAndUpdate({rollNo:modRollNo,models:{$elemMatch:{articleId:articleId,clientId:new ObjectId(clientId)}}},{$set:{'models.$.productStatus':status}});
+            let modeler = await db.modelerList.findOne({rollNo:modRollNo});
+            let modelList = modeler.models.filter((obj => {
+                if(obj.clientId == clientId){
+                    return [...obj.models]
+                }
+            }))
+            let flag = false;
+            let date;
+            modelList.find(obj => obj.productStatus != "Approved");
+            flag = modelList.length == 0 ? true : false;
+            date = flag ? new Date() : flag;
+            await db.modelerList.findOneAndUpdate( {
+                rollNo: modRollNo,
+                "models.clientId": clientId,
+                "models.models.articleId": articleId
+              },
+              {
+                $set: {
+                  "models.$.models.$[inner].productStatus": status,
+                  "models.$.complete": flag,
+                  "models.$.completedDate":date
+                }
+              },
+              {
+                arrayFilters: [{ "inner.articleId": articleId }]
+              });
            
             let approve = await db.modelerProducts.updateOne({clientId:clientId,"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": status}});
             
@@ -725,22 +826,27 @@ module.exports = {
         }    
     },
     dbGetModelerMonthlyStatus:async()=>{
-        let currMonth = new Date().getMonth();
+        let currMonth = new Date().getMonth() + 1;
+        let currYear = new Date().getFullYear()
         let date = new Date()
         date.setMonth(currMonth)
-        date.setHours(0, 0, 0, 0);
+        
         let models = await db.modelerList.aggregate([
             {
                 $unwind:"$models"
             },
             {
-                $match:{
-                    "models.productStatus":  "Approved",
-                    $expr: {
-                        $eq: [{ $month: "$models.date" }, currMonth + 1]
-                    }
+                $unwind: "$models.models"
+              },
+              {
+                $match: {
+                  "models.models.productStatus": "Approved",
+                  "models.models.date": {
+                    $gte: new Date(currYear, currMonth - 1, 1),
+                    $lt: new Date(currYear, currMonth, 1)
+                  }
                 }
-            },
+              },
             {
                 $group:{
                     _id:"$_id",
@@ -766,11 +872,11 @@ module.exports = {
             },
             {
                 $match:{
-                    "models.productStatus":  "Approved",
+                    "models.models.productStatus":  "Approved",
                     $expr: {
                         $and:[
-                            {$eq: [{ $month: "$models.date" }, month]},
-                            {$eq: [{ $year: "$models.date" }, year]}
+                            {$eq: [{ $month: "$models.models.date" }, month]},
+                            {$eq: [{ $year: "$models.models.date" }, year]}
                         ] 
                     }
                 }
@@ -838,7 +944,19 @@ module.exports = {
                 console.log({result});
             }
             await db.Products.updateOne({clientId:clientId,'productList.articleId':articleId},{$set:{'productList.$.price':price}});
-           let a =  await db.modelerList.findOneAndUpdate({rollNo:modelerRollNo,models:{$elemMatch:{clientId:new ObjectId(clientId),articleId:articleId}}},{$set:{'models.$.price':price}});
+           let a =  await db.modelerList.findOneAndUpdate( {
+            rollNo: modelerRollNo,
+            "models.clientId": clientId,
+            "models.models.articleId": articleId
+          },
+          {
+            $set: {
+              "models.$.models.$[inner].price": price,
+            }
+          },
+          {
+            arrayFilters: [{ "inner.articleId": articleId }]
+          });
            console.log({a});
             await db.modelerProducts.updateOne({clientId:clientId,'assignedPro.articleId':articleId},{$set:{'assignedPro.$.price':price}});
             return true;
@@ -957,7 +1075,23 @@ module.exports = {
             
             return {data,helpData};  
             }else{
-                let data = await db.correction.find({modRollNo:rollNo});
+                let data = await db.hotspot.aggregate([
+                    {
+                        $match:{mod_rollNo:rollNo}
+                    },
+                    {
+                        $group:{
+                            _id:"$version",
+                            articleId:{$first:"$articleId"},
+                            QA:{$first:"$QA"}
+                        }
+                    },
+                    {
+                        $sort:{
+                            _id:-1
+                        }
+                    }
+                ])
                 console.log({data});
                 let helpData = [];
             if(rollNo == "1"){
@@ -973,24 +1107,43 @@ module.exports = {
 
     dbGetProgress:async(clientId)=>{
         try {
-            let data = await db.modelerProducts.aggregate([
+            let data = await db.modelerList.aggregate([
             {
-                $match:{clientId: new ObjectId(clientId)}
+                $match:{'models.clientId': clientId}
             },
             {
-                $unwind : "$assignedPro"
+                $unwind : "$models"
+            },
+            {
+                $match:{'models.clientId': clientId}
+            },
+            {
+                $addFields:{
+                    totalProducts:{$size:"$models.models"},
+                    totalAmount: {
+                        $reduce: {
+                          input: "$models.models",
+                          initialValue: 0,
+                          in: { $add: ["$$value", "$$this.price"] }
+                        }
+                      }
+                }
             },
             {
                 $group:{
-                    _id:'$assignedPro.assigned',
+                    _id:"$_id",
                     totalAmount:{
-                        $sum:"$assignedPro.price"
+                        $sum:"$totalAmount"
                     },
-                    count:{$sum:1},
+                    modelerName:{$first:"$modelerName"},
+                    modelerRollNo:{$first:"$rollNo"},
+                    totalProducts:{$first:"$totalProducts"},
+                    deadLineOne:{$first:"$models.deadLineOne"},
+                    deadLineTwo:{$first:"$models.deadLineTwo"},
                     approvedCount:{
                         $sum:{
                             $cond:[
-                                {$eq:['$assignedPro.productStatus',"Approved"]},1,0
+                                {$eq:['$models.models.productStatus',"Approved"]},1,0
                             ]
                         }
                     }   
@@ -1039,15 +1192,46 @@ module.exports = {
         try {
             let getModerlerModels = await db.modelerList.aggregate([
                 {
+                    $match : {rollNo:rollNo}
+                },
+                {
+                    $unwind: "$models"
+                },
+                {
+                    $addFields: {
+                      "models.clientId": { $toObjectId: "$models.clientId" }
+                    }
+                },
+                {
                     $lookup:{
                         from:'clientlists',
                         localField:'models.clientId',
                         foreignField:'_id',
-                        as:'clientDetails'
+                        as:'models.clientDetails'
                     }
                 },
                 {
-                    $match : {rollNo:rollNo}
+                    $unwind:"$models.clientDetails"
+                },
+                {
+                    $group: {
+                        _id: "$_id",
+                        modelerName: { $first: "$modelerName" },
+                        rollNo: { $first: "$rollNo" },
+                        bankDetails: { $first: "$bankDetails" },
+                        email: { $first: "$email" },
+                        models: {
+                          $push: {
+                            clientId: "$models.clientId",
+                            clientDetails: "$models.clientDetails",
+                            models: "$models.models",
+                            complete:"$models.complete",
+                            completeDate:"$models.completeDate",
+                            deadLineOne:"$models.deadLineOne",
+                            deadLineTwo:"$models.deadLineTwo"
+                          }
+                        }
+                      }
                 }
             ])
             console.log(getModerlerModels);
@@ -1080,32 +1264,19 @@ module.exports = {
         try {
             let invoiceExist = await db.invoice.find({modelerId:modelerId,invoiceId:invoiceId});
             if(invoiceExist.length == 0){
-                await db.modelerList.updateOne(
-                    { _id: modelerId },
-                    [
+                await db.modelerList.updateMany(
                     {
+                        _id: modelerId,
+                        "models.models.productStatus": "Approved"
+                      },
+                      {
                         $set: {
-                        models: {
-                            $map: {
-                            input: "$models",
-                            as: "model",
-                            in: {
-                                $cond: [
-                                {
-                                    $and: [
-                                    { $eq: [ "$$model.productStatus", "Approved" ] },
-                                    { $eq: [ "$$model.invoice", false ] }
-                                    ]
-                                },
-                                { $mergeObjects: [ "$$model", { invoice: true } ] },
-                                "$$model"
-                                ]
-                            }
-                            }
+                          "models.models.$[inner].invoice": true
                         }
-                        }
-                    }
-                    ]
+                      },
+                      {
+                        arrayFilters: [{ "inner.productStatus": "Approved" }]
+                      }
                 );
                 await db.modelerProducts.updateMany(
                     {
@@ -1199,21 +1370,17 @@ module.exports = {
             await db.Products.updateOne({clientId:clientId,'productList.articleId':articleId},{$set:{'productList.$.tag':tagName}});
             let a = await db.modelerList.updateMany(
                 {
+                    rollNo: modRoll,
                     "models.clientId": clientId,
-                    "models.articleId": articleId
+                    "models.models.articleId": articleId
                   },
                   {
                     $set: {
-                      "models.$.tag": tagName
+                      "models.$.models.$[inner].tag": tagName,  
                     }
                   },
                   {
-                    arrayFilters: [
-                      {
-                        "models.clientId": clientId,
-                        "models.articleId": articleId
-                      }
-                    ]
+                    arrayFilters: [{ "inner.articleId": articleId }]
                   }
             )
             return true;
@@ -1479,7 +1646,19 @@ module.exports = {
             let clientName = clientDetails.clientName.replace(regex,"_");
             if(modelTeam){
                 modelTeam = modelTeam.assignedPro.find(obj => obj.articleId == data.articleId);
-                let a = await db.modelerList.findOneAndUpdate({rollNo:modelTeam.modRollno,models:{$elemMatch:{articleId:data.articleId,clientId:new ObjectId(data.clientId)}}},{$set:{'models.$.productStatus':"Correction"}});
+                let a = await db.modelerList.findOneAndUpdate( {
+                    rollNo: modelTeam.modRollno,
+                    "models.clientId": data.clientId,
+                    "models.models.articleId": data.articleId
+                  },
+                  {
+                    $set: {
+                      "models.$.models.$[inner].productStatus": 'Correction',
+                    }
+                  },
+                  {
+                    arrayFilters: [{ "inner.articleId": data.articleId }]
+                  });
                 await db.Products.updateOne({clientId:data.clientId,"productList.articleId":data.articleId},{$set:{"productList.$.productStatus":"Correction"}});   
                 await db.QaReviews.updateOne({clientId:data.clientId,articleId:data.articleId},{$set:{modalStatus:"Correction",underQA:false}});
             } 
@@ -1531,7 +1710,6 @@ module.exports = {
                 }
             }
         ])
-        console.log("asdffffffffffffffffffffffffffff");
         console.log({maxVersion});
         if(maxVersion.length != 0){
           if(fs.existsSync(`./public/models/${clientName}/${articleId}/version-${maxVersion[0].maxOne + 1}/${articleId}.glb`)){
@@ -1554,6 +1732,45 @@ module.exports = {
             console.log(error);
             return false;
         }   
+    },
+
+    dbGetLatestHotspotsForModeler:async(clientId,articleId)=>{
+        try {
+            let maxVersion = await db.hotspot.aggregate([
+                {
+                    $match:{clientId:new ObjectId(clientId),articleId:articleId}
+                },
+                {
+                    $group:{
+                        _id:null,
+                        maxOne:{$max:"$version"}
+                    }
+                }
+            ])
+            if(maxVersion.length != 0){
+                let hotspots = await db.hotspot.find({clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne});
+                if(hotspots.length != 0){
+                    let targetTime = hotspots[0].date;
+                    let currTime = new Date();
+                    let timeDifferenceInMinutes = currTime - targetTime;
+                    timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
+                    timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
+                    if(timeDifferenceInMinutes > 5){
+                        return {status:true,data:hotspots,msg:"data found"}
+                    }else{ 
+                        return {status:true,msg:"under QA"}
+                    }
+                }else{
+                    throw new Error("no hotspots found!!")
+                } 
+            }else{
+                
+                return {status:true,msg:"No correction is created"}
+            }    
+        } catch (error) {
+            console.log(error);
+            return {status:false}
+        }
     },
 
     dbGetHotspotById:async(hotspotInfo)=>{
@@ -1627,23 +1844,57 @@ module.exports = {
             console.log(modelerId);
             const list = await db.modelerList.aggregate([
                 {
-                    $match:{_id:new ObjectId(modelerId)}
-                },
-                {
-                    $unwind:"$models"
-                },
-                {
-                    $lookup:{
-                        from:"clientlists",
-                        localField:"models.clientId",
-                        foreignField:"_id",
-                        as:"clientData"
+                    $match: {
+                      _id: new ObjectId(modelerId)
                     }
-                },
-                {
-                    $unwind:"$clientData"
-                }
+                  },
+                  {
+                    $unwind: "$models"
+                  },
+                  {
+                    $addFields: {
+                      "models.clientId": { $toObjectId: "$models.clientId" }
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: "clientlists",
+                      localField: "models.clientId",
+                      foreignField: "_id",
+                      as: "models.clientDetails"
+                    }
+                  },
+                  {
+                    $unwind: "$models.clientDetails"
+                  },
+                  {
+                    $group: {
+                      _id: "$_id",
+                      modelerName: { $first: "$modelerName" },
+                      rollNo: { $first: "$rollNo" },
+                      bankDetails: { $first: "$bankDetails" },
+                      email: { $first: "$email" },
+                      models: {
+                        $push: {
+                          clientId: "$models.clientId",
+                          clientDetails: "$models.clientDetails",
+                          models: "$models.models"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      modelerName: 1,
+                      rollNo: 1,
+                      bankDetails: 1,
+                      email: 1,
+                      models: 1
+                    }
+                  }
             ])
+            console.log({list});
             if(list.length != 0){
                 return list;
             }else{
@@ -1686,20 +1937,191 @@ module.exports = {
             let target = await db.hotspot.findOne({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId});
             if(target){
                 let targetTime = new Date(target.date);
+                console.log({targetTime});
                 let currTime = new Date();
-                let timeDifferenceInMinutes = Math.floor((currTime - targetTime) / (1000 * 6));
+                let timeDifferenceInMinutes = currTime - targetTime;
+                timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
+                timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
+                console.log({timeDifferenceInMinutes});
                 if(timeDifferenceInMinutes <= 5){
                     let updateHotspot = await db.hotspot.findOneAndUpdate({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId},{$set:{correction:corrData.text}});
                     if(updateHotspot){
+                       console.log("correction edit successfull");
                         let id = updateHotspot._id 
                         return {status:true,id:id}
                     }else{
                         return {status:false};
                     }
                 }else{
+                    console.log("time exceeded for correction edit");
                     return {status:false,msg:"time exceeded"}
                 }
             }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbEditExistingCorrection:async(corrData,count,element)=>{
+        try {
+            let team;
+            let target = await db.hotspot.findOne({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId});
+            if(count == 1 && target){
+                team = target;
+            }else{
+                let target = await db.hotspot.findOne({clientId:new ObjectId(element.clientId),articleId:element.articleId,version:element.version,hotspotId:element.hotspotId});
+                team = target
+            }
+            if(target){
+                let targetTime = new Date(target.date);
+                console.log({targetTime});
+                let currTime = new Date();
+                let timeDifferenceInMinutes = currTime - targetTime;
+                timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
+                timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
+                console.log({timeDifferenceInMinutes});
+                if(timeDifferenceInMinutes <= 5){
+                    let updateHotspot = await db.hotspot.findOneAndUpdate({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId},{$set:{correction:corrData.correction}});
+                    if(updateHotspot){
+                       console.log("correction edit successfull");
+                        let id = updateHotspot._id 
+                        return {status:true,id:id}
+                    }else{
+                        return {status:false};
+                    }
+                }else{
+                    console.log("time exceeded for correction edit");
+                    return {status:false,msg:"time exceeded"}
+                }
+            }else{
+                console.log(team);
+                corrData.date = team.date;
+                corrData.modeler = team.modeler;
+                corrData.QA = team.QA;
+                corrData.mod_rollNo = team.mod_rollNo;
+                corrData.QA_rollNo = team.QA_rollNo
+              await db.hotspot.create(corrData);
+              return {status:true}
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbDeleteHotspot:async(hotspotName)=>{
+        try {
+            let hotspot = await db.hotspot.findOne({hotspotName:hotspotName});
+            let timeDifferenceInMinutes;
+            if(hotspot){
+                let targetTime = new Date(hotspot.date);
+                let currTime = new Date();
+                timeDifferenceInMinutes = currTime - targetTime;
+                timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
+                timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
+            }
+            if(timeDifferenceInMinutes <= 5){
+                let deleteRes = await db.hotspot.deleteOne({hotspotName:hotspotName});
+                if(deleteRes.deletedCount != 0){
+                    return {status:true,msg:"Deleted"};
+                }
+            }else{
+                return {status:true,msg:"Time exceeded"};
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbCreateDeadLineForModeler:async(deadLine)=>{
+        try {
+            if(deadLine.status == 'deadLineOne'){
+                console.log("run");
+                await db.modelerList.updateOne({
+                    rollNo: deadLine.modRoll,
+                    "models.clientId": deadLine.clientId,
+                  },
+                  {
+                    $set: {
+                      "models.$.deadLineOne": deadLine.date,
+                    }
+                  })
+            }else{
+                await db.modelerList.updateOne({
+                    rollNo: deadLine.modRoll,
+                    "models.clientId": deadLine.clientId,
+
+                  },
+                  {
+                    $set: {
+                      "models.$.deadLineTwo": deadLine.date,
+                    }
+                  })
+            }
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbUpdateBonusForModeler:async(flag,modelerId,clientId)=>{
+        try {
+            if(flag){
+              let updateBonus = await db.modelerList.updateOne({_id:new ObjectId(modelerId),'models.clientId':clientId},{$push:{bonus:50}});
+              if(updateBonus.modifiedCount != 0){
+                return true;
+              }else{
+                return false;
+              }
+            } 
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
+    dbGetApprovedModelsForQa:async(qaRollNo)=>{
+        try {
+            let clients = await db.modelerProducts.aggregate([
+                {
+                  $match: {
+                    'assignedPro.qaRollNo': qaRollNo
+                  }
+                },
+                {
+                  $unwind: "$assignedPro"
+                },
+                {
+                  $match: {
+                    'assignedPro.qaRollNo': qaRollNo
+                  }
+                },
+                {
+                    $lookup: {
+                      from: "clientlists", // Name of the collection to join with
+                      localField: "clientId",
+                      foreignField: "_id",
+                      as: "clientInfo"
+                    }
+                  },
+                  {
+                    $unwind: "$clientInfo"
+                  },
+                {
+                  $group: {
+                    _id: "$_id",
+                    clientId: { $first: "$clientId" },
+                    assignedPro: { $push: "$assignedPro" },
+                    approvedClient: { $first: "$approvedClient" },
+                    clientName: { $first: "$clientInfo.clientName" },
+                    __v: { $first: "$__v" }
+                  }
+                }
+              ]);
+              return clients
         } catch (error) {
             console.log(error);
             return false;

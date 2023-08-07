@@ -35,12 +35,16 @@
                             </div>
                         </div>
                         </div>
-                      </div>
+                        <div class="QAbtn">
+                          <div class="col-6 col-md-3 col-xl-3" style="margin-right: auto;">
+                            <button class="btn btn-ghost btn-primary startQa"><a [routerLink]="['../../../../../QA_panel',articleId,clientId,version]">Start QA</a> </button>
+                        </div>
+                        </div>
                   </div>
               </div>
           </div>
  
- 
+        </div>
       </div>
 
       <div class="col-12 col-lg-6">
@@ -120,7 +124,7 @@
           <div class="chatHead">
             
             <h2>QA-Admin Exchange</h2>
-            <button data-bs-toggle="tooltip" title="click for modeler chat"   class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary"><a [routerLink]="['../../../reviews',QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId]">Modeler Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+            <button data-bs-toggle="tooltip" title="click for modeler chat"   class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary"><a [routerLink]="['../../../../reviews',QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version]">Modeler Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
               font-size: 1em;
           "></i></span></a></button>
            

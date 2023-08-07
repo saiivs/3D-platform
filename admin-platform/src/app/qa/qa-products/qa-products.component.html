@@ -59,8 +59,11 @@
             <div class="col pe-md-32 pe-md-120" >
               <h4>Products</h4>
 
-
+              
             </div>
+            <div class="hp-header-search searchContainer col">
+              <input type="text" style="width: 40%;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
+          </div>
             <ng-template #emptyTable>
               <p class="hp-p1-body emptyTable">
                 No data to view. Try adding new client.
@@ -89,7 +92,8 @@
                       currentPage: page,
                       totalItems: totalRecords
                     };let i = index">
-                    <td scope="row">{{i+1}}</td>
+                    <ng-container *ngIf="serachForModel === ''||(pro.tag.toLowerCase().includes(serachForModel))||(pro.articleId.toLowerCase().includes(serachForModel))||(pro.productName.toLowerCase().includes(serachForModel))">
+                      <td scope="row">{{i+1}}</td>
                     <td>{{pro.articleId}}</td>
                     <td>
                       <div class="modalNameContainer">
@@ -119,6 +123,8 @@
                     <td [ngStyle]="{color : pro.adminStatus == 'Approved' ? 'green':'red', 'font-weight' : 600}">
                       {{pro.adminStatus}}
                     </td>
+                    </ng-container>
+                    
                   </tr>
                 </tbody>
               </table>

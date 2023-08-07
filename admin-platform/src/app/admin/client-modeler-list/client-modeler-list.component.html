@@ -1,7 +1,7 @@
-<div class="hp-main-layout-content">
+<!-- <div class="hp-main-layout-content">
     <div class="row mb-32 g-32">
         <div class="col flex-grow-1 overflow-hidden">
-            <div class="col-6">
+            <div class="col-12">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-sm-6 col-12">
                         <span class="h3 fw-semibold hp-text-color-black-bg hp-text-color-dark-0 d-block mb-0"> Modelers
@@ -14,7 +14,7 @@
 
                 <div class="row mt-24 mx-0">
                     <div *ngFor="let modeler of modelerList;let i = index;"
-                        class="hp-bg-black-0 hp-bg-dark-100 border hp-border-color-black-10 hp-border-color-dark-80 p-12 mb-16 col-12 rounded-5">
+                        class="hp-bg-black-0 hp-bg-dark-100 border hp-border-color-black-10 hp-border-color-dark-80 p-12 mb-16 col-12 rounded-3">
                         <div class="row align-items-center justify-content-between">
                             <div class="mb-16 mb-sm-0 col-sm-6 col-12">
                                 <div class="row align-items-center">
@@ -36,18 +36,113 @@
                                 </div>
                             </div>
 
-                            <div class="text-sm-end text-start col-sm-3 col-6" style="min-height: 50px;">
+                            <div class="text-start col-sm-3 col-3" style="min-height: 50px;">
                                 <span class="d-block h4 fw-normal mb-0"> $ {{modeler.totalAmount}} </span>
                                 <span class="d-block hp-p1-body mt-4">Models: {{modeler.count}}</span>
                             </div>
 
-                            <div class="text-end col-sm-3 col-6" style="min-height: 50px;">
-                                <span class="h4">{{modeler.percentage}}</span>
+                            <div class="col-sm-3 col-6" style="min-height: 50px;">
+                                <div>
+                                    <span class="h4">{{modeler.percentage}}</span>
+                                </div>
+                                <div>
+                                  <label for="">Add Dead Line</label>
+                                  <input type="date">  
+                                </div>
+                                <div>
+                                  <label for="">Add Dead Line</label>
+                                  <input type="date">  
+                                </div>
+                                
                             </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+<div class="hp-main-layout-content">
+    <div class="row mb-32 gy-32">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row justify-content-between">
+              <div class="col pe-md-32 pe-md-120" >
+                <h4>Modelers with their product status.</h4>
+              </div>
+              <ng-template #emptyTable>
+                <p class="hp-p1-body emptyTable">
+                  No data to view. Try adding new client.
+                </p>
+                <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
+              </ng-template>
+              <div class="table-responsive col-12 mt-16">
+                <table  class="table table-bordered text-center">
+                  <thead>
+                    <tr>
+                      <th scope="col">Sl No</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Products</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Dead Line 1</th>
+                      <th scope="col">Dead Line 2</th>
+                      <th scope="col">Bonus</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr  *ngFor="let modeler of modelerList | paginate
+                    : {
+                        id: 'listing_pagination',
+                        itemsPerPage: 50,
+                        currentPage: page,
+                        totalItems: totalRecords
+                      };let i = index">
+                      <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
+                      <td>{{modeler.modelerName}}</td>
+                      <td>{{modeler.totalProducts}}</td>
+                      <td>€ {{modeler.totalAmount}} </td>
+                      <td>{{modeler.percentage}}</td>
+                      <td class="deadLine"><input type="date" (input)="getDeadLineOne($event,modeler.modelerRollNo)" [value]="modeler?.deadLineOne | date:'yyyy-MM-dd' || null" name="" id=""></td>
+                      <td class="deadLine"><input type="date" (input)="getDeadLineTwo($event,modeler.modelerRollNo)" [value]="modeler?.deadLineTwo | date:'yyyy-MM-dd' || null" name="" id=""></td>
+                      <td>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
+                          <label class="form-check-label" for="flexCheckDefault">
+                            30%
+                          </label>
+                        </div>
+                        
+                        <div class="form-check">
+                          <input class="form-check-input" (change)=addBonus($event,modeler._id) type="checkbox" value="" id="flexCheckChecked">
+                          <label class="form-check-label" for="flexCheckChecked">
+                            50%
+                          </label>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div>
+                  <pagination-controls id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                  (pageChange)="page = $event"></pagination-controls>
+                </div>
+              </div>
+  
+              <div class="col-12 mt-24 hljs-container">
+                <pre>
+          <code class="html" data-component='table' data-code='overview'></code>
+      </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+      
+    </div>
+  </div>
+  

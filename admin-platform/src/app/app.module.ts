@@ -25,6 +25,7 @@ import { TestComponent } from './test/test.component';
 import { GalleryComponent } from './gallery/gallery.component';
 import { HotspotCorrectionComponent } from './hotspot-correction/hotspot-correction.component';
 import { CorrectionImageComponent } from './correction-image/correction-image.component';
+import { ActualFullScrenComponent } from './actual-full-scren/actual-full-scren.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { CorrectionImageComponent } from './correction-image/correction-image.co
     GalleryComponent,
     HotspotCorrectionComponent,
     CorrectionImageComponent,
+    ActualFullScrenComponent,
   ],
   imports: [
     BrowserModule,

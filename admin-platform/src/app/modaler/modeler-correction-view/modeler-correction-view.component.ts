@@ -37,15 +37,18 @@ export class ModelerCorrectionViewComponent implements OnInit{
       this.clientDetails = res
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientDetails.clientName.replace(regex,"_")
+      console.log("asdfasdfasdfasdf");
       
-      this.backEndService.getLatestCorrection(this.clientId,this.articleId).subscribe((res)=>{
-        if(res.status){
+      this.backEndService.getLatestCorrectionForModeler(this.clientId,this.articleId).subscribe((res)=>{
+        if(res){
+          
+          
           console.log({res});
           
-          this.tabPanels = Array(res.data[0].version).fill(1).map((_, index) => `Version ${index+1}`);
+          this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `Version ${index+1}`);
           // this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
           this.tabPanels.reverse()
-          this.hotspots = res.data;
+          this.hotspots = res;
           this.correctionsWithVersions = this.hotspots.reduce((result,hotspot)=>{
             const {version} = hotspot;
             if(!result[version]) result[version] = [];
@@ -60,6 +63,9 @@ export class ModelerCorrectionViewComponent implements OnInit{
             this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1)
           })
         }else{
+          console.log(res);
+          
+          console.log("asdfasdfasdf");
           this.noCorrections = true;
         }
           
@@ -81,7 +87,7 @@ export class ModelerCorrectionViewComponent implements OnInit{
     this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
       if(res){
         this.hotspots = res;
-        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
+        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`)
       }   
     })
   }

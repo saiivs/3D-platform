@@ -191,3 +191,5 @@ model-viewer {
   height: 40vw;
   width: 80%;
 }
+
+.fullScreen{position: absolute;}

@@ -168,3 +168,14 @@ model-viewer {
   height: 40vw;
   width: 80%;
 }
+.startQa:hover a{
+color: white;
+}
+
+.QAbtn{
+  position: absolute;
+  z-index: 2;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+}

@@ -15,6 +15,7 @@ import { QaProfileComponent } from './qa-profile/qa-profile.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 // import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ChatSocketService } from '../services/chat-socket.service';
+import { ApprovedModelsComponent } from './approved-models/approved-models.component';
 
 // const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 
@@ -30,7 +31,8 @@ import { ChatSocketService } from '../services/chat-socket.service';
     QaReviewsComponent,
     QaAdminReviewComponent,
     ScrollDownDirective,
-    QaProfileComponent, 
+    QaProfileComponent,
+    ApprovedModelsComponent, 
   ],
   imports: [
     CommonModule,

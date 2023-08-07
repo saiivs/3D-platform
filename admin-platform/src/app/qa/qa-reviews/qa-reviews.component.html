@@ -3,7 +3,7 @@
   <div class="row">
       <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
           <div class="swiper hp-ecommerce-app-detail-slider-1">
-            <span><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+            <span ><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
               <div class="swiper-wrapper">
                   <div class="swiper-slide">
                       <div class="d-flex align-items-center justify-content-center">
@@ -74,7 +74,7 @@
                   
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                       <li><a class="dropdown-item" style="cursor: pointer;" (click)="updateModalStatus(QaCommentArr[0]?.articleId,'Approved')">Approve</a></li>
-                      <!-- <li><a class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#exampleModal">Correction</a></li> -->
+                      <li><a class="dropdown-item" style="cursor: pointer;" (click)="updateModalStatus(QaCommentArr[0]?.articleId,'Correction')">Correction</a></li>
                       <li><a class="dropdown-item" style="cursor: pointer;" (click)="downloadFile(QaCommentArr[0]?.articleId)">Download</a></li>
                     </ul>
                   </div>
@@ -126,7 +126,7 @@
           <div class="chatHead">
             
             <h2 >QA-Modeler Exchange</h2>
-            <button data-bs-toggle="tooltip" title="click for admin chat"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary"><a [routerLink]="['../../../admin',QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId]">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+            <button data-bs-toggle="tooltip" title="click for admin chat"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary"><a [routerLink]="['../../../../admin',QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version]">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
               font-size: 1em;
           "></i></span></a></button>
            
