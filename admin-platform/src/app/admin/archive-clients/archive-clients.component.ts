@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { client } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-archive-clients',
@@ -11,7 +12,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ArchiveClientsComponent implements OnInit{
 
-  constructor(private backEndService: BackendService,private titleService:Title){
+  constructor(private backEndService: BackendService,private titleService:Title,private notificationService:NotificationService){
 
   }
 
@@ -26,6 +27,9 @@ export class ArchiveClientsComponent implements OnInit{
     this.subscription = this.backEndService.getClient().subscribe((data)=>{
         this.clientTableData = data.data.filter(obj => obj.status == "completed")
         this.totalRecords = this.clientTableData.length; 
+    })
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
     })
   }
 

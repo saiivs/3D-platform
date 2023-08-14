@@ -11,17 +11,19 @@
 }
 
 .text-with-dots {
-  width: 150px; /* Set the desired width */
+  width: 87px; /* Set the desired width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
 }
 
-.reallocateContainer{
+.reallocate{
+  margin-top: 1rem;
+}
+.ReqReaBtn{
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+  gap: 1rem;
 }
 
 .assignBtn{

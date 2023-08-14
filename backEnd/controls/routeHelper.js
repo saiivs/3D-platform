@@ -123,9 +123,10 @@ module.exports = {
             let passTrue = getUser.password == req.body.password ? true :false;
             if(passTrue) {
                 let role = getUser.role
+                let userName = getUser.name
                 getUserJson = JSON.stringify(getUser);
                 let accessToken = await jwt.sign(getUserJson,process.env.ACC_TOKEN_SECRET);
-                res.json({token:accessToken,userRole:role,userEmail:getUser.email,rollNo:getUser.rollNo})
+                res.json({token:accessToken,userRole:role,userEmail:getUser.email,rollNo:getUser.rollNo,userName: userName})
             }else{
                 res.json({password:true})
             }
@@ -292,8 +293,9 @@ module.exports = {
                         }
                     }
                                     }
-                await database.dbupdateVersion(req.body,status,count);
-                file.mv(`./public/models/${updatedClientName}/${req.body.id}/version-${count}/${req.body.id}.glb`,async(err,data)=>{
+                let updateResult = await database.dbupdateVersion(req.body,status,count);
+                if(updateResult){
+                   file.mv(`./public/models/${updatedClientName}/${req.body.id}/version-${count}/${req.body.id}.glb`,async(err,data)=>{
                     if(err){
                         console.log(err);
                         throw new Error
@@ -302,7 +304,10 @@ module.exports = {
                         console.log("differen");
                         res.status(200).json({status:true,version:count});
                     }
-                })
+                }) 
+                }else{
+                    throw new Error("something went wrong over version update!! *dbupdateVersion");
+                }   
             }else if(data.msg == "model under QA"){
                     res.status(200).json({status:false,msg:data.msg})
             }else{
@@ -828,8 +833,9 @@ module.exports = {
 
      createRequirement:async(req,res)=>{
         try {
-            let {clientId,requirement} = req.body;
-            let result = await database.dbCreateRequirement(clientId,requirement);
+            let {clientId,requirement,prodcuts} = req.body;
+            console.log({clientId,requirement,prodcuts});
+            let result = await database.dbCreateRequirement(clientId,requirement,prodcuts);
             if(result){
                 res.status(200).json(true);
             }else{
@@ -1313,6 +1319,81 @@ module.exports = {
             }else{
                 throw new Error;
             }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      getApprovedModelsForModeler:async(req,res)=>{
+        try {
+            let {modelerRollNo} = req.params;
+            let models = await database.dbGetApprovedModelsForModeler(modelerRollNo);
+            if(models){
+                res.status(200).json(models);
+            }else{
+                throw new Error;
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      updateNotificationStatus:async(req,res)=>{
+        try {
+            const {clientId,articleId,modelerRollNo,version,status} = req.body;
+            let result = await database.dbUpdateNotificationStatus({clientId,articleId,version,status,modelerRollNo});
+            if(result){
+                res.status(200).json(true);
+            }else{
+                res.status(500).json(false);
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      getNotificationForQA:async(req,res)=>{
+        try {
+            const {rollNo} = req.params;
+            const notifications = await database.dbGetNotificationForQA(rollNo);
+            if(notifications){
+                res.status(200).json(notifications);
+            }else{
+                throw new Error;
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      updateNotificationForQA:async(req,res)=>{
+        try {
+            const {clientId,articleId} = req.body;
+            const result = await database.dbUpdateNotificationForQA(clientId,articleId);
+            if(result){
+                res.status(200).json(true);
+            }else{
+                throw new Error("notification update for QA went wrong!!");
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      updateNotificationAdmin:async(req,res)=>{
+        try {
+           const {modelerId,clientId} = req.body;
+           let result = await database.dbUpdateNotificationAdmin(modelerId,clientId);
+           if(result){
+            res.status(200).json(true);
+           }else{
+            throw new Error("something went wrong while updating the admin notification status")
+           }
         } catch (error) {
             console.log(error);
             res.status(500).json(false);

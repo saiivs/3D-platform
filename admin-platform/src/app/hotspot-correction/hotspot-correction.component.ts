@@ -94,7 +94,7 @@ createCorrection()
     }else{
       this.emptyField = ""
       let findItem = this.hotspotDataCorrection[index]
-      console.log(findItem);
+      console.log({findItem});
       
      let obj = {
       correction : inputTxt.value,

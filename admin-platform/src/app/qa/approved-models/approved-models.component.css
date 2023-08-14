@@ -107,6 +107,13 @@
   min-width: 7rem;
 }
 
+.emptyTable{
+  text-align: center;
+}
+.emptyImg{
+  margin: auto;
+  width: 5rem;
+}
 
 
 

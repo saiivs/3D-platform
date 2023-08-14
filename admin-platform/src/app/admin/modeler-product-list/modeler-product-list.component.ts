@@ -11,7 +11,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class ModelerProductListComponent implements OnInit,OnDestroy{
 
-  constructor(private route:ActivatedRoute,private backEndService:BackendService,private searchService :NotificationService){};
+  constructor(private route:ActivatedRoute,private backEndService:BackendService,private notificationService :NotificationService){};
 
   modelerId:string = "";
   modelList:Array<any> = [];
@@ -22,13 +22,20 @@ export class ModelerProductListComponent implements OnInit,OnDestroy{
   
 
   ngOnInit(): void {
-    this.modelerId = this.route.snapshot.params['modelerId'];
+    try {
+      this.modelerId = this.route.snapshot.params['modelerId'];
     this.subscriptionModelList = this.backEndService.getAllModelListForModeler(this.modelerId).subscribe((res)=>{
       console.log(res);
       this.modelList = res
       res[0].models.forEach((obj:any)=>{
         this.totalRecords = obj.models.length + this.totalRecords
       })
+    })
+    } catch (error) {
+      console.log(error);
+    }
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
     })
   }
 

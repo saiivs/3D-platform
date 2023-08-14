@@ -20,6 +20,7 @@ import { ModelerCorrectionViewComponent } from './modeler-correction-view/modele
 import {MatTabsModule} from '@angular/material/tabs';
 import { ModelerProfileComponent } from './modeler-profile/modeler-profile.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { ApprovedProductsComponent } from './approved-products/approved-products.component';
 
 
 
@@ -37,6 +38,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     BankFormComponent,
     ModelerCorrectionViewComponent,
     ModelerProfileComponent,
+    ApprovedProductsComponent,
   ],
   
   imports: [

@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import jsPDF from 'jspdf';
 
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class InvoiceComponent implements OnInit{
 
-  constructor(private backEnd:BackendService,private toaster:ToastrService){
+  constructor(private backEnd:BackendService,private toaster:ToastrService,private notificatinService:NotificationService){
 
   }
 
@@ -35,8 +36,6 @@ export class InvoiceComponent implements OnInit{
   ngOnInit() {
     this.invoiceNumber = `#${this.curDate.getTime()}-${Math.random().toString(36).substring(2, 7)}-${localStorage.getItem('rollNo')}`
     this.backEnd.generateInvoice(localStorage.getItem('rollNo')).subscribe((res)=>{
-      
-      
       this.modelerObjectId = res[0]._id
       this.modelerName = res[0].modelerName;
       // this.clients = res[0].clientDetails;
@@ -70,20 +69,9 @@ export class InvoiceComponent implements OnInit{
         }
 
       })
-      // this.clients.forEach((client)=>{
-      //   let name = ""
-      //  for(let model of this.approvedModels){
-      //   this.subTotal += model.price;
-      //   if(model.clientId == client._id){
-      //     if(name != client.clientName){
-      //       model.clientName = client.clientName;
-      //       name = client.clientName;
-      //     }else{
-      //       model.clientName = ""
-      //     } 
-      //   } 
-      //  }
-      // })
+    })
+    this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+      this.notificatinService.setNotificationDAta(data);
     })
   }
 
@@ -113,6 +101,7 @@ export class InvoiceComponent implements OnInit{
       formData.append("modelerId",this.modelerObjectId);
       formData.append("modelerRollNo",this.modelerRollNo);
       this.backEnd.saveModelerInvoice(formData).subscribe((res)=>{  
+        
       })
     }) 
   }

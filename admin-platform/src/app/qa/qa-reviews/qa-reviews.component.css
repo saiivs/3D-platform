@@ -176,8 +176,9 @@ p.meta{
 .QAbtn{
   position: absolute;
   z-index: 2;
-  bottom: 0;
+  bottom: 8px;
   right: 0;
+  left: 6px;
   width: 100%;
 }
 

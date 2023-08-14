@@ -3,7 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { modelerLanding } from 'src/app/models/interface';
+import swal from "sweetalert2/dist/sweetalert2.js"
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-modaler-products',
@@ -12,7 +14,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ModalerProductsComponent implements OnInit,OnDestroy{
   @ViewChild('fileInput') fileInput: any;
-constructor(private route:ActivatedRoute,private backEndService :BackendService,private toaster:ToastrService,private router:Router){
+constructor(private route:ActivatedRoute,private backEndService :BackendService,private toaster:ToastrService,private router:Router,private notificatinService:NotificationService){
 
 }
 
@@ -25,10 +27,11 @@ index!:number;
 totalRecords!:number;
 bonus:Array<any> = [];
 page:number = 1;
+tableData:Boolean = true;
 deadLineOne!:string|null
-deadLineTwo!:string|null
+deadLineTwo!:string|null;
+isLoading:Boolean = false;
 subscription!:Subscription;
-
 
 
 ngOnInit() {
@@ -36,15 +39,45 @@ ngOnInit() {
   this.subscription = this.backEndService.getModalerPro(this.productId,localStorage.getItem('rollNo')).subscribe((data:any)=>{ 
     console.log(data);
     
-    this.clientId = data[0].clientId
-    this.bonus = data[1].bonus;
-    this.deadLineOne = data[1]?.deadLineOne;
-    this.deadLineTwo = data[1]?.deadLineTwo;
-    this.products = [...data[0].assignedPro]; 
+  if(data.proData){
+    this.clientId = data.proData[0].clientId
+    this.bonus = data.deadLineBonus.bonus;
+    console.log(this.bonus);
+    this.deadLineOne = data.deadLineBonus?.deadLineOne;
+    this.deadLineTwo = data.deadLineBonus?.deadLineTwo;
+    this.products = [...data.proData[0].assignedPro]; 
     this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
+    console.log(this.products);
+    
     this.totalRecords = this.products.length
+    if(data.additionalInfo.length > 1){
+      for(let pro of this.products){
+      for (let info of data.additionalInfo){
+        if(this.clientId == info.clientId&&pro.articleId==info.articleId){
+          pro.extraInfo = info.additionalInfo
+        }
+      }
+    }
+    }
+  }else{
+    this.tableData = false;
+  } 
+  })
+  this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+    this.notificatinService.setNotificationDAta(data);
   })
 
+}
+
+aditionalInfoDilog(info:string){
+  swal.fire({
+    title: '',
+    icon: 'info',
+    html:`${info}`,
+    showCloseButton: false,
+    showCancelButton: false,
+    focusConfirm: false,
+  })
 }
 
 isValidZipFile(file: any):boolean{
@@ -67,7 +100,6 @@ acceptFile(event :any){
      this.products[this.index].modalFile = true
   }else{
     this.toaster.error('Error', 'Please select a .glb file')
-
   }
 }
 
@@ -78,6 +110,7 @@ resetFile(index:number){
 }
 
 onUpload(id:string,index:number){
+  this.isLoading = true;
   index = (this.page - 1) * 50 + index;
   const formData = new FormData();
   formData.append('file',this.uploadedFile,this.uploadedFile.name);
@@ -92,6 +125,7 @@ onUpload(id:string,index:number){
       this.products[index].productStatus = 'Uploaded';
       this.router.navigate(['/modeler', 'reviews',id,this.clientId,res.version])
     }else{
+      this.isLoading = false;
       this.toaster.error('Error','Sorry model is under QA.');
     }
   })

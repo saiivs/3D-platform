@@ -189,14 +189,12 @@
                                             </div>
 
                                             <div class="divider my-4"></div>
-                                            <div class="text-center" *ngIf="!seeMoreToggle"
-                                                (click)="getAllNotification('seeLess')">
-                                                <p class="hp-badge-text seeMoreBtn pt-2">See Less</p>
-                                            </div>
+                                            
                                             <div class="hp-overflow-y-auto px-10 myScroll"
                                                 style="max-height: 400px; margin-right: -10px; margin-left: -10px;">
                                                 <ng-container *ngIf="notifyData.length != 0;else noNotify">
-                                                    <div *ngFor="let notify of notifyData;let i = index"
+                                                    <ng-container *ngFor="let modelers of notifyData">
+                                                       <div (click)="viewModelersList(modelers._id,notify.clientId)" *ngFor="let notify of modelers.completedList;let i = index"
                                                         class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10"
                                                         style="margin-left: -10px; margin-right: -10px;">
                                                         <div class="w-auto px-0 me-12">
@@ -207,25 +205,19 @@
                                                         </div>
 
                                                         <div class="w-auto px-0 col">
-                                                            <span class="hp-text-color-black-60">Corruption detected in
-                                                                model</span>
+                                                            <span class="hp-text-color-black-60"></span>
+                                                            Model List Completed
                                                             <p
                                                                 class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
-                                                                {{notify.productName}}.
-                                                                <span class="hp-text-color-black-60">QA By</span>
-                                                                {{notify.QaName}}
+                                                                <span class="hp-text-color-black-60">{{modelers.modelerName}}- models from {{notify.clientDetails.clientName}}</span>
+                                                                
                                                             </p>
-                                                            <button class="crtnViewBtn"
-                                                                (click)="openDialog(notify.correction)"><span
-                                                                    class="d-block hp-badge-text fw-medium text-white">View</span></button>
                                                             <!-- <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">1m ago</span> -->
                                                         </div>
-                                                    </div>
+                                                    </div> 
+                                                    </ng-container>
+                                                    
                                                 </ng-container>
-                                                <div class="text-center" *ngIf="seeMoreToggle"
-                                                    (click)="getAllNotification('seeMore')">
-                                                    <p class="hp-badge-text seeMoreBtn">See More</p>
-                                                </div>
                                                 <ng-template #noNotify>
                                                     <p class="text-danger notify">No notifications to view</p>
                                                 </ng-template>
@@ -398,8 +390,7 @@
 
                                 <div class="w-auto ms-8 px-0 hp-sidebar-hidden mt-4">
                                     <span
-                                        class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">User
-                                        Name</span>
+                                        class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">{{userName}}</span>
                                     <a href="#" class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
                                 </div>
                             </div>

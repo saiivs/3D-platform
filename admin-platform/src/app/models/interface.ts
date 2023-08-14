@@ -11,7 +11,8 @@ export interface userRes {
   userEmail:string,
   password?:Boolean,
   userExist?:Boolean,
-  rollNo:string
+  rollNo:string,
+  userName:string
 }
 
 export interface csvRecord{
@@ -62,7 +63,10 @@ export interface productList{
   Reff?:string,
   tag:string,
   modRollno:string,
-  version?:number
+  version?:number,
+  reallocate?:Boolean,
+  additionalInfo?:Boolean,
+  extraInfo?:string
 }
 
 export interface team{

@@ -8,7 +8,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ToastrService } from 'ngx-toastr';
 import { CorrectionImageComponent } from '../correction-image/correction-image.component';
 import { MatDialog } from '@angular/material/dialog';
-import { overflow } from 'html2canvas/dist/types/css/property-descriptors/overflow';
+
 
 @Component({
   selector: 'app-qa-do',
@@ -100,18 +100,13 @@ export class QaDoComponent implements OnInit, AfterViewInit{
         this.latestHotspotUpdated = true;
         this.showLatestHotspotOverModel()
       }else{
-        console.log("new model");
-        console.log(res.data);
-        
+        console.log("new model");   
         this.versionTracker = "Updated model"
         this.latestHotspotData = res.data;
-        
         this.isNewModelAvailable = !this.isNewModelAvailable;
       }
       this.hotSpotData = res.data;
-     
       this.latestVersion = res.data[0].version;
-     
       this.tabPanels = Array(this.latestVersion).fill(1).map((_, index) => `Version ${index+1}`);
       this.tabPanels.reverse()
       } else{
@@ -126,9 +121,6 @@ export class QaDoComponent implements OnInit, AfterViewInit{
     this.latestHotspotData = event;
     this.latestHotspotUpdated = true;
     this.isNewModelAvailable = false
-    console.log("updated hotspot");
-    console.log(this.latestHotspotUpdated,this.latestVersion);
-    
     let count = 1 + this.latestVersion
     this.latestVersion = count;
     this.tabPanels = Array(count).fill(1).map((_, index) => `Version ${index+1}`);
@@ -136,6 +128,8 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   }
 
   showLatestHotspotOverModel(){
+    console.log(this.latestHotspotData);
+    
     if(this.isNewModelAvailable){
       this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${this.articleId}.glb`
     } 
@@ -145,12 +139,10 @@ export class QaDoComponent implements OnInit, AfterViewInit{
         hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${hotspot.hotspotName}.jpg`
         this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1);
       })
-        this.hotSpotData = this.latestHotspotData
+      console.log(this.latestHotspotUpdated);
+      
+       this.hotSpotData = [...this.latestHotspotData]
     }
-    console.log("here it is");
-    console.log(this.hotSpotData);
-    
-    
   }
 
   showHistoryHotspotOverModel(version:number){
@@ -161,7 +153,9 @@ export class QaDoComponent implements OnInit, AfterViewInit{
     this.historyHotspot.forEach((hotspot:any,index:number)=>{
       hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${version}/${hotspot.hotspotName}.jpg`
     })
-    this.hotSpotData = this.historyHotspot
+    
+    this.hotSpotData = [...this.historyHotspot]
+   
   }
 
   imageNotFound(version:number,index:number){
@@ -182,6 +176,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
       this.tabVersionTracker = version;
       if(version != this.latestVersion){
         this.removeAllHotspot()
+        
         this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
           this.historyHotspot = res;
           this.showHistoryHotspotOverModel(version);
@@ -217,7 +212,6 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   @ViewChild('modelTest',{ static: true }) modelTest!: ElementRef;
 
   removeHotspot(hotspotId:any){
-    console.log("removed");
     if(this.tempHotspot.length != 0){
       this.tempHotspot = this.tempHotspot.filter(hotspot => hotspot.hotspotId != hotspotId);
       this.hotSpotData = [...this.tempHotspot]
@@ -237,7 +231,6 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   }
 
   removeAllHotspot(){
-    console.log("called");
     const removeItems = this.modelTest.nativeElement.querySelectorAll('.hotspot');
     removeItems.forEach((item: any) => {
       this.renderer.removeChild(item.parentNode, item);
@@ -245,7 +238,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   }
  
   addHotspot(event:MouseEvent){
-    if(!this.hotspotDenied){
+    if(!this.hotspotDenied){ 
     const modelViewerElement = this.modelViewerContainer.nativeElement.querySelector('model-viewer');
     const point = modelViewerElement.positionAndNormalFromPoint(event.clientX, event.clientY);
     let hotSpotId = (this.nextHotspotId + 1).toString();
@@ -255,14 +248,12 @@ export class QaDoComponent implements OnInit, AfterViewInit{
    
     const normal = point.normal.toString().replace(/m/g, "");
     const position = point.position.toString().replace(/m/g, "");
-    console.log(this.version, hotSpotId);
     
     const hotspot = this.renderer.createElement('button');
     this.renderer.addClass(hotspot,'hotspot');
     this.renderer.setAttribute(hotspot,'slot',`hotspot-${this.version}${hotSpotId}`);
     this.renderer.setAttribute(hotspot,'data-position',position);
     this.renderer.setAttribute(hotspot, 'data-normal',normal);
-    console.log(hotspot);
     let buttonText = hotspotSlotExist ? this.renderer.createText(`${Number(hotSpotId) - 1 }`) : this.renderer.createText(hotSpotId);
     
     this.renderer.setStyle(hotspot, 'width', '25px');
@@ -282,16 +273,16 @@ export class QaDoComponent implements OnInit, AfterViewInit{
       hotspotId : `${hotSpotId}`,
       slot : `hotspot-${this.version}${hotSpotId}`
     }
+    
     this.tempHotspot.push(obj)
     this.hotSpotData.push(obj)
+    this.latestHotspotData.push(obj)
     // this.backEndService.createHotSpot(`hotspot-${hotSpotId}`,normal,position,this.articleId,this.clientId,`${hotSpotId}`).subscribe(()=>{})
     }
     
   }
 
-  addHotspotInitially(normal:string,position:string,name:string,hotSpotId:number){
-    console.log("calledd for deletiuon");
-    
+  addHotspotInitially(normal:string,position:string,name:string,hotSpotId:number){ 
     const hotspot = this.renderer.createElement('button');
     this.renderer.addClass(hotspot,'hotspot');
     this.renderer.setAttribute(hotspot,'slot',name);
@@ -303,7 +294,6 @@ export class QaDoComponent implements OnInit, AfterViewInit{
     this.renderer.setStyle(hotspot,'font-size', '10px');
     this.renderer.appendChild(hotspot, buttonText);
     this.renderer.setAttribute(hotspot, 'data-visibility-attribute', 'visible');
-    console.log(hotspot);
     
     this.modelTest.nativeElement.appendChild(hotspot);
   }
@@ -319,8 +309,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
     if(this.editImgFile || this.editTxtInput){
       const hotSpot = this.hotSpotData[index];
       const {corrImg,correction} = hotSpot;
-      console.log({hotSpot});
-
+     
       const formData = new FormData();
       formData.append('image',this.editImgFile);
       formData.append('text',this.editTxtInput);
@@ -360,6 +349,8 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   }
 
   editCorrectionNew(){
+    console.log("click the edit button");
+    console.log(this.hotSpotData);
     if(this.correctionUpdatedTime){
      this.timeValidation(this.correctionUpdatedTime)
     }else{
@@ -402,7 +393,9 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   EditCorrectionNew()
 {
   const formData = new FormData();
-  this.correctionItems.forEach((itemRef:ElementRef<HTMLElement>,index:number)=>{
+  let count = 1
+  this.correctionItems.forEach((itemRef:ElementRef<HTMLElement>)=>{ 
+    if(this.hotSpotData.length >= count){
     const listItem = itemRef.nativeElement;  
     let inputTxt = listItem.querySelector('input[type ="text"]')  as HTMLInputElement;
     let inputImg = listItem.querySelector('input[type="file"]')  as HTMLInputElement;
@@ -410,15 +403,12 @@ export class QaDoComponent implements OnInit, AfterViewInit{
       this.emptyField = "error"
     }else{
       this.emptyField = ""
-      let findItem = this.hotSpotData.find(obj => obj.hotspotId == `${index+1}`)
-      console.log("trackkk");
-      
-      console.log(this.trackEditedCorrection);
+      let findItem = this.hotSpotData.find(obj => obj.hotspotId == `${count}`) 
       const cacheBuster = new Date().getTime();
       let obj = {
         correction : inputTxt.value,
-        hotspotId : index+1,
-        hotspotName : `hotspot-${this.version}${index+1}`,
+        hotspotId : count,
+        hotspotName : `hotspot-${this.version}${count}`,
         normalValue: findItem.normalValue,
         positionValue:findItem.positionValue,
         clientId:this.clientId,
@@ -426,12 +416,18 @@ export class QaDoComponent implements OnInit, AfterViewInit{
         corrImg:`${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.version}/${findItem.hotspotName}.jpg?cache=${cacheBuster}`,
         clientName:this.clientName,
         version:this.version,
-        edited:this.trackEditedCorrection.includes(index+1) 
+        edited:this.trackEditedCorrection.includes(count) 
       }
+      console.log(count);
+      
      this.editedCorrectionArr.push(obj);
      const jsonString = JSON.stringify(obj);
-     formData.append(`item${index+1}`,jsonString);
-     if(inputImg?.files?.[0]) formData.append(`image${index+1}`,inputImg?.files?.[0])
+     formData.append(`item${count}`,jsonString);
+     if(inputImg?.files?.[0]) formData.append(`image${count}`,inputImg?.files?.[0])
+     if(this.hotSpotData.length >= count){
+      count = count + 1
+     }
+    }
     }
   })
 
@@ -454,13 +450,8 @@ export class QaDoComponent implements OnInit, AfterViewInit{
 
 deleteCorrection(hotspotName:string,hotSpotId:string){
   this.backEndService.deleteCorrection(hotspotName,this.clientName,this.articleId,this.version).subscribe((res)=>{
-    if(res == 'Deleted'){
-      console.log(this.latestHotspotData);
-      console.log(hotSpotId);
-      
+    if(res == 'Deleted'){ 
       this.latestHotspotData = this.latestHotspotData.filter(obj=> obj.hotspotId != hotSpotId);
-      console.log(this.latestHotspotData);
-      
       this.hotSpotData = [...this.latestHotspotData]
       this.nextHotspotId = this.hotSpotData.length;
       const removeItems = this.modelTest.nativeElement.querySelectorAll('.hotspot');

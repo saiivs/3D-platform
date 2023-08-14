@@ -25,8 +25,6 @@ import { ModelerProductListComponent } from './modeler-product-list/modeler-prod
 import { AdminModelCorrectionComponent } from './admin-model-correction/admin-model-correction.component';
 
 
-
-
 @NgModule({
   declarations: [
     AdminComponent,
@@ -41,6 +39,7 @@ import { AdminModelCorrectionComponent } from './admin-model-correction/admin-mo
     AdminModelerProfileComponent,
     ModelerProductListComponent,
     AdminModelCorrectionComponent,
+    
   ],
   imports: [
     CommonModule,

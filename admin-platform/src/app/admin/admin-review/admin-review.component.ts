@@ -32,7 +32,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   newData :any = {}
   checkDate : string = new Date().toISOString().slice(0,10);
   userEmail = localStorage.getItem('userEmail');
-  productName:string = "";
+  product:any = {};
   proStatus:string = "";
   modelerName :string = "";
   groupedMessages: { [date: string]: any[] } = {};
@@ -81,8 +81,11 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
-        
         this.modelDetails = [...data.modelDetails];
+        console.log(this.modelDetails);
+        this.product = data.modelDetails[0].assignedPro.find((obj:any)=>{
+          if(obj.articleId == this.articleId) return obj
+        })
         const regex = /[^a-zA-Z0-9]/g;
         this.clientName = this.modelDetails[0].clientDetails[0].clientName.replace(regex,"_");
         this.validateGlbFile(data);
@@ -104,15 +107,15 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         },10)
       }
     })
-    this.backEnd.adminCurrProName.subscribe((proName)=>{
-      this.backEnd.adminCurrModeler.subscribe((modelerName)=>{
-        this.modelerName = modelerName
-      })
-      this.productName = proName
-      this.backEnd.currentData.subscribe((clientName)=>{
-        this.clientName = clientName
-      })
-    })
+    // this.backEnd.adminCurrProName.subscribe((proName)=>{
+    //   this.backEnd.adminCurrModeler.subscribe((modelerName)=>{
+    //     this.modelerName = modelerName
+    //   })
+    //   this.productName = proName
+    //   this.backEnd.currentData.subscribe((clientName)=>{
+    //     this.clientName = clientName
+    //   })
+    // })
   }
 
   scrollToBottom() {
@@ -199,7 +202,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   }
 
   fullScreenMode(){
-    this.router.navigate(['admin/model-FullScreen',this.articleId,this.clientName,this.version]);
+    this.router.navigate(['admin/model-FullScreen',this.articleId,this.clientId,this.version]);
   }
 
   downloadFile(articleId:string|undefined){

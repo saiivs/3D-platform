@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component ,HostListener } from '@angular/core';
+import { BackendService } from './services/backend.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'admin-platform';
+
+  constructor(private backEndService:BackendService){}
+
+  // @HostListener('window:beforeunload', ['$event'])
+  // onBeforeUnload(event: BeforeUnloadEvent) {
+  //   this.backEndService.logout();
+  // }
 }

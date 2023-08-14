@@ -25,13 +25,15 @@ export class AdminComponent implements OnInit{
   searchValue:string = ""
   notificationLen:number = 0;
   seeMoreToggle:boolean = true;
+  userName!:string|null;
   
-  constructor(private titleService:Title,private route:Router,private backEnd:BackendService,private dialog : MatDialog,private search:NotificationService,private router:ActivatedRoute,private cdr: ChangeDetectorRef){
+  constructor(private titleService:Title,private route:Router,private backEnd:BackendService,private dialog : MatDialog,private search:NotificationService,private router:ActivatedRoute,private cdr: ChangeDetectorRef,private notificationService:NotificationService){
 
   }
 
   ngOnInit() {
     this.titleService.setTitle("Admin-Clients");
+    this.userName = localStorage.getItem("userName") || null
     this.search.enableSearch.subscribe((flag)=>{
       if(flag){
         this.searchBtn = true;
@@ -40,31 +42,25 @@ export class AdminComponent implements OnInit{
       }
       this.cdr.detectChanges();
     })
-    this.backEnd.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
+      this.notificationService.notification_admin.subscribe((data)=>{
+      console.log(data);
       this.notifyData = [...data];
       this.notificationLen += this.notifyData.length;
+      })
+      
     })
   }
 
-  openDialog(correctionString:string): void {
-    const corrData : correctionData = {
-      correction:correctionString
-    }
-    const dialogRef = this.dialog.open(CorrectionDilogComponent,{
-      width:"35rem",
-      data:corrData
-    });
-  }
-
+  
   invokeService(){
     this.search.setSearchalue(this.searchValue);
   }
 
-  getAllNotification(flag:string){
-    this.seeMoreToggle = !this.seeMoreToggle;
-    this.backEnd.getNotificationForAdmin(flag).subscribe((data)=>{
-      this.notifyData = [...data];
-    })
+  viewModelersList(modelerId:string,clientId:string){
+    this.backEnd.updateNotificationViewForAdmin(modelerId,clientId).subscribe(()=>{})
+    this.route.navigate(['admin/modeler/productList',modelerId])
   }
 
   enableBar(){

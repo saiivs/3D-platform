@@ -7,6 +7,7 @@ import swal from "sweetalert2/dist/sweetalert2.js"
 
 import '@google/model-viewer'
 import { Subscription } from 'rxjs';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-qa-reviews',
@@ -19,7 +20,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
   clientDetails: Array<any> = [];
   modelerDetails: any = {};
-  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router){
+  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private notficationService:NotificationService){
 
   }
 
@@ -125,6 +126,9 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         this.router.navigate(['/error'])
       }
     })
+    this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
+      this.notficationService.setNotificationForQA(data);
+    })
   }
 
   scrollToBottom() {
@@ -180,7 +184,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   }
 
   updateModalStatus(articleId:string,status:string){
-    if(status != 'Correction'){
+    if(status){
        swal.fire({
       position: 'center',
       title: 'Confirm',
@@ -190,6 +194,8 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       cancelButtonText: 'cancel'
     }).then((result)=>{
       if(result.value){
+        console.log("calleddddddd updtion");
+        
           this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{
             this.QaCommentArr[0].modalStatus = status
           })

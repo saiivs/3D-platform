@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { userInfo } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-admin-modeler-profile',
@@ -10,7 +11,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class AdminModelerProfileComponent implements OnInit {
 
-  constructor(private backEndService: BackendService, private route: ActivatedRoute) { };
+  constructor(private backEndService: BackendService, private route: ActivatedRoute,private notificationService:NotificationService) { };
 
   userData: userInfo = { email: '', name: '', password: '', role: '', phone: '', address: '', about: "", aboutStatus: false };
   bankInfo: any = {};
@@ -34,6 +35,9 @@ export class AdminModelerProfileComponent implements OnInit {
       } else {
 
       }
+    })
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
     })
   }
 

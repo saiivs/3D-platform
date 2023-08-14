@@ -202,7 +202,22 @@ router.post('/createModelerDeadLine/post',auth.authentication,routeHelper.create
 router.post('/updateBonus/post',auth.authentication,routeHelper.updateBonusForModeler);
 
 //get all the approved models for the QA
-router.get('/getApprovedModelsForQa/get/:qaRollNo',auth.authentication,routeHelper.getApprovedModelsForQa)
+router.get('/getApprovedModelsForQa/get/:qaRollNo',auth.authentication,routeHelper.getApprovedModelsForQa);
+
+//get all the approved models for the modeler
+router.get('/getApprovedModelsForModeler/get/:modelerRollNo',auth.authentication,routeHelper.getApprovedModelsForModeler);
+
+//update the viewed notofications for the modeler as true
+router.post("/updateNotificationStatus/post",auth.authentication,routeHelper.updateNotificationStatus);
+
+//get the notification data for the QA
+router.get('/getNotificationForQA/get/:rollNo',auth.authentication,routeHelper.getNotificationForQA);
+
+//update the notification view status for QA
+router.post("/updateNotificationForQA/post",auth.authentication,routeHelper.updateNotificationForQA);
+
+//update the notification view for admin
+router.post('/updateNotificationViewForAdmin/post',auth.authentication,routeHelper.updateNotificationAdmin)
 
 
 

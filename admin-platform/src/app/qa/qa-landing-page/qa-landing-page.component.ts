@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { QaLanding } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-qa-landing-page',
@@ -10,7 +11,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class QaLandingPageComponent implements OnInit,OnDestroy{
 
-  constructor(private backEnd:BackendService){
+  constructor(private backEnd:BackendService,private notficationService:NotificationService){
 
   }
 
@@ -52,6 +53,9 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
         }
         this.totalRecords = this.clientsArr.length;
       } 
+    })
+    this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
+      this.notficationService.setNotificationForQA(data);
     })
   }
 

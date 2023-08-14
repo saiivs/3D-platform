@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-qa-profile',
@@ -8,7 +9,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class QaProfileComponent implements OnInit{
 
-  constructor(private backEndService:BackendService){};
+  constructor(private backEndService:BackendService,private notficationService:NotificationService){};
 
   QAData:any = {}
 
@@ -16,6 +17,9 @@ export class QaProfileComponent implements OnInit{
     this.backEndService.getQAForProfile(localStorage.getItem('userEmail')).subscribe((res)=>{
       this.QAData = res
     });
+    this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
+      this.notficationService.setNotificationForQA(data);
+    })
     
   }
 }

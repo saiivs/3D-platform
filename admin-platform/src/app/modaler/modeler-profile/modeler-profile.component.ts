@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Form, FormControl, FormGroup, Validators } from '@angular/forms';
 import { userInfo } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-modeler-profile',
@@ -10,7 +11,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ModelerProfileComponent implements OnInit{
 
-  constructor(private backEndService:BackendService){}
+  constructor(private backEndService:BackendService,private notificatinService:NotificationService){}
 
   userData:userInfo|null = null;
   bankInfo:any = {};
@@ -46,6 +47,9 @@ export class ModelerProfileComponent implements OnInit{
       }else{
         this.noUserFound = true;
       }  
+    })
+    this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+      this.notificatinService.setNotificationDAta(data);
     })
   }
 

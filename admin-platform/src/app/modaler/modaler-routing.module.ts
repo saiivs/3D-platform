@@ -10,6 +10,7 @@ import { InvoiceComponent } from './invoice/invoice.component';
 import { InteractiveChatComponent } from '../admin/interactive-chat/interactive-chat.component';
 import { ModelerCorrectionViewComponent } from './modeler-correction-view/modeler-correction-view.component';
 import { ModelerProfileComponent } from './modeler-profile/modeler-profile.component';
+import { ApprovedProductsComponent } from './approved-products/approved-products.component';
 
 const route:Routes = [
   {path:"",component:ModalerComponent,canActivate:[ModalerGuard],
@@ -20,7 +21,8 @@ const route:Routes = [
     {path:"reviews/:articleId/:clientId/:version",component:ReviewsComponent},
     {path:"model-FullScreen/:articleId/:clientId/:version",component:ModelFullscreenComponent},
     {path:"model-correction/:articleId/:clientId/:version",component:ModelerCorrectionViewComponent},
-    {path:"Invoice/:rollNo",component:InvoiceComponent}
+    {path:"Invoice/:rollNo",component:InvoiceComponent},
+    {path:"Approved-models",component:ApprovedProductsComponent}
   ]}
 ]
 

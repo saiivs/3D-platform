@@ -132,7 +132,11 @@
         </div>
         <div class="col-xs-12 col-lg-3">
           <div>
-            <button class="btn btn-lg btn-primary" (click)="aasignProduct()">Assign</button>
+            <button class="btn btn-lg btn-primary" (click)="aasignProduct()">
+              <span *ngIf="!isLoading">Assign</span>
+              <span *ngIf="isLoading" class="spinner-grow spinner-grow-sm me-8" role="status" aria-hidden="true"></span>
+                <span *ngIf="isLoading">Assigning...</span> 
+            </button>
           </div>
         </div>
         <div class="col-lg-3">
@@ -144,9 +148,16 @@
           </div>
         </div>
       </div>
-      <button type="button" *ngIf="requirementData == ''" class="btn btn-primary" data-bs-toggle="modal"
-        data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add Special Requirements</button>
-      <a class="btn btn-primary" *ngIf="requirementData != ''" data-bs-toggle="collapse" href="#multiCollapseExample1"
+
+      <div class="ReqReaBtn">
+        <button *ngIf="requirementSelectFlag" (click)="selectModeForRequirements()" class="btn btn-lg btn-dark" >Add Special Requirements</button>
+        <button *ngIf="addRequirement" type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal"
+        data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add</button>
+        <button class="btn btn-lg btn-dark" (click)="reallocateModel()">Reallocate</button>
+      </div>
+      
+
+      <a class="btn btn-primary" *ngIf="clientOverallRequirement != ''" data-bs-toggle="collapse" href="#multiCollapseExample1"
         role="button" aria-expanded="false" aria-controls="multiCollapseExample1">View Requirement</a>
     </div>
     <div class="modal fade" id="varyingModal" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
@@ -212,15 +223,13 @@
                   <tr>
                     <th scope="col">
                       <div class="myCheckBox">
-                        <input class="form-check-input" type="checkbox" [(ngModel)]="masterCheckBox"
+                        <input class="form-check-input" matTooltip="{{selectionText}}" matTooltipPosition="above" type="checkbox" [(ngModel)]="masterCheckBox"
                           (change)="checkBoxChange()" id="flexCheckDefault">
-                        <label class="form-check-label" for="flexCheckDefault">
-                          {{selectionText}}
-                        </label>
                       </div>
                     </th>
                     <th scope="col">Sl No</th>
                     <th scope="col">Article Id</th>
+                    <th scope="col" matTooltip="Additional Infromation" matTooltipPosition="above">Info</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
                     <th scope="col">Assigned Modeler</th>
@@ -230,7 +239,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="
+                  <tr  *ngFor="
                   let pro of products
                     | paginate
                       : {
@@ -240,18 +249,18 @@
                           totalItems: totalRecords
                         };
                   let i = index
-                ">
-                    <ng-container
+                " [ngStyle]="{'background': pro?.assigned && !pro?.reallocate ? '#3df7003d' : ''}">
+                
+                    <ng-container  
                       *ngIf="recieved === ''||(pro.tag.toLowerCase().includes(recieved))||(pro.articleId.toLowerCase().includes(recieved))||(pro.productName.toLowerCase().includes(recieved))">
-                      <td *ngIf="!pro.assigned;else done"><input class="form-check-input" [(ngModel)]="pro.isSelected"
+
+                      <td *ngIf="!pro.assigned || pro?.reallocate || pro?.additionalInfo;else done"><input class="form-check-input" [(ngModel)]="pro.isSelected"
                           type="checkbox" id="flexCheckDefault"></td>
                       <ng-template #done>
                         <td>
                           <div class="reallocateContainer">
                             <i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"
                               style="font-size: 1.5em;color: green;"></i>
-                            <p class="hp-badge-text" (click)="reallocateModel(i)"
-                              style="color: #0010f7;cursor: pointer;">Reallocate</p>
                           </div>
                         </td>
                       </ng-template>
@@ -278,6 +287,11 @@
                           </div>
                         </div>
                       </td>
+                      <td ><i *ngIf="pro.extraInfo;else noInfo" class="hp-text-color-dark-0 ri-2x ri-information-line" (click)="aditionalInfoDilog(pro.extraInfo)" style="font-size: 1.5em;color: blue;cursor: pointer;"></i>
+                        <ng-template #noInfo>
+                          --
+                        </ng-template>
+                       </td>
                       <td>
                         <div>
                           <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above">
@@ -287,7 +301,8 @@
                               class="hp-text-color-dark-0 ri-2x ri-upload-cloud-2-fill" style="font-size: 1.3rem;"></i>
                           </div>
                           <ng-template #ReffUrl>
-                            <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click here</a></div>
+                            <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click here</a>
+                            </div>
                           </ng-template>
                         </div>
                       </td>

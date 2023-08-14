@@ -159,44 +159,6 @@ let createBudget = new Schema({
     }
 })
 
-let correctionModel = new Schema({
-    clientId:{
-        type : ObjectId,
-        required:true
-    },
-    articleId:{
-        type:String,
-        required:true
-    },
-    productName:{
-        type:String,
-        required:true
-    },
-    modelerName:{
-        type:String,
-        required:true
-    },
-    modRollNo:{
-        type:String,
-        required:true
-    },
-    QaName:{
-        type:String,
-        required:true
-    },
-    QaRollNo:{
-        type:String,
-        required:true
-    },
-    correction:{
-        type:String,
-        required:true
-    },
-    date:{
-        type:Date,
-    }
-})
-
 let invoiceData = new Schema({
     modelerId:{
         type: ObjectId,
@@ -243,7 +205,11 @@ let clientRequirement = new Schema({
         type:ObjectId,
         required:true
     },
-    requirement:{
+    articleId:{
+        type:String,
+        required:false
+    },
+    additionalInfo:{
         type:String,
         required:true
     }
@@ -301,7 +267,13 @@ let modelHotspot = new Schema({
     date:{
         type:Date,
         required:true
+    },
+    modelerView:{
+        type:Boolean,
+        required:true,
+        default:false
     }
+
     
 })
 
@@ -312,7 +284,6 @@ let QaReviews = mongoose.model('qaComments',qaComments);
 let AdminReviews = mongoose.model('adminComments',adminComments);
 let modelerList  = mongoose.model('modeler',modeler);
 let budget = mongoose.model('budget',createBudget);
-let correction = mongoose.model('correction',correctionModel);
 let invoice = mongoose.model('invoices',invoiceData);
 let tags = mongoose.model('tags',modelTags);
 let helpLine = mongoose.model('helpLine',help);
@@ -327,7 +298,6 @@ module.exports = {
     AdminReviews,
     modelerList,
     budget,
-    correction,
     invoice,
     tags,
     helpLine,

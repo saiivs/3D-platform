@@ -5,6 +5,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { CorrectionImageComponent } from '../../correction-image/correction-image.component'
 import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-modeler-correction-view',
@@ -14,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 export class ModelerCorrectionViewComponent implements OnInit{
   
-  constructor(private route:ActivatedRoute,private backEndService:BackendService,private renderer:Renderer2,private openDilog:MatDialog){}
+  constructor(private route:ActivatedRoute,private backEndService:BackendService,private renderer:Renderer2,private openDilog:MatDialog,private notificatinService:NotificationService){}
 
   articleId:string = "";
   clientId:string = "";
@@ -28,6 +29,7 @@ export class ModelerCorrectionViewComponent implements OnInit{
   clientName:string = "";
   noCorrections:boolean = false;
   hotspots:Array<any> = [];
+
   @ViewChild('modelTest',{ static: false }) modelTest!: ElementRef;
   ngOnInit(): void {
     this.clientId = this.route.snapshot.params['clientId'];
@@ -41,11 +43,9 @@ export class ModelerCorrectionViewComponent implements OnInit{
       
       this.backEndService.getLatestCorrectionForModeler(this.clientId,this.articleId).subscribe((res)=>{
         if(res){
-          
-          
-          console.log({res});
-          
           this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `Version ${index+1}`);
+          let modelerViewStatus = res[0].modelerView;
+          if(!modelerViewStatus) this.backEndService.updateNotificationViewForModeler(this.clientId,this.articleId,this.version,localStorage.getItem("rollNo"),true).subscribe((res)=>{})
           // this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
           this.tabPanels.reverse()
           this.hotspots = res;
@@ -71,7 +71,9 @@ export class ModelerCorrectionViewComponent implements OnInit{
           
       })
     })
-    
+    this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+    this.notificatinService.setNotificationDAta(data);
+  })
   }
 
   onTabChange(event:MatTabChangeEvent){
@@ -99,7 +101,7 @@ export class ModelerCorrectionViewComponent implements OnInit{
   openCorrectionImg(imgLink:string){
     let url = imgLink
    this.openDilog.open(CorrectionImageComponent,{
-      width:"32rem",
+      width:"60rem",
       data:url
     })
   }

@@ -18,7 +18,7 @@ label {
 }
 
 .text-with-dots {
-  width: 150px; /* Set the desired width */
+  width: 87px; /* Set the desired width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -37,4 +37,9 @@ label {
 
 .bonusBorder{
   border-color: #0063f7;
+}
+
+.emptyTable{
+  display: flex;
+  flex-direction: column;
 }

@@ -4,6 +4,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { CorrectionImageComponent } from 'src/app/correction-image/correction-image.component';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -13,7 +14,7 @@ import { environment } from 'src/environments/environment';
 })
 export class AdminModelCorrectionComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private backEndService: BackendService, private renderer: Renderer2, private openDilog: MatDialog) { }
+  constructor(private route: ActivatedRoute, private backEndService: BackendService, private renderer: Renderer2, private openDilog: MatDialog,private notificationService:NotificationService) { }
 
   articleId: string = "";
   clientId: string = "";
@@ -60,6 +61,9 @@ export class AdminModelCorrectionComponent implements OnInit {
         }
 
       })
+    })
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
     })
 
   }

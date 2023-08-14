@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import ApexCharts from 'apexcharts';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-modeler-status',
@@ -30,7 +31,7 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
   subcription2!:Subscription;
 
 
-  constructor(private backEnd: BackendService, private router: Router) {
+  constructor(private backEnd: BackendService, private router: Router,private notificationService:NotificationService) {
 
   }
 
@@ -171,7 +172,9 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
       }
 
     })
-
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
+    })
   }
 
   dateInputValue(date: string) {

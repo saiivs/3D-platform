@@ -62,9 +62,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
   countForMasterCheckBox: number = 50;
   canClose: Boolean = false;
   requirementData: string = "";
-  addRequirement: Boolean = true;
-
-
+  addRequirement: Boolean = false;
+  requirementSelectFlag:Boolean = true;
+  clientOverallRequirement:string = "";
+  isLoading:Boolean = false;
+  
   ngOnInit() {
     this.titleService.setTitle("Products");
     this.checkUrl = this.router.url;
@@ -80,20 +82,33 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
     this.productId = this.route.snapshot.params['id'];
     this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res) => {
+      console.log(res.requirement);
+      
       this.clientName = res.Arr[2].clientName
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientName.replace(regex, '_')
       this.budget = res.Arr[1].budgetValue;
       this.updatedBudget = res.Arr[1].budgetValue;
-      if (res.requirement.length == 0) {
-        this.requirementData = ""
+
+      if (res.requirement.length != 1) { 
+        this.clientOverallRequirement = ""
       } else {
-        this.requirementData = res.requirement[0].requirement
+        this.clientOverallRequirement = res.requirement[0].requirement
       }
       // this.requirementData = res.requirement[0]
       this.clientId = res.Arr[0].clientId
       this.products = [...res.Arr[0].productList];
 
+      if(res.requirement.length > 1){
+        for(let pro of this.products){
+        for (let info of res.requirement){
+          if(this.clientId == info.clientId&&pro.articleId==info.articleId){
+            pro.extraInfo = info.additionalInfo
+          }
+        }
+      }
+      }
+      
       this.backEndService.getTagCollections().subscribe((res) => {
         if (res) {
           this.tagList = [...res]
@@ -137,6 +152,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.reactiveForm = new FormGroup({
       modelerName: new FormControl(null)
     })
+    this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.searchService.setNotificationForAdmin(data);
+    })
   }
 
   checkBoxChange() {
@@ -145,7 +163,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
       let count = (this.page - 1) * 50 + i
       if (count <= limit) {
         if (!this.products[count]?.assigned) {
-          this.products[count].isSelected = this.masterCheckBox
+          this.products[count].isSelected = !this.products[count].reallocate ? this.masterCheckBox : this.products[count].isSelected;
+        }else if(this.products[count]?.reallocate){
+          this.products[count].isSelected = this.masterCheckBox;
         }
         if (this.masterCheckBox) {
           this.selectionText = " Unselect All"
@@ -201,10 +221,34 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }
   }
 
+  selectModeForRequirements(){
+    this.addRequirement = true;
+    this.requirementSelectFlag = false;
+    this.products.forEach((pro)=>{
+      if(pro.assigned){
+        pro.additionalInfo = true;
+        pro.isSelected = true;
+      }
+    })
+  }
+
+  aditionalInfoDilog(info:string){
+    swal.fire({
+      title: '',
+      icon: 'info',
+      html:`${info}`,
+      showCloseButton: false,
+      showCancelButton: false,
+      focusConfirm: false,
+    })
+  }
+
   aasignProduct() {
+    
     this.isChecked = false;
     this.checkedItems = this.products.filter(pro => pro.isSelected == true);
     if (this.checkedItems.length != 0 && this.modelerRollNo != "" && this.QARollNo != "") {
+      this.isLoading = true;
       let modeler = this.modelersArr.find(obj => obj.rollNo == this.modelerRollNo);
       let Qa = this.QATeamArr.find(obj => obj.rollNo == this.QARollNo);
       swal.fire({
@@ -225,8 +269,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
                   item.modRollno = modeler.rollNo;
                   item.isSelected = false;
                 }
+                if(item.reallocate){
+                  item.isSelected = false;
+                  item.reallocate = false;
+                  this.reallocation = false;
+                }
                 return [...this.products]
               })
+              this.isLoading = false;
               for (let person of this.QATeamArr) {
                 person.isSelected = false;
               }
@@ -239,20 +289,22 @@ export class ProductsComponent implements OnInit, OnDestroy {
               this.modelerRollNo = "";
               this.QARollNo = "";
             } else {
+              this.isLoading = false;
               this.toaster.error('Error', 'Something went wrong. Please try again later')
             }
           })
         } else if (result.dismiss === swal.DismissReason.cancel) {
-
+          this.isLoading = false;
         }
       })
-
     } else {
+      this.isLoading = false;
       this.toaster.error('Error', 'Please check the selected details');
     }
   }
 
-  reallocateModel(index: number) {
+  reallocateModel() {
+    
     swal.fire({
       position: 'center',
       title: 'Are you sure?',
@@ -263,11 +315,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.value) {
         this.reallocation = true;
-        index = (this.page - 1) * 50 + index;
-        this.products[index].assigned = "";
-        this.products[index].QaTeam = "";
-        this.products[index].price = "";
-        this.products[index].isSelected = true;
+        this.products.forEach((pro)=>{
+          if(pro.assigned){
+            pro.price = ""
+            pro.reallocate = true;
+            pro.isSelected = true;
+          }
+        })
       } else if (result.dismiss === swal.DismissReason.cancel) {
 
       }
@@ -399,8 +453,24 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   @ViewChild('requirement', { static: false }) requirement!: ElementRef;
   getRequirement() {
+    let prodcuts = [];
+    prodcuts = this.products.filter(pro => pro.additionalInfo||pro.isSelected);
     this.requirementData = this.requirement.nativeElement.value;
-    this.backEndService.saveRequirement(this.requirementData, this.clientId).subscribe((res) => {
+    this.backEndService.saveRequirement(this.requirementData, this.clientId,prodcuts).subscribe((res) => {
+      if(res){
+        this.toaster.success("success","Additional info added successfully")
+        this.addRequirement = false;
+        this.requirementSelectFlag = true;
+        this.products.forEach((pro)=>{
+          if(pro.additionalInfo||pro.isSelected){
+            pro.extraInfo = this.requirementData;
+            pro.additionalInfo = false;
+            pro.isSelected = false;
+          }
+        })
+      }else{
+        this.toaster.error("error","Something went wrong!!")
+      }
     })
   }
 

@@ -1,0 +1,21 @@
+.emptyTable{
+    display: flex;
+    flex-direction: column;
+    
+  }
+  .emptyImg{
+    margin: auto;
+    width: 5rem;
+  }
+
+  .text-with-dots {
+    width: 87px; /* Set the desired width */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+
+  .myhover:hover{
+    color: white;
+  }

@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-client-modeler-list',
@@ -10,13 +11,14 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ClientModelerListComponent implements OnInit {
 
-  constructor(private backEnd: BackendService, private route: ActivatedRoute) {
+  constructor(private backEnd: BackendService, private route: ActivatedRoute,private notificationService:NotificationService) {
   }
 
   modelerList: Array<any> = [];
   clientId: any = "";
   page:number = 1;
   totalRecords!:number;
+  models:Array<any> = [];
   deadLineOne!:Date
   deadLineTwo!:Date 
 
@@ -27,14 +29,23 @@ export class ClientModelerListComponent implements OnInit {
       console.log(res);
       
       this.modelerList = [...res]
-      
+      this.models = res[0].models;
+      let count = 0;
+      this.models.forEach((model)=>{
+        if(model.productStatus == 'Approved'){
+          count += 1;
+        }
+      }) 
       this.modelerList = this.modelerList.map((obj) => {
-        let percnt = (obj.approvedCount / obj.totalProducts) * 100;
+        let percnt = (count / obj.totalProducts) * 100;
         percnt = Number((percnt).toFixed(2));
         let final = `${percnt}%`;
         return { ...obj, percentage: final }
       })
       this.totalRecords = this.modelerList.length;
+    })
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
     })
   }
 

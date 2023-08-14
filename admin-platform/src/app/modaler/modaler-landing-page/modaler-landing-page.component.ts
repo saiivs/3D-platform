@@ -5,6 +5,7 @@ import { modelerLanding } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
 import { BankFormComponent } from '../bank-form/bank-form.component';
 import { MatDialog } from '@angular/material/dialog';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-modaler-landing-page',
@@ -13,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class ModalerLandingPageComponent implements OnInit,OnDestroy{
 
-constructor(private backEndService: BackendService,private router:Router,private dilog:MatDialog){
+constructor(private backEndService: BackendService,private router:Router,private dilog:MatDialog,private notificatinService:NotificationService){
 
 }
 
@@ -47,6 +48,9 @@ subscription!:Subscription;
         }) 
       }
     }
+  })
+  this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+    this.notificatinService.setNotificationDAta(data);
   })
  }
 

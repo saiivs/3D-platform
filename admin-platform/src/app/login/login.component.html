@@ -67,8 +67,10 @@
                       <input type="password" class="form-control" id="loginPassword" formControlName="password" placeholder="*****">
                       <small class="text-danger" *ngIf="!reactiveForm.get('password')?.valid&&reactiveForm.get('password')?.touched">Required</small>
                   </div>
-                  <button type="submit" class="btn btn-primary w-100" [disabled]="!reactiveForm.valid">
-                     LOGIN
+                  <button type="submit" class="btn btn-primary w-100" [disabled]="!reactiveForm.valid || isLoading">
+                     <span *ngIf="!isLoading">LOGIN</span>
+                     <div *ngIf="isLoading" class="spinner-border text-white" role="status" style="width: 1.2rem;height: 1.2rem;">
+                    </div>
                   </button>
 
               </form>

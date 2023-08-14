@@ -74,7 +74,7 @@
                   </li>
 
                   <li>
-                      <a href="#">
+                      <a [routerLink]="'Approved-models'">
                           <div class="tooltip-item in-active" data-bs-toggle="tooltip" data-bs-placement="right" title="" data-bs-original-title="E-Commerce" aria-label="E-Commerce"></div>
 
                           <span>
@@ -105,7 +105,7 @@
                     </div>
 
                     <div class="w-auto ms-8 px-0 hp-sidebar-hidden mt-4">
-                        <span class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">User Name</span>
+                        <span class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">{{userName}}</span>
                         <a [routerLink]="['profile']"  class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
                     </div>
                 </div>
@@ -164,42 +164,7 @@
                             <span>Dashboards</span>
                             <i class="ri-arrow-down-s-line"></i>
                         </a>
-
-                        <!-- <ul class="dropdown-menu">
-                            <li class="dropend">
-                                <a href="dashboard-analytics.html">
-                                    <span>
-                                        <span class="submenu-item-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                <path d="M8.97 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7h-6c-5 0-7 2-7 7v6c0 5 2 7 7 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                                <path d="m1.97 12.7 6-.02c.75 0 1.59.57 1.87 1.27l1.14 2.88c.26.65.67.65.93 0l2.29-5.81c.22-.56.63-.58.91-.05l1.04 1.97c.31.59 1.11 1.07 1.77 1.07h4.06" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                            </svg>
-                                        </span>
-
-                                        <span>Analytics</span>
-                                    </span>
-                                </a>
-                            </li>
-
-                            <li class="dropend">
-                                <a href="dashboard-ecommerce.html">
-                                    <span>
-                                        <span class="submenu-item-icon">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                                <path d="M3 9.11v5.77C3 17 3 17 5 18.35l5.5 3.18c.83.48 2.18.48 3 0l5.5-3.18c2-1.35 2-1.35 2-3.46V9.11C21 7 21 7 19 5.65l-5.5-3.18c-.82-.48-2.17-.48-3 0L5 5.65C3 7 3 7 3 9.11Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                            </svg>
-                                        </span>
-
-                                        <span>E-Commerce</span>
-                                    </span>
-                                </a>
-                            </li>
-                        </ul> -->
                     </li>
-
-
-
                     </ul>
                 </div>
                 </div>
@@ -225,36 +190,39 @@
                                 <path d="M12 6.44v3.33M12.02 2C8.34 2 5.36 4.98 5.36 8.66v2.1c0 .68-.28 1.7-.63 2.28l-1.27 2.12c-.78 1.31-.24 2.77 1.2 3.25a23.34 23.34 0 0 0 14.73 0 2.22 2.22 0 0 0 1.2-3.25l-1.27-2.12c-.35-.58-.63-1.61-.63-2.28v-2.1C18.68 5 15.68 2 12.02 2Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"></path>
                                 <path d="M15.33 18.82c0 1.83-1.5 3.33-3.33 3.33-.91 0-1.75-.38-2.35-.98-.6-.6-.98-1.44-.98-2.35" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10"></path>
                             </svg>
-                            <span *ngIf="notifyData.length != 0 || helpNotification.length != 0;" class="position-absolute translate-middle p-1 rounded-circle bg-primary hp-notification-circle" style="width: 6px; height: 6px; top: 12px;"></span>
+                            <span *ngIf="blueIndicator || helpNotification.length != 0;" class="position-absolute translate-middle p-1 rounded-circle bg-primary hp-notification-circle" style="width: 6px; height: 6px; top: 12px;"></span>
                         </button>
 
                         <div class="hp-notification-menu dropdown-fade position-absolute pt-18" style="width: 380px; top: 100%;">
                             <div class="p-24 rounded hp-bg-black-0 hp-bg-dark-100">
                                 <div class="row justify-content-between align-items-center mb-16">
                                     <div class="col hp-flex-none w-auto h5 hp-text-color-black-100 hp-text-color-dark-10 hp-text-color-dark-0 me-64 mb-0">Notifications</div>
-
                                     <div class="col hp-flex-none w-auto hp-badge-text fw-medium hp-text-color-black-80 me-12 px-0">{{notificationLen + helpNotification.length}} New</div>
                                 </div>
 
                                 <div class="divider my-4"></div>
-                                <div class="text-center" *ngIf="!seeMoreToggle" (click)="getAllNotification('seeLess')"><p class="hp-badge-text seeMoreBtn pt-2">See Less</p></div>
                                 <div class="hp-overflow-y-auto px-10 myScroll" style="max-height: 400px; margin-right: -10px; margin-left: -10px;">
                                     <ng-container *ngIf="notifyData.length != 0 || helpNotification.length != 0;else noNotify">
                                         <div  *ngFor="let notify of notifyData;let i = index" class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
-                                        <div class="w-auto px-0 me-12">
+                                            <ng-container *ngIf="!notify.modelerView;else noNotify">
+                                            <div class="w-auto px-0 me-12" *ngIf="!notify.modelerView">
                                             <div class="avatar-item d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;">
                                                 <i class="hp-text-color-dark-0 ri-2x ri-todo-line"></i>
                                             </div>
                                         </div>
-
-                                        <div (click)="correctionModelView(notify.version,notify.articleId,notify.clientId)" class="w-auto px-0 col">
+                                       
+                                           <div (click)="correctionModelView(notify.version,notify.articleId,notify.clientId,i)" class="w-auto px-0 col">
                                             <!-- <span class="hp-text-color-black-60" >Correction detected in model</span> -->
                                             <p class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
                                                 Correction detected in model {{notify.articleId}}. QA By {{notify.QA}}. 
                                             </p>
                                            
                                          <!-- <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">1m ago</span> -->
-                                        </div>
+                                        </div> 
+                                       
+                                            </ng-container>
+                                       
+                                        
                                     </div>
                                     <div *ngFor="let help of helpNotification;let i = index" class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
                                         <div class="w-auto px-0 me-12">
@@ -275,163 +243,13 @@
                                         </div>
                                     </div>
                                     </ng-container>
-                                    <div class="text-center" *ngIf="seeMoreToggle"  (click)="getAllNotification('seeMore')"><p class="hp-badge-text seeMoreBtn">See More</p></div>
                                     <ng-template #noNotify>
                                         <p class="text-danger notify">No notifications to view</p>
                                     </ng-template>
-
-                                    <!-- modal -->
-                                    
-                                    
-
-                                    <!-- <div class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
-                                        <div class="w-auto px-0 me-12">
-                                            <div class="avatar-item d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;">
-                                                <img src="assets/app-assets/img/memoji/user-avatar-2.png" class="w-100">
-                                            </div>
-                                        </div>
-
-                                        <div class="w-auto px-0 col">
-                                            <p class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
-                                                Edward Adams <span class="hp-text-color-black-60">invite you</span> to Prototyping
-                                            </p>
-
-                                            <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">9h ago</span>
-                                        </div>
-                                    </div> -->
-
-                                    <!-- <div class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
-                                        <div class="w-auto px-0 me-12">
-                                            <div class="avatar-item d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;">
-                                                <img src="assets/app-assets/img/memoji/user-avatar-3.png" class="w-100">
-                                            </div>
-                                        </div>
-
-                                        <div class="w-auto px-0 col">
-                                            <p class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
-                                                Richard Charles <span class="hp-text-color-black-60">mentioned you in</span> UX Basics Field
-                                            </p>
-
-                                            <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">13h ago</span>
-                                        </div>
-                                    </div> -->
-
-                                    <!-- <div class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
-                                        <div class="w-auto px-0 me-12">
-                                            <div class="avatar-item hp-bg-dark-success bg-success-4 d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="hp-text-color-success-1">
-                                                    <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2Zm4.78 7.7-5.67 5.67a.75.75 0 0 1-1.06 0l-2.83-2.83a.754.754 0 0 1 0-1.06c.29-.29.77-.29 1.06 0l2.3 2.3 5.14-5.14c.29-.29.77-.29 1.06 0 .29.29.29.76 0 1.06Z" fill="currentColor"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-
-                                        <div class="w-auto px-0 col">
-                                            <p class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
-                                                <span class="hp-text-color-black-60">You swapped exactly</span>
-                                                0.230000 ETH <span class="hp-text-color-black-60">for</span> 28,031.99
-                                            </p>
-
-                                            <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">17h ago</span>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- <div class="me-2 hp-basket-dropdown-button w-auto px-0 position-relative">
-                        <button type="button" class="btn btn-icon-only bg-transparent border-0 hp-hover-bg-black-10 hp-hover-bg-dark-100 hp-transition d-flex align-items-center justify-content-center" style="height: 40px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" class="hp-text-color-black-80 hp-text-color-dark-30">
-                                <path d="M8.4 6.5h7.2c3.4 0 3.74 1.59 3.97 3.53l.9 7.5C20.76 19.99 20 22 16.5 22H7.51C4 22 3.24 19.99 3.54 17.53l.9-7.5C4.66 8.09 5 6.5 8.4 6.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                <path d="M8 8V4.5C8 3 9 2 10.5 2h3C15 2 16 3 16 4.5V8M20.41 17.03H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </button>
-
-                        <div class="hp-basket-dropdown">
-                            <div class="row px-0 justify-content-between align-items-center">
-                                <h5 class="mb-0 w-auto hp-text-color-dark-15">My Cart</h5>
-
-                                <div class="w-auto px-0 me-8">
-                                    <span class="d-inline-block hp-caption fw-medium w-auto hp-text-color-black-80 hp-text-color-dark-30">1 Item</span>
-                                </div>
-                            </div>
-
-                            <div class="divider mt-24 mb-4"></div>
-
-                            <div class="hp-basket-dropdown-list">
-                                <div class="hp-d-block hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-primary hp-hover-bg-dark-80 rounded py-8 px-10 hp-overflow-x-auto" style="margin-left: -10px; margin-right: -10px;">
-                                    <div class="row flex-nowrap justify-content-between align-items-center">
-                                        <div class="col mt-4 pe-0" style="flex: 0 0 32px;">
-                                            <a href="javascript:;">
-                                                <div class="avatar-item d-flex align-items-center justify-content-center hp-bg-black-0 hp-bg-dark-100 rounded-circle" style="width: 35px; height: 35px;">
-                                                    <img src="assets/app-assets/img/product/watch-1.png">
-                                                </div>
-                                            </a>
-                                        </div>
-
-                                        <div class="col ms-10 px-0" style="flex: 0 0 120px;">
-                                            <a href="app-ecommerce-product-detail.html">
-                                                <h5 class="mb-0 fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-15">Smart Watches 3</h5>
-                                                <p class="mb-0 hp-caption hp-text-color-black-60" style="margin-top: 1px;">By <span class="hp-text-color-black-80">Sony</span></p>
-                                            </a>
-                                        </div>
-
-                                        <div class="col hp-d-flex hp-d-flex-column ms-8 px-0" style="flex: 0 0 70px;">
-                                            <div class="input-number input-number-sm" style="width: 65px;">
-                                                <div class="input-number-handler-wrap">
-                                                    <span class="input-number-handler input-number-handler-up">
-                                                        <span class="input-number-handler-up-inner">
-                                                            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
-                                                                <path d="M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-
-                                                    <span class="input-number-handler input-number-handler-down input-number-handler-down-disabled">
-                                                        <span class="input-number-handler-down-inner">
-                                                            <svg viewBox="64 64 896 896" width="1em" height="1em" fill="currentColor">
-                                                                <path d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </span>
-                                                </div>
-
-                                                <div class="input-number-input-wrap">
-                                                    <input class="input-number-input" type="number" min="1" max="10" value="1">
-                                                </div>
-                                            </div>
-
-                                            <div class="hp-cursor-pointer mt-4 hp-input-description fw-medium text-black-60 text-decoration-underline">Remove Item</div>
-                                        </div>
-
-                                        <div class="col ps-0 text-end">
-                                            <p class="hp-basket-dropdown-list-item-price hp-p1-body mb-0 hp-text-color-black-80 hp-text-color-dark-30 fw-medium">$59.00</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="divider mt-4 mb-12"></div>
-
-                            <div class="row">
-                                <div class="col-6 px-8">
-                                    <a href="app-ecommerce-checkout.html">
-                                        <button type="button" class="btn btn-text w-100 hp-bg-black-20 hp-text-color-black-100 hp-hover-text-color-primary-1 hp-hover-bg-primary-4">
-                                            View Cart
-                                        </button>
-                                    </a>
-                                </div>
-
-                                <div class="col-6 px-8">
-                                    <a href="app-ecommerce-checkout-address.html">
-                                        <button type="button" class="btn btn-text hp-text-color-black-0 hp-bg-black-100 hp-hover-bg-primary-1 w-100">
-                                            Checkout
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
 
                     <div class="hover-dropdown-fade w-auto px-0 ms-6 position-relative">
                         <div class="hp-cursor-pointer rounded-4 border hp-border-color-dark-80">
@@ -593,7 +411,7 @@
                           </div>
 
                           <div class="w-auto ms-8 px-0 hp-sidebar-hidden mt-4">
-                              <span class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">User Name</span>
+                              <span class="d-block hp-text-color-black-100 hp-text-color-dark-0 hp-p1-body lh-1">{{userName}}</span>
                               <a [routerLink]="['profile']" class="hp-badge-text fw-normal hp-text-color-dark-30">View Profile</a>
                           </div>
                       </div>

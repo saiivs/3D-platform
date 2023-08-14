@@ -65,17 +65,21 @@
               <input type="text" style="width: 40%;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
           </div>
             <ng-template #emptyTable>
-              <p class="hp-p1-body emptyTable">
-                No data to view. Try adding new client.
+              <div class="emptyTable">
+                <p class="hp-p1-body">
+                All the models have been approved.
               </p>
-              <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
+              <i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill" style="color: green;"></i>
+              </div>
+              
             </ng-template>
             <div class="table-responsive col-12 mt-16">
-              <table  class="table table-bordered text-center">
+              <table  class="table table-bordered text-center" *ngIf="proList;else emptyTable">
                 <thead>
                   <tr>
                     <th scope="col">Sl No</th>
                     <th scope="col">Article Id</th>
+                    <th scope="col" matTooltip="Additional Infromation" matTooltipPosition="above">Info</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
                     <th scope="col">Price</th>
@@ -95,6 +99,11 @@
                     <ng-container *ngIf="serachForModel === ''||(pro.tag.toLowerCase().includes(serachForModel))||(pro.articleId.toLowerCase().includes(serachForModel))||(pro.productName.toLowerCase().includes(serachForModel))">
                       <td scope="row">{{i+1}}</td>
                     <td>{{pro.articleId}}</td>
+                    <td ><i *ngIf="pro.extraInfo;else noInfo" class="hp-text-color-dark-0 ri-2x ri-information-line" (click)="aditionalInfoDilog(pro.extraInfo)" style="font-size: 1.5em;color: blue;cursor: pointer;"></i>
+                      <ng-template #noInfo>
+                        --
+                      </ng-template>
+                     </td>
                     <td>
                       <div class="modalNameContainer">
                       <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>

@@ -41,8 +41,10 @@ export class BackendService {
 
   emitProNameDetailsAdmin$ = new BehaviorSubject<string>(localStorage.getItem('ProductName')||'default value');
   adminCurrProName = this.emitProNameDetailsAdmin$.asObservable()
+
   
-//error handling function which redirects the user to the error page "*"
+  
+//error handling function which redirects the user to the error page 
   erroHandler = (error: HttpErrorResponse)=> {
     let message;
     switch (error.status) {
@@ -253,10 +255,6 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/getGlbDetails/get/${articleId}/${clientId}/${version}`).pipe((catchError(this.erroHandler)))
   }
 
-  getNotificationForAdmin(status:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/notification_Admin/get/${status}`).pipe((catchError(this.erroHandler)));
-  }
-
   generateInvoice(rollNo:string|null):Observable<any>{
     return this.http.get<any>(`${this.url}/generateInvoice/get/${rollNo}`).pipe((catchError(this.erroHandler)))
   }
@@ -297,8 +295,8 @@ export class BackendService {
     return this.http.post<any>(`${this.url}/saveModelPng/post`,file).pipe((catchError(this.erroHandler)));
   }
 
-  saveRequirement(requirement:string,clientId:any):Observable<any>{
-    return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId});
+  saveRequirement(requirement:string,clientId:any,prodcuts:Array<any>):Observable<any>{
+    return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId,prodcuts});
   }
 
   scrapeImages(link:string,productName:string,articleId:string,clientName:string):Observable<any>{
@@ -372,6 +370,8 @@ export class BackendService {
   }
 
   getAllModelListForModeler(modelerId:string):Observable<any>{
+    console.log("callleeeeee");
+    
     return this.http.get<any>(`${this.url}/getAllModelListForModeler/${modelerId}`)
   }
 
@@ -399,8 +399,28 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/getApprovedModelsForQa/get/${qaRollNo}`);
   }
 
+  getApprovedModelsForModeler(modelerRollNo:string|null):Observable<any>{
+    return this.http.get<any>(`${this.url}/getApprovedModelsForModeler/get/${modelerRollNo}`);
+  }
+
   deleteCorrection(hotspotName:string,clientName:string,articleId:string,version:number):Observable<any>{
     return this.http.post<any>(`${this.url}/deleteCorrection/post`,{hotspotName,clientName,articleId,version})
+  }
+
+  updateNotificationViewForModeler(clientId:string,articleId:string,version:number,modelerRollNo:string|null,status:Boolean):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateNotificationStatus/post`,{clientId,articleId,version,modelerRollNo,status})
+  }
+
+  updateNotificationViewForQA(clientId:string,articleId:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateNotificationForQA/post`,{clientId,articleId})
+  }
+
+  updateNotificationViewForAdmin(modelerId:string,clientId:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateNotificationViewForAdmin/post`,{modelerId,clientId})
+  }
+
+  logout(){
+    localStorage.clear()
   }
 }
 

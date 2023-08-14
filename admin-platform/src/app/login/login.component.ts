@@ -16,6 +16,8 @@ export class LoginComponent implements OnInit {
   reactiveForm!:FormGroup;
   resData!:userRes
   wrongPass:string =""
+  isLoading:Boolean = false;
+
   constructor(private backEndService:BackendService,private router:Router,private titleService:Title){
 
   }
@@ -29,17 +31,15 @@ export class LoginComponent implements OnInit {
   }
 
   formSubmit(){
+    this.isLoading = true;
     this.backEndService.userLogin(this.reactiveForm.value).subscribe((response)=>{
-      console.log(response);
-
         if(response.token){
-          console.log("enter");
-
          this.resData = response;
          localStorage.setItem("userToken",this.resData.token)
          localStorage.setItem("userEmail",this.resData.userEmail)
          localStorage.setItem("userRole",this.resData.userRole)
-         localStorage.setItem("rollNo",this.resData.rollNo)
+         localStorage.setItem("rollNo",this.resData.rollNo);
+         localStorage.setItem("userName",this.resData.userName)
 
          if(localStorage.getItem("userRole")=="admin"){
           this.router.navigate(['admin'])
@@ -48,17 +48,17 @@ export class LoginComponent implements OnInit {
          }else if(localStorage.getItem("userRole")=="QA"){
             this.router.navigate(['QA'])
          }
-
         }else if(response.password){
+          this.isLoading = false;
           console.log("wrong pass");
-
           this.wrongPass = "Incorrect Password"
         }else {
+          this.isLoading = false;
           console.log("user dont exist");
-
           this.wrongPass = "User Dont Exist"
         }
     },(err)=>{
+      console.log(err);
       this.router.navigate(['pageNotFound'])
     })
   }

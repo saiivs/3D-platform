@@ -6,21 +6,24 @@
           <div class="card-body">
             <div class="row justify-content-between">
               <div class="col pe-md-32 pe-md-120" >
-                <h4>Products</h4>
+                <h4>Approved Products</h4>
   
                 
               </div>
               <div class="hp-header-search searchContainer col">
-                <input type="text" style="width: 40%;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
+                <input type="text" style="width: 40%;margin-left: auto;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
             </div>
+            
               <ng-template #emptyTable>
-                <p class="hp-p1-body emptyTable">
-                  No data to view. Try adding new client.
+                <div class="emptyTable">
+                  <p class="hp-p1-body" style="text-align: center;">
+                  No data to view. 
                 </p>
-                <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
+                <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />  
+                </div>
               </ng-template>
               <div class="table-responsive col-12 mt-16">
-                <table  class="table table-bordered text-center" *ngIf="clients.length != 0;else noApprovedModels">
+                <table  class="table table-bordered text-center" *ngIf="clients.length != 0;else emptyTable">
                   <thead>
                     <tr>
                       <th scope="col">Sl No</th>
@@ -39,11 +42,11 @@
                        <tr *ngFor="let pro of client.assignedPro| paginate
                     : {
                         id: 'listing_pagination',
-                        itemsPerPage: 50,
+                        itemsPerPage: 6,
                         currentPage: page,
                         totalItems: totalRecords
                       };let i = index">
-                      <ng-container >
+                      <ng-container *ngIf="pro.productStatus == 'Approved';else noApprovedModels">
                         <ng-container *ngIf="serachForModel === ''||(pro.tag.toLowerCase().includes(serachForModel))||(pro.articleId.toLowerCase().includes(serachForModel))||(pro.productName.toLowerCase().includes(serachForModel))">
                         <td scope="row">{{i+1}}</td>
                         <td>{{client.clientName}}</td>
@@ -63,8 +66,8 @@
                       <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
                       <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                       <td >
-                        <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" class="btn btn-sm btn-outline-primary">
-                          <a class="myhover" [routerLink]="['/QA/reviews',pro.articleId,client.clientId,pro.version]"
+                        <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" class="btn btn-sm btn-outline-primary myhover">
+                          <a class="myhover" (click)="scrapeImages(pro.productLink,pro.productName,pro.articleId)" [routerLink]="['/modeler/reviews',pro.articleId,client.clientId,pro.version]"
                             >View Model</a>
                         </button>
                       </td>
@@ -82,20 +85,18 @@
                       
                     </tr> 
                     </ng-container>
-                   
+                    <ng-template #noApprovedModels>
+                        <p class="hp-p1-body emptyTable">
+                            No data to view.
+                          </p>
+                          <div class="emptyImg">
+                            <img  src="assets/myImg/empty-folder.png" alt="" />
+                          </div>
+                    </ng-template>
                   </tbody>
                 </table>
-                <ng-template #noApprovedModels>
-                  <p class="hp-p1-body emptyTable">
-                    No data to view.
-                  </p>
-                  <div class="emptyImg">
-                    <img  src="assets/myImg/empty-folder.png" alt="" />
-                  </div>
-    
-                </ng-template>
                 <div>
-                  <pagination-controls *ngIf="clients.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                  <pagination-controls *ngIf="products.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
                     (pageChange)="page = $event"></pagination-controls>
                 </div>
               </div>

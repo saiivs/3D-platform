@@ -7,6 +7,7 @@ import '@google/model-viewer'
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { BehaviorSubject, Observable, Subscription ,combineLatest , find, of} from 'rxjs';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-reviews',
@@ -19,7 +20,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
 
   @ViewChild('comntRef') comntRef:any;
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
-  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private toaster:ToastrService,private cdRef: ChangeDetectorRef){
+  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private toaster:ToastrService,private cdRef: ChangeDetectorRef,private notificatinService:NotificationService){
     console.log("loaded");
     
   }
@@ -124,6 +125,9 @@ export class ReviewsComponent implements OnInit,OnDestroy{
             this.scrollToBottom();
           },10)
         }
+      })
+      this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+        this.notificatinService.setNotificationDAta(data);
       })
   }
 

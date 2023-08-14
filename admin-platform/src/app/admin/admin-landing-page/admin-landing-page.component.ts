@@ -33,6 +33,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
   AddBtn: Boolean = true;
   Acc_Manager: string = ""
   budget: number = 0;
+  isLoading:Boolean = false;
   bonus:number = 0;
   subscription!: Subscription;
 
@@ -62,6 +63,9 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       })
       this.budget += data.budgetData
       this.totalRecords = this.clientTableData.length;
+    })
+    this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.searchService.setNotificationForAdmin(data);
     })
   }
 
@@ -135,6 +139,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
   }
 
   uploadCsv() {
+    this.isLoading = true;
     if (this.csvFileName != "") {
       this.toastr.success('success', 'File successfully uploaded')
       let clientInfo: clientData = new clientData();
@@ -143,6 +148,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       clientInfo.status = "Not Approved"
       this.newClientTableData.push(clientInfo);
       this.backEndService.createProduct(this.csvArr, this.newClientTableData).subscribe((response) => {
+        this.isLoading = false;
         this.clientTableData.push(response)
         this.resetFile.nativeElement.value = ""
         this.csvArr = []

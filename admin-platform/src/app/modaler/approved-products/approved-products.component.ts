@@ -1,14 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 
 @Component({
-  selector: 'app-approved-models',
-  templateUrl: './approved-models.component.html',
-  styleUrls: ['./approved-models.component.css']
+  selector: 'app-approved-products',
+  templateUrl: './approved-products.component.html',
+  styleUrls: ['./approved-products.component.css']
 })
-export class ApprovedModelsComponent implements OnInit,OnDestroy{
+export class ApprovedProductsComponent {
+
 
   constructor(private backEnd:BackendService,private route:ActivatedRoute){
     
@@ -28,8 +29,10 @@ export class ApprovedModelsComponent implements OnInit,OnDestroy{
   
 
   ngOnInit(){
-    let QaRollNo = localStorage.getItem('rollNo');
-    this.subscription = this.backEnd.getApprovedModelsForQa(QaRollNo).subscribe((data)=>{
+    
+    let modRollNo = localStorage.getItem('rollNo');
+    console.log(modRollNo);
+    this.subscription = this.backEnd.getApprovedModelsForModeler(modRollNo).subscribe((data)=>{
       this.clients = data.clients;  
       let count = 0;
       this.clients.forEach((client)=>{
@@ -39,7 +42,16 @@ export class ApprovedModelsComponent implements OnInit,OnDestroy{
     })
   }
 
+  scrapeImages(url:string,name:string,articleId:string){
+    this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
+      console.log(res);
+      
+    })
+  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe()
   }
+
+   
 }

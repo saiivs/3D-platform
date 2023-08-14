@@ -5,6 +5,7 @@ import swal from "sweetalert2/dist/sweetalert2.js"
 import "@google/model-viewer"
 import { environment } from '../../../environments/environment';
 import { Subscription } from 'rxjs';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-interactive-chat',
@@ -15,7 +16,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
 
   @ViewChild('comntRef') comntRef: any;
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
-  constructor(private backEnd: BackendService, private route: ActivatedRoute, private router: Router, private render: Renderer2, private elementRef: ElementRef) {
+  constructor(private backEnd: BackendService, private route: ActivatedRoute, private router: Router, private render: Renderer2, private elementRef: ElementRef,private notificationService:NotificationService) {
 
   }
 
@@ -114,6 +115,9 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
       } else {
         this.router.navigate(['/error'])
       }
+    })
+    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+      this.notificationService.setNotificationForAdmin(data);
     })
   }
 

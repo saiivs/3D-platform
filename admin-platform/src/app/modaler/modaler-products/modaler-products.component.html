@@ -56,17 +56,21 @@
               <h4>Products</h4>
             </div>
             <ng-template #emptyTable>
-              <p class="hp-p1-body emptyTable">
-                No data to view. Try adding new client.
+              <div class="emptyTable">
+                <p class="hp-p1-body emptyTable">
+                All the models have been approved
               </p>
-              <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
+              <i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill" style="color: green;"></i>
+              </div>
+              
             </ng-template>
             <div class="table-responsive col-12 mt-16">
-              <table  class="table table-bordered text-center">
+              <table  class="table table-bordered text-center" *ngIf="tableData;else emptyTable">
                 <thead>
                   <tr>
                     <th scope="col">Sl No</th>
                     <th scope="col">Article Id</th>
+                    <th scope="col" matTooltip="Additional Infromation" matTooltipPosition="above">Info</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Price</th>
                     <th scope="col">Product Link</th>
@@ -74,9 +78,6 @@
                     <th scope="col">Product Status</th>
                     <th scope="col">Upload Model</th>
                     <th scope="col">Preview</th>
-                    
-                    
-
                   </tr>
                 </thead>
                 <tbody>
@@ -87,8 +88,14 @@
                       currentPage: page,
                       totalItems: totalRecords
                     };let i = index">
-                    <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
+                    <ng-container>
+                      <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                     <td>{{pro.articleId}}</td>
+                    <td ><i *ngIf="pro.extraInfo;else noInfo" class="hp-text-color-dark-0 ri-2x ri-information-line" (click)="aditionalInfoDilog(pro.extraInfo)" style="font-size: 1.5em;color: blue;cursor: pointer;"></i>
+                      <ng-template #noInfo>
+                        --
+                      </ng-template>
+                     </td>
                     <td><div class="modalNameContainer">
                       <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above" >{{pro.productName}}</div>
                       <div *ngIf="pro.Reff"><a href="{{pro.Reff}}" target="_blank" style="font-size: smaller;">Reference</a></div>    
@@ -107,7 +114,11 @@
                     <td *ngIf="!pro?.modalFile;else uploadBtn"><input type="file" id="actual-btn" #fileInput (change)="acceptFile($event)" hidden/><label for="actual-btn" (click)="getIndex(i)">Choose File</label></td>
                     <ng-template #uploadBtn>
                       <td>
-                        <button class="btn btn-sm btn-primary" (click)="onUpload(pro.articleId,i)">Upload Model</button><span class="closeBtn" (click)="resetFile(i)">X &nbsp;Close</span>
+                        <button class="btn btn-sm btn-primary" (click)="onUpload(pro.articleId,i)" [disabled]="isLoading">
+                          <span *ngIf="!isLoading">Upload Model</span>
+                          <div *ngIf="isLoading" class="spinner-border text-white" role="status" style="width: 1.2rem;height: 1.2rem;">
+                          </div>
+                        </button><span class="closeBtn" (click)="resetFile(i)">X &nbsp;Close</span>
                       </td>
                     </ng-template>
                     <td *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
@@ -123,6 +134,8 @@
                        </p>
                       </td>
                     </ng-template>
+                    </ng-container>
+                    
                    
                   </tr>
                 </tbody>

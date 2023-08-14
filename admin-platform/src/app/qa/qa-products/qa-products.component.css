@@ -25,3 +25,12 @@
   justify-content: flex-end;
 }
 
+.emptyTable{
+  display: flex;
+  flex-direction: column;
+}
+.emptyImg{
+  margin: auto;
+  width: 5rem;
+}
+

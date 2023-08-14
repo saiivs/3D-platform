@@ -75,7 +75,7 @@
                       <td *ngIf="modelObj.productStatus != 'Not uploaded';else NoData">
                         <button class="btn btn-sm btn-outline-primary">
                           <a class="myhover"
-                            [routerLink]="['../../reviews',modelObj.articleId,modelObj.clientData._id,modelObj.version]">View
+                            [routerLink]="['../../../reviews',modelObj.articleId,modelObj.clientId,modelObj.version]">View
                             Model</a>
                         </button>
                       </td>

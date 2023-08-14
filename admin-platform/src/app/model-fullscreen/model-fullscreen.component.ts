@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import "@google/model-viewer"
 import { BackendService } from 'src/app/services/backend.service';
@@ -25,7 +25,8 @@ export class ModelFullscreenComponent implements OnInit{
   modelName :string|null = localStorage.getItem('ProductName');
   clientName:string|null = localStorage.getItem('clientName');
   modelDetail:any = {};
-  warning:string|null = localStorage.getItem("ModelWarning")||null
+  warning:string|null = localStorage.getItem("ModelWarning")||null;
+  isDoubleSided:Boolean = false;
 
   ngOnInit(){
     this.articleId = this.route.snapshot.params['articleId'];
@@ -41,6 +42,46 @@ export class ModelFullscreenComponent implements OnInit{
       this.polygonCount = res.info.totalTriangleCount;
       this.materialCount = res.info.materialCount; 
     })  
+  }
+
+  @ViewChild('modelViewer') modelViewer:any
+  onModelLoad(event:Event): void {
+    console.log(this.modelViewer);
+    
+    let scene = this.modelViewer.scene;
+    console.log(scene);
+    
+    
+    console.log(this.modelViewer);
+    
+    // this.modelViewer.addEventListener('load',()=>{
+    //    if(this.glbModel){
+    //   let scene = this.glbModel.getScene();
+
+    //   if(scene){
+    //     let isDoubleSided = false;
+
+    //     scene.traverse((child:any)=>{
+    //       if (child.isMesh) {
+    //         if (child.material.side > 0) {
+    //           isDoubleSided = true;
+    //         }
+    //       }
+    //     })
+
+    //     if(isDoubleSided){
+    //       this.isDoubleSided = true;
+    //       console.log("model doublesided");
+          
+    //     }else{
+    //       this.isDoubleSided = false;
+    //       console.log("model is not doublesided");
+          
+    //     }
+    //   }
+    // }
+    // })
+   
   }
 
   openDialog(): void {

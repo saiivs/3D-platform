@@ -10,13 +10,15 @@ width: 100%;">
                     </div>
                     <div class="d-flex align-items-center justify-content-center">
                         
-                        <model-viewer
+                        <model-viewer #modelViewer
                         camera-controls
                         camera-orbit="45deg 55deg 115%"
                         [src]="modelSrc"
                         alt=""
                         data-js-focus-visible=""
                         ar-status="not-presenting"
+                        (load)="onModelLoad($event)"
+                        id="modelViewer"
                         >
                         </model-viewer>
                     </div>
