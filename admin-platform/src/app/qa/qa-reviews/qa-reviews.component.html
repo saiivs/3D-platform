@@ -18,7 +18,7 @@
                         </model-viewer>
                         <div class="mywarning" *ngIf="warningMsg != ''">
                           <div class="col-12 col-md-6 col-xl-6" style="margin-left: auto;">
-                            <div class="card" style="border: 1px solid #ffc212;border-radius: 6px;background-color: #ffc21269;">
+                            <div class="card" *ngIf="warningShow" style="border: 1px solid #ffc212;border-radius: 6px;background-color: #ffc21269;">
                                 <div class="card-body" style="padding: 11px 11px;">
                                     <div class="row g-16">
                                         <div class="col-6 hp-flex-none w-auto">
@@ -30,9 +30,15 @@
                                             <h3 class="mb-4"><span class="hp-badge-text text-primary hp-text-color-dark-primary-2">Warning</span></h3>
                                             <p class="hp-p1-body mb-0 text-black-80 hp-text-color-dark-30">{{warningMsg}}</p>
                                         </div>
+                                        <i (click)="warningShow = false" class="hp-text-color-dark-0 ri-close-fill warningClosebtn"></i>
                                     </div>
                                 </div>
                             </div>
+                            <div *ngIf="!warningShow" class="col-6 hp-flex-none w-auto">
+                              <div class="avatar-item d-flex align-items-center justify-content-center hp-bg-color-dark-primary rounded-circle" style="background-color: #ffc21200;margin-left: auto;">
+                                <i (click)="warningShow=true" class="text-danger ri-2x ri-error-warning-line" style="cursor: pointer;" ></i>
+                              </div>
+                          </div>
                         </div>
                         </div>
                         <div class="QAbtn">

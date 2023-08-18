@@ -6,7 +6,7 @@
           <div class="card-body">
             <div class="row justify-content-between">
               <div class="col pe-md-32 pe-md-120" >
-                <h4>Approved Products</h4>
+                <h4>Approved Models</h4>
   
                 
               </div>
@@ -32,6 +32,7 @@
                       <th scope="col">Product Name</th>
                       <th scope="col">Product Link</th>
                       <th scope="col">Price</th>
+                      <th scope="col">QA</th>
                       <th scope="col">Product Status</th>
                       <th scope="col">Preview</th>
                       <th scope="col">Admin Status</th>
@@ -42,7 +43,7 @@
                        <tr *ngFor="let pro of client.assignedPro| paginate
                     : {
                         id: 'listing_pagination',
-                        itemsPerPage: 6,
+                        itemsPerPage: 50,
                         currentPage: page,
                         totalItems: totalRecords
                       };let i = index">
@@ -63,6 +64,7 @@
                         <td class="text-danger">NO LINK</td>
                       </ng-template>
                       <td>€ {{pro.price}}</td>
+                      <td>{{pro.QaTeam}}</td>
                       <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
                       <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                       <td >
@@ -96,7 +98,7 @@
                   </tbody>
                 </table>
                 <div>
-                  <pagination-controls *ngIf="products.length != 0;" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                  <pagination-controls *ngIf="clients.length != 0;" id="listing_pagination" [maxSize]="6" [directionLinks]="true"
                     (pageChange)="page = $event"></pagination-controls>
                 </div>
               </div>

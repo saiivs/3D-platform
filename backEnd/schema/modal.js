@@ -152,6 +152,10 @@ let createBudget = new Schema({
         type:Date,
         required:true
     },
+    remainingBudget:{
+        type:Number,
+        required:false
+    },
     exceeded:{
         type:Boolean,
         required:true,

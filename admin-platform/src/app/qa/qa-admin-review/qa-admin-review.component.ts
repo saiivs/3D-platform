@@ -40,6 +40,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   flag:Boolean = true;
   polygonCount!:number;
   warningMsg:string = "";
+  warningShow:Boolean = true;
   srcFile:string = "";
   QaTeamName:string = "";
   correctionValue:string = "";
@@ -47,7 +48,11 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   correctionInvalid:string = "";
   modRollNo:string = '';
   subscription!:Subscription;
-
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  
   validateGlbFile(data:any){
     let modelData = data.gltfData;
     function getFileExtension(fileName:string) {
@@ -84,10 +89,11 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     }else{
       this.canCloseModal = true;
     }
-    this.clientId = this.route.snapshot.params['clientId'];
-    this.articleId = this.route.snapshot.params['articleId'];
-    this.version = this.route.snapshot.params['version'];
-    this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
+    this.subscription4 = this.route.params.subscribe(params => {
+      this.clientId = params['clientId'];
+      this.articleId = params['articleId'];
+      this.version = params['version'];
+      this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString();
       if(data){
         this.validateGlbFile(data);
@@ -117,6 +123,9 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
         },10)
       }
     })
+      // You can now use these values to update your component's state or perform actions
+    });
+   
   }
 
   scrollToBottom() {
@@ -143,7 +152,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     this.flag = true;
     this.comntRef.nativeElement.value = ""
    
-    this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+    this.subscription1 = this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
     })
 
@@ -164,7 +173,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
      cancelButtonText: 'cancel'
    }).then((result)=>{
      if(result.value){
-         this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{
+         this.subscription2 = this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo,this.modelerDetails.list).subscribe((res)=>{
            this.QaCommentArr[0].modalStatus = status
          })
      }else{
@@ -186,7 +195,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   getCorrection(status:string){
     this.correctionValue = this.correction.nativeElement.value;
     if(this.correctionValue != ""){
-      this.backEnd.approveModal(this.clientId,this.articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{})
+      this.subscription3 = this.backEnd.approveModal(this.clientId,this.articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo,this.modelerDetails.list).subscribe((res)=>{})
     }else{
       this.correctionInvalid = "Invalid correction field";
       }  
@@ -209,6 +218,10 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if(this.subscription)this.subscription.unsubscribe();
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe() 
+    if(this.subscription4)this.subscription4.unsubscribe() 
   }
 }

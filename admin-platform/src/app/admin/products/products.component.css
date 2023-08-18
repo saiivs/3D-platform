@@ -65,6 +65,11 @@
   color: white;
 }
 
+.deadlineBtn{
+  display: flex;
+  gap: 7px;
+}
+
 .my-swal-title {
   font-size: 1rem !important;
 }

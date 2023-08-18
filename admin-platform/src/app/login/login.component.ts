@@ -1,22 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup , Validators } from '@angular/forms';
 import { BackendService } from '../services/backend.service';
 import { userRes } from '../models/interface';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit,OnDestroy {
 
-  title:string="Login-Page"
+  title:string="Login Page"
   reactiveForm!:FormGroup;
   resData!:userRes
   wrongPass:string =""
   isLoading:Boolean = false;
+  subscription!:Subscription
 
   constructor(private backEndService:BackendService,private router:Router,private titleService:Title){
 
@@ -32,7 +34,7 @@ export class LoginComponent implements OnInit {
 
   formSubmit(){
     this.isLoading = true;
-    this.backEndService.userLogin(this.reactiveForm.value).subscribe((response)=>{
+    this.subscription = this.backEndService.userLogin(this.reactiveForm.value).subscribe((response)=>{
         if(response.token){
          this.resData = response;
          localStorage.setItem("userToken",this.resData.token)
@@ -63,4 +65,7 @@ export class LoginComponent implements OnInit {
     })
   }
 
+  ngOnDestroy(): void {
+    if(this.subscription)this.subscription.unsubscribe()
+  }
 }

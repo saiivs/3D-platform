@@ -26,20 +26,22 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
   totalCorruptionModels:number = 0;
   totalApprovedClients:number = 0;
   subscription!:Subscription;
+  subscription1!:Subscription;
 
 
   ngOnInit() {
-   this.subscription =  this.backEnd.getClientsForQa().subscribe((data)=>{
-      if(data){
+    let qaRollNo = localStorage.getItem("rollNo")
+   this.subscription =  this.backEnd.getClientsForQa(qaRollNo).subscribe((data)=>{
+      if(data){ 
+        console.log(data);
+        
         this.clientsArr = [...data];
-        let rollNo = localStorage.getItem("rollNo")
+       
         for(let item of this.clientsArr){
-          this.products = item.assignedPro.filter((obj:any)=>{
-            if(obj.qaRollNo == rollNo)
-            return obj;
-          })
-          this.totalModels = this.products.length;
+          let flag = true;
+          
           item.assignedPro.filter((obj:any)=>{
+            this.totalModels ++
             if(obj.productStatus == 'Not Uploaded' || obj.productStatus == 'Uploaded' || obj.productStatus == 'Correction'){
               item.approvedClient = false;
               if(obj.productStatus == 'Correction') this.totalCorruptionModels = this.totalCorruptionModels + 1;
@@ -48,13 +50,19 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
             }else{
               this.totalApprovedModels = this.totalApprovedModels + 1;
             }
+            if(obj.productStatus != "Approved"){
+              flag = false;
+            }
+            item.listCompleted = flag ? "Complete" : "Incomplete"
           })
           if(item.approvedClient) this.totalApprovedClients ++;
+          
         }
+        
         this.totalRecords = this.clientsArr.length;
       } 
     })
-    this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
+    this.subscription1 = this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
       this.notficationService.setNotificationForQA(data);
     })
   }
@@ -65,7 +73,8 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    if(this.subscription)this.subscription.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe()
   }
 
 }

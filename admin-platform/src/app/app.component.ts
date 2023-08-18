@@ -7,7 +7,7 @@ import { BackendService } from './services/backend.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'admin-platform';
+  title = '3D Platform';
 
   constructor(private backEndService:BackendService){}
 

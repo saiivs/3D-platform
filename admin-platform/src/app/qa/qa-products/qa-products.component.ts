@@ -28,19 +28,20 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   serachForModel:string = "";
   clientRequirement!:string|boolean
   subscription!:Subscription;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
   
-
   ngOnInit(){
     this.Id = this.route.snapshot.params['id'];
-    this.subscription = this.backEnd.getQaPro(this.Id).subscribe((data)=>{
-      console.log(data);
-      
+    let qaRollNo = localStorage.getItem("rollNo");
+    this.subscription = this.backEnd.getQaPro(this.Id,qaRollNo).subscribe((data)=>{
      if(data.proList.length > 0){
       this.clientId = data.proList[0].clientId
       this.clientDetails = data.proList[0].clientData; 
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
       this.products = [...data.proList[0].assignedPro];
+      this.totalRecords = this.products.length;    
       if(data.requirement.length > 1){
         for(let pro of this.products){
         for (let info of data.requirement){
@@ -50,22 +51,19 @@ export class QaProductsComponent implements OnInit,OnDestroy{
         }
       }
       }
-      let qaRollNo = localStorage.getItem("rollNo");
-      this.products = this.products.filter(obj => obj.qaRollNo == qaRollNo)
-      this.totalRecords = this.products.length;
+      
      }else{
       this.proList = false;
      }
     })
-    this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
+    this.subscription1 = this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
       this.notficationService.setNotificationForQA(data);
     })
   }
 
   scrapeImages(url:string,name:string,articleId:string){
-    this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
-      console.log(res);
-      
+    this.subscription2 = this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
+      console.log(res);  
     })
   }
 
@@ -81,7 +79,7 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    if(this.subscription)this.subscription.unsubscribe()
   }
 
 }

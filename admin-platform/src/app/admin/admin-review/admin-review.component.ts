@@ -41,6 +41,10 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   polygonCount!:number;
   srcFile:string = ""
   subscription!:Subscription;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
   warningMsg:string = "";
 
   validateGlbFile(data:any){
@@ -107,15 +111,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         },10)
       }
     })
-    // this.backEnd.adminCurrProName.subscribe((proName)=>{
-    //   this.backEnd.adminCurrModeler.subscribe((modelerName)=>{
-    //     this.modelerName = modelerName
-    //   })
-    //   this.productName = proName
-    //   this.backEnd.currentData.subscribe((clientName)=>{
-    //     this.clientName = clientName
-    //   })
-    // })
   }
 
   scrollToBottom() {
@@ -143,7 +138,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     console.log(this.groupedMessages);    
     this.comntRef.nativeElement.value = ""
    
-    this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+    this.subscription1 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
     })
 
@@ -158,7 +153,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         this.groupedMessages[this.currentDate].push(message);
       });
       this.comntRef.nativeElement.value = ""
-      this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+      this.subscription2 = this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
     })
     }
@@ -181,14 +176,12 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     }).then((result)=>{
       if(result.value){
         if(status == "Approved"){
-          this.backEnd.AdminApproveModal(this.clientId,articleId).subscribe((res)=>{
-            console.log({res});
-            
+         this.subscription3 = this.backEnd.AdminApproveModal(this.clientId,articleId).subscribe((res)=>{
             this.QaCommentArr[0].modalStatus = status
             this.QaCommentArr[0].adminStatus = status
           })
         }else{
-          this.backEnd.rejectModal(this.clientId,articleId).subscribe((res)=>{
+          this.subscription4 = this.backEnd.rejectModal(this.clientId,articleId).subscribe((res)=>{
             this.QaCommentArr[0].modalStatus = "Correction"
             this.QaCommentArr[0].adminStatus = status
           })
@@ -214,6 +207,10 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(){
-    this.subscription.unsubscribe()
+    if(this.subscription)this.subscription.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
   }
 }

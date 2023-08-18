@@ -21,6 +21,7 @@ export class ArchiveClientsComponent implements OnInit{
   totalRecords:number = 0;
   page:number = 1
   subscription!:Subscription;
+  subscription1!:Subscription;
 
   ngOnInit(){
     this.titleService.setTitle(this.title)
@@ -28,7 +29,7 @@ export class ArchiveClientsComponent implements OnInit{
         this.clientTableData = data.data.filter(obj => obj.status == "completed")
         this.totalRecords = this.clientTableData.length; 
     })
-    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription1 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
   }
@@ -38,7 +39,7 @@ export class ArchiveClientsComponent implements OnInit{
   }
 
   ngOnDestroy(){
-    this.subscription.unsubscribe()
+    if(this.subscription)this.subscription.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe()
   }
-
 }

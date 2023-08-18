@@ -207,8 +207,9 @@
                                 <div class="divider my-4"></div>
                                 <div class="hp-overflow-y-auto px-10 myScroll" style="max-height: 400px; margin-right: -10px; margin-left: -10px;">
                                     <ng-container *ngIf="notificationLen != 0;else noNotify">
-                                        <div  *ngFor="let notify of notifyData;let i = index" class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
-                                            <ng-container *ngFor="let model of notify.assignedPro;let modelIndex = index">
+                                        <ng-container *ngFor="let notify of notifyData;let i = index">
+                                             <div *ngFor="let model of notify.assignedPro;let modelIndex = index"  class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10" style="margin-left: -10px; margin-right: -10px;">
+                                            
                                             <div class="w-auto px-0 me-12">
                                             <div class="avatar-item d-flex align-items-center justify-content-center rounded-circle" style="width: 48px; height: 48px;">
                                                 <i class="hp-text-color-dark-0 ri-2x ri-todo-line"></i>
@@ -225,11 +226,13 @@
                                         </div> 
                                        
                                            
-                                            </ng-container>
+                                           
                                             
                                        
                                         
                                     </div>
+                                        </ng-container>
+                                       
                                     </ng-container>
                                     <ng-template #noNotify>
                                         <p class="text-danger notify">No notifications to view</p>

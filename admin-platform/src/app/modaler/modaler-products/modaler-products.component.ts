@@ -26,18 +26,22 @@ version:number = 0;
 index!:number;
 totalRecords!:number;
 bonus:Array<any> = [];
+serachForModel:string = "";
 page:number = 1;
 tableData:Boolean = true;
 deadLineOne!:string|null
 deadLineTwo!:string|null;
 isLoading:Boolean = false;
 subscription!:Subscription;
+subscription1!:Subscription;
+subscription2!:Subscription;
+ 
 
 
 ngOnInit() {
   this.productId = this.route.snapshot.params['id'];
   this.subscription = this.backEndService.getModalerPro(this.productId,localStorage.getItem('rollNo')).subscribe((data:any)=>{ 
-    console.log(data);
+    console.log({data});
     
   if(data.proData){
     this.clientId = data.proData[0].clientId
@@ -63,7 +67,7 @@ ngOnInit() {
     this.tableData = false;
   } 
   })
-  this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+  this.subscription1 = this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
     this.notificatinService.setNotificationDAta(data);
   })
 
@@ -112,12 +116,14 @@ resetFile(index:number){
 onUpload(id:string,index:number){
   this.isLoading = true;
   index = (this.page - 1) * 50 + index;
+  let list = this.products[index].list;
   const formData = new FormData();
   formData.append('file',this.uploadedFile,this.uploadedFile.name);
   formData.append('id',id);
   formData.append('clientId',this.clientId)
   formData.append('modRollNo',localStorage.getItem('rollNo')||"");
-  this.backEndService.uploadModal(formData).subscribe((res)=>{
+  formData.append('list',list)
+  this.subscription2 = this.backEndService.uploadModal(formData).subscribe((res)=>{
     if(res.status){
       this.version = res.version;
       this.toaster.success('success','model successfully uploaded');
@@ -136,7 +142,10 @@ this.backEndService.getProName(proName)
 }
 
 ngOnDestroy(): void {
-  this.subscription.unsubscribe();
+  if(this.subscription)this.subscription.unsubscribe();
+  if(this.subscription1)this.subscription1.unsubscribe()
+  if(this.subscription2)this.subscription2.unsubscribe()
+    
 }
 
 }

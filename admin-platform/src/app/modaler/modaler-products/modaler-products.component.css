@@ -38,6 +38,10 @@ label {
 .bonusBorder{
   border-color: #0063f7;
 }
+.searchContainer{
+  display: flex;
+  justify-content: flex-end;
+}
 
 .emptyTable{
   display: flex;

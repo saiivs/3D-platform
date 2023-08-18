@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import "@google/model-viewer"
 import { BackendService } from 'src/app/services/backend.service';
@@ -6,13 +6,14 @@ import { environment } from '../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ModelWarningComponent } from '../model-warning/model-warning.component';
 import { warning } from '../models/interface';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-model-fullscreen',
   templateUrl: './model-fullscreen.component.html',
   styleUrls: ['./model-fullscreen.component.css']
 })
-export class ModelFullscreenComponent implements OnInit{
+export class ModelFullscreenComponent implements OnInit,OnDestroy{
 
   constructor(private route:ActivatedRoute,private router:Router,private backEnd:BackendService,private dialog : MatDialog){}
 
@@ -27,17 +28,19 @@ export class ModelFullscreenComponent implements OnInit{
   modelDetail:any = {};
   warning:string|null = localStorage.getItem("ModelWarning")||null;
   isDoubleSided:Boolean = false;
-
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  
   ngOnInit(){
     this.articleId = this.route.snapshot.params['articleId'];
     this.clientId = this.route.snapshot.params['clientId'];
     this.version = this.route.snapshot.params['version']
-    this.backEnd.AgetClientById(this.clientId).subscribe((client)=>{
+    this.subscription1 = this.backEnd.AgetClientById(this.clientId).subscribe((client)=>{
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = client.clientName.replace(regex,"_"); 
       this.modelSrc = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
     })
-    this.backEnd.getGlbFileDetails(this.articleId,this.clientId,this.version).subscribe((res)=>{
+    this.subscription2 = this.backEnd.getGlbFileDetails(this.articleId,this.clientId,this.version).subscribe((res)=>{
       this.modelDetail = res;
       this.polygonCount = res.info.totalTriangleCount;
       this.materialCount = res.info.materialCount; 
@@ -49,39 +52,6 @@ export class ModelFullscreenComponent implements OnInit{
     console.log(this.modelViewer);
     
     let scene = this.modelViewer.scene;
-    console.log(scene);
-    
-    
-    console.log(this.modelViewer);
-    
-    // this.modelViewer.addEventListener('load',()=>{
-    //    if(this.glbModel){
-    //   let scene = this.glbModel.getScene();
-
-    //   if(scene){
-    //     let isDoubleSided = false;
-
-    //     scene.traverse((child:any)=>{
-    //       if (child.isMesh) {
-    //         if (child.material.side > 0) {
-    //           isDoubleSided = true;
-    //         }
-    //       }
-    //     })
-
-    //     if(isDoubleSided){
-    //       this.isDoubleSided = true;
-    //       console.log("model doublesided");
-          
-    //     }else{
-    //       this.isDoubleSided = false;
-    //       console.log("model is not doublesided");
-          
-    //     }
-    //   }
-    // }
-    // })
-   
   }
 
   openDialog(): void {
@@ -102,6 +72,11 @@ export class ModelFullscreenComponent implements OnInit{
       subUrl = 'admin'
     }
     this.router.navigate([`${subUrl}/reviews`,this.articleId,this.clientId,this.version]);
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
   }
 
 }

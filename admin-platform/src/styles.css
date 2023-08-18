@@ -31,3 +31,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   .table{
     border-color: #2125295e;
   }
+
+  .warningClosebtn{
+    position: absolute;
+    width: fit-content;
+    right: 0;
+    font-size: 1.5em;
+    cursor: pointer;
+  }

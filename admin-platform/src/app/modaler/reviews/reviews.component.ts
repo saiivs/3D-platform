@@ -45,10 +45,16 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   clientName:string="";
   polygonCount!:number;
   warningMsg:string = "";
+  warningShow:Boolean = true;
   version:number = 0;
   srcFile:string = "";
   subscription!:Subscription;
-
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  subscription5!:Subscription;
+  
   // functions
   validateGlbFile(data:any){
     try {
@@ -71,7 +77,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
         if(format == 'png') extnsWrng =`png files used`
-        if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+        if(obj.image.height > 2048) imgHieghtWrng = `Higher resolution used`
       }
     })
     if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){ 
@@ -89,9 +95,10 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   ngOnInit() {
-      this.articleId = this.route.snapshot.params['articleId'];
-      this.clientId = this.route.snapshot.params['clientId'];
-      this.version = this.route.snapshot.params['version']
+    this.subscription5 = this.route.params.subscribe(params => {
+      this.clientId = params['clientId'];
+      this.articleId = params['articleId'];
+      this.version = params['version'];
       this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
         this.currentDate = new Date().toLocaleDateString('en-GB');
         if(data){
@@ -126,7 +133,10 @@ export class ReviewsComponent implements OnInit,OnDestroy{
           },10)
         }
       })
-      this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+      // You can now use these values to update your component's state or perform actions
+    });
+      
+      this.subscription1 = this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
         this.notificatinService.setNotificationDAta(data);
       })
   }
@@ -155,7 +165,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     formData.append('screenshot',blob,'image.png');
     formData.append('articleId',this.QaCommentArr[0]?.articleId);
     formData.append('clientId',this.QaCommentArr[0]?.clientId);
-    this.backEnd.sendpngOfModel(formData).subscribe((res)=>{});
+    this.subscription2 = this.backEnd.sendpngOfModel(formData).subscribe((res)=>{});
   }
 
   dataURLtoBlob(dataUrl: string): Blob {
@@ -194,7 +204,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     this.groupedMessages[this.currentDate].push(pushObj); 
     this.flag = true;
     this.comntRef.nativeElement.value = ""
-    this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+   this.subscription3 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
     })  
   }
@@ -208,7 +218,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   helpCall(){
-    this.backEnd.helpLine(localStorage.getItem('rollNo'),this.articleId,this.clientId).subscribe((res)=>{
+    this.subscription4 = this.backEnd.helpLine(localStorage.getItem('rollNo'),this.articleId,this.clientId).subscribe((res)=>{
       if(res.status){
         if(res.data == 'New') this.toaster.success('success','Lead 3D artist will contact you soon!');
         else this.toaster.success('success','Lead 3D artist will contact you soon!');  
@@ -217,7 +227,12 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    if(this.subscription)this.subscription.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
+    if(this.subscription5)this.subscription5.unsubscribe() 
   }
 
 }

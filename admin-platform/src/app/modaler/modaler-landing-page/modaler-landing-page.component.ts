@@ -28,30 +28,45 @@ modeler:any = {}
 modelersArray:Array<any> = []
 productCount: number = 0;
 subscription!:Subscription;
+subscription2!:Subscription;
 
  ngOnInit() {
-  this.subscription = this.backEndService.getClientsForModaler().subscribe((clientData)=>{
-    if(clientData){
+  let modRollNo = localStorage.getItem('rollNo')
+  this.subscription = this.backEndService.getClientsForModaler(modRollNo).subscribe((clientData)=>{ 
+    console.log("asdlkfmasdklfnakdsfl");
+    console.log({clientData});
+    
+    
+    if(clientData.length > 0){
+      let flag = true;
       this.clients = [...clientData]
+      console.log(this.clients);
+      
       this.modelersArray = clientData[0].modelerData
       this.totalRecords = clientData.length
       for(let item of this.clients){
         item.assignedPro.filter((obj:any)=>{
           let modelerRoll = localStorage.getItem('rollNo');
-         this.modeler = this.modelersArray.find(obj => obj.rollNo == localStorage.getItem("rollNo"));
+         this.modeler = this.modelersArray[0]
           if(obj.modRollno == modelerRoll) this.productCount ++
           if(obj.productStatus == 'Correction' || obj.productStatus == 'Not Uploaded'){
             item.approvedClient = false; 
           }else if(obj.invoice == false&&obj.productStatus == 'Approved'){
             this.disableInvoice = false;
           }
+          if(obj.productStatus != "Approved"){
+            flag = false;
+          }
+          item.listCompleted = flag ? "Complete" : "Incomplete"
         }) 
       }
+      console.log(this.clients);
+      
     }
   })
-  this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
-    this.notificatinService.setNotificationDAta(data);
-  })
+    this.subscription2 = this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
+      this.notificatinService.setNotificationDAta(data);
+    })
  }
 
  Invoice(){
@@ -72,14 +87,14 @@ subscription!:Subscription;
   }
 }
   
-
  QaNameLoad(name:string,clientName:string){ 
   this.backEndService.getQaName(name)
   this.backEndService.getClientName(clientName)
  }
 
  ngOnDestroy(): void {
-   this.subscription.unsubscribe();
+   if(this.subscription)this.subscription.unsubscribe();
+   if(this.subscription2)this.subscription2.unsubscribe();
  }
 
 

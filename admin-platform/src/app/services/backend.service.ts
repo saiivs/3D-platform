@@ -153,9 +153,8 @@ export class BackendService {
     return this.productLink;
   }
 
-  getClientsForModaler():Observable<modelerLanding[]>{
-    let userEmail = localStorage.getItem('userEmail')
-    return this.http.get<modelerLanding[]>(`${this.url}/clientsForModalers/Get/${userEmail}`).pipe((catchError(this.erroHandler)))
+  getClientsForModaler(modRollNo:string|null):Observable<modelerLanding[]>{
+    return this.http.get<modelerLanding[]>(`${this.url}/clientsForModalers/Get/${modRollNo}`).pipe((catchError(this.erroHandler)))
   }
 
   getModalerPro(id:any,modRollNo:string|null):Observable<modelerLanding[]>{
@@ -166,13 +165,12 @@ export class BackendService {
     return this.http.post<any>(`${this.url}/upload-modal/post`,formData).pipe((catchError(this.erroHandler)))
   }
 
-  getClientsForQa():Observable<any>{
-    let userEmail = localStorage.getItem('userEmail')
-    return this.http.get<any>(`${this.url}/clientsForQa/Get/${userEmail}`).pipe((catchError(this.erroHandler)))
+  getClientsForQa(qaRollNo:string|null):Observable<any>{
+    return this.http.get<any>(`${this.url}/clientsForQa/Get/${qaRollNo}`).pipe((catchError(this.erroHandler)))
   }
 
-  getQaPro(Id:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/Qa-products/Get/${Id}`).pipe((catchError(this.erroHandler)))
+  getQaPro(Id:string,qaRollNo:string|null):Observable<any>{
+    return this.http.get<any>(`${this.url}/Qa-products/Get/${Id}/${qaRollNo}`).pipe((catchError(this.erroHandler)))
   }
 
   pushComment(comment:string,clientId:string,articleId:string,user:any):Observable<boolean>{
@@ -183,8 +181,8 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/QaComments/Get/${clientId}/${articleId}/${version}`).pipe((catchError(this.erroHandler)))
   }
 
-  approveModal(clientId:string,articleId:string,status:string,rollNo:string|null,modelerName:string,correction:string = "",modelName:string = "",modelerRollNo:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/approveModal/post`,{clientId,articleId,status,rollNo,modelerName,correction,modelName,modelerRollNo}).pipe((catchError(this.erroHandler)))
+  approveModal(clientId:string,articleId:string,status:string,rollNo:string|null,modelerName:string,correction:string = "",modelName:string = "",modelerRollNo:string,list:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/approveModal/post`,{clientId,articleId,status,rollNo,modelerName,correction,modelName,modelerRollNo,list}).pipe((catchError(this.erroHandler)))
   }
 
   pushAdminComment(comment:string,clientId:string,articleId:string,user:any):Observable<boolean>{
@@ -227,8 +225,8 @@ export class BackendService {
     return this.http.post<boolean>(`${this.url}/setDeadLine/post`,{date,clientId,type}).pipe((catchError(this.erroHandler)))
   }
 
-  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,budgetExceed:string):Observable<boolean>{
-    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed}).pipe((catchError(this.erroHandler)))
+  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,updatedBudget:number,budgetExceed:string,list:any):Observable<boolean>{
+    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed,updatedBudget,list}).pipe((catchError(this.erroHandler)))
   }
 
   createBudget(budgetPrice:number):Observable<boolean>{
@@ -296,127 +294,135 @@ export class BackendService {
   }
 
   saveRequirement(requirement:string,clientId:any,prodcuts:Array<any>):Observable<any>{
-    return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId,prodcuts});
+    return this.http.post(`${this.url}/createRequirement/post`,{requirement,clientId,prodcuts}).pipe((catchError(this.erroHandler)));
   }
 
   scrapeImages(link:string,productName:string,articleId:string,clientName:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/scrapeImages/post`,{link,productName,articleId,clientName});
+    return this.http.post<any>(`${this.url}/scrapeImages/post`,{link,productName,articleId,clientName}).pipe((catchError(this.erroHandler)));;
   }
 
   getScrapedImg(articleId:string,productName:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getScrapedImgs/get/${articleId}/${productName}`);
+    return this.http.get<any>(`${this.url}/getScrapedImgs/get/${articleId}/${productName}`).pipe((catchError(this.erroHandler)));;
   }
 
   getClientDetailsById(clientId:any,articleId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getClientById/get/${clientId}/${articleId}`)
+    return this.http.get<any>(`${this.url}/getClientById/get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));
   }
 
   uploadReferenceManually(formData:FormData,articleId:string,clientName:string):Observable<any>{
     formData.append('articleId', articleId);
     formData.append('clientName', clientName);
-    return this.http.post<any>(`${this.url}/uploadRefManuall/post`,formData);
+    return this.http.post<any>(`${this.url}/uploadRefManuall/post`,formData).pipe((catchError(this.erroHandler)));;
   }
 
   createHotSpot(hotspotName:string,normal:string,position:string,articleId:string,clientId:string,nor:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/createHotspot/post`,{hotspotName,normal,position,articleId,clientId,nor});
+    return this.http.post<any>(`${this.url}/createHotspot/post`,{hotspotName,normal,position,articleId,clientId,nor}).pipe((catchError(this.erroHandler)));;
   }
 
   checkForHotspots(clientId:string,articleId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getHotspots/get/${clientId}/${articleId}`)
+    return this.http.get<any>(`${this.url}/getHotspots/get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));
   }
 
   getLatestCorrection(clientId:string,articleId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getLatestCorrection/get/${clientId}/${articleId}`)
+    return this.http.get<any>(`${this.url}/getLatestCorrection/get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));
   }
 
   getLatestCorrectionForModeler(clientId:string,articleId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getLatestCorrectionForModeler/get/${clientId}/${articleId}`)
+    return this.http.get<any>(`${this.url}/getLatestCorrectionForModeler/get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));
   }
 
   updateHotspotCorrections(correctionData:Array<any>):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateHotspot/post`,correctionData)
+    return this.http.post<any>(`${this.url}/updateHotspot/post`,correctionData).pipe((catchError(this.erroHandler)));
   }
 
   updateHotspotCorrectionImg(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateHotspotImg/post`,formData);
+    return this.http.post<any>(`${this.url}/updateHotspotImg/post`,formData).pipe((catchError(this.erroHandler)));;
   }
 
   getClientDetailsForQADo(clientId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getClientForQADo/get/${clientId}`);
+    return this.http.get<any>(`${this.url}/getClientForQADo/get/${clientId}`).pipe((catchError(this.erroHandler)));;
   }
 
   getHotspotwithVersion(version:number,clientId:string,articleId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/getHotspotWithId/get/${version}/${clientId}/${articleId}`);
+    return this.http.get<any>(`${this.url}/getHotspotWithId/get/${version}/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));;
   }
 
   updateModelUnderQa(clientId:string,articleId:string,flag:boolean):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateModelUnderQA/post`,{clientId,articleId,flag})
+    return this.http.post<any>(`${this.url}/updateModelUnderQA/post`,{clientId,articleId,flag}).pipe((catchError(this.erroHandler)));
   }
 
   getUserDetailsForProfile(userEmail:string|null):Observable<any>{
-    return this.http.get<any>(`${this.url}/getUserDetailsForProfile/get/${userEmail}`)
+    return this.http.get<any>(`${this.url}/getUserDetailsForProfile/get/${userEmail}`).pipe((catchError(this.erroHandler)));
   }
 
   updateBankDetails(bankInfo:any,rollNo:string|null):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateBankDetails/post`,{bankInfo,rollNo})
+    return this.http.post<any>(`${this.url}/updateBankDetails/post`,{bankInfo,rollNo}).pipe((catchError(this.erroHandler)));
   }
 
   createAboutforModeler(modelerEmail:string,aboutTxt:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/createAbout/post`,{modelerEmail,aboutTxt})
+    return this.http.post<any>(`${this.url}/createAbout/post`,{modelerEmail,aboutTxt}).pipe((catchError(this.erroHandler)));
   }
 
   getQAForProfile(userEmail:string|null):Observable<any>{
-    return this.http.get<any>(`${this.url}/getQAForProfile/get/${userEmail}`)
+    return this.http.get<any>(`${this.url}/getQAForProfile/get/${userEmail}`).pipe((catchError(this.erroHandler)));
   }
 
   getAllModelListForModeler(modelerId:string):Observable<any>{
     console.log("callleeeeee");
     
-    return this.http.get<any>(`${this.url}/getAllModelListForModeler/${modelerId}`)
+    return this.http.get<any>(`${this.url}/getAllModelListForModeler/${modelerId}`).pipe((catchError(this.erroHandler)));
   }
 
   AgetClientById(clientId:string):Observable<any>{
-    return this.http.get<any>(`${this.url}/AgetClientById/get/${clientId}`)
+    return this.http.get<any>(`${this.url}/AgetClientById/get/${clientId}`).pipe((catchError(this.erroHandler)));
   }
 
   editCorrection(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${this.url}/editCorrection/post`,formData);
+    return this.http.post<any>(`${this.url}/editCorrection/post`,formData).pipe((catchError(this.erroHandler)));
   }
 
   EditExistingCorrection(formData:FormData):Observable<any>{
-    return this.http.post<any>(`${this.url}/editExistingCorrection/post`,formData)
+    return this.http.post<any>(`${this.url}/editExistingCorrection/post`,formData).pipe((catchError(this.erroHandler)));
   }
 
   createModelerDeadLine(date:Date,status:String,modRoll:string,clientId:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/createModelerDeadLine/post`,{date,status,modRoll,clientId})
+    return this.http.post<any>(`${this.url}/createModelerDeadLine/post`,{date,status,modRoll,clientId}).pipe((catchError(this.erroHandler)));
   }
 
   updateBonus(flag:boolean,modelerId:string,clientId:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateBonus/post`,{flag,modelerId,clientId})
+    return this.http.post<any>(`${this.url}/updateBonus/post`,{flag,modelerId,clientId}).pipe((catchError(this.erroHandler)));
   }
 
   getApprovedModelsForQa(qaRollNo:string|null):Observable<any>{
-    return this.http.get<any>(`${this.url}/getApprovedModelsForQa/get/${qaRollNo}`);
+    return this.http.get<any>(`${this.url}/getApprovedModelsForQa/get/${qaRollNo}`).pipe((catchError(this.erroHandler)));
   }
 
   getApprovedModelsForModeler(modelerRollNo:string|null):Observable<any>{
-    return this.http.get<any>(`${this.url}/getApprovedModelsForModeler/get/${modelerRollNo}`);
+    return this.http.get<any>(`${this.url}/getApprovedModelsForModeler/get/${modelerRollNo}`).pipe((catchError(this.erroHandler)));
   }
 
   deleteCorrection(hotspotName:string,clientName:string,articleId:string,version:number):Observable<any>{
-    return this.http.post<any>(`${this.url}/deleteCorrection/post`,{hotspotName,clientName,articleId,version})
+    return this.http.post<any>(`${this.url}/deleteCorrection/post`,{hotspotName,clientName,articleId,version}).pipe((catchError(this.erroHandler)));
   }
 
   updateNotificationViewForModeler(clientId:string,articleId:string,version:number,modelerRollNo:string|null,status:Boolean):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateNotificationStatus/post`,{clientId,articleId,version,modelerRollNo,status})
+    return this.http.post<any>(`${this.url}/updateNotificationStatus/post`,{clientId,articleId,version,modelerRollNo,status}).pipe((catchError(this.erroHandler)));
   }
 
   updateNotificationViewForQA(clientId:string,articleId:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateNotificationForQA/post`,{clientId,articleId})
+    return this.http.post<any>(`${this.url}/updateNotificationForQA/post`,{clientId,articleId}).pipe((catchError(this.erroHandler)));
   }
 
   updateNotificationViewForAdmin(modelerId:string,clientId:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateNotificationViewForAdmin/post`,{modelerId,clientId})
+    return this.http.post<any>(`${this.url}/updateNotificationViewForAdmin/post`,{modelerId,clientId}).pipe((catchError(this.erroHandler)));
+  }
+
+  rejectBonusEligibility(list:any,modelerRollNo:string,clientId:string):Observable<any>{
+    return this.http.post<any>(`${this.url}/rejectBonusEligibility/post`,{list,modelerRollNo,clientId}).pipe((catchError(this.erroHandler)));
+  }
+
+  updateInvoicedList(invoiceList:Array<any>):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateInvoicedList/post`,{invoiceList}).pipe((catchError(this.erroHandler)));
   }
 
   logout(){

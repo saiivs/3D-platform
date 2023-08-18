@@ -30,7 +30,7 @@ router.get('/modelers/Get',auth.authentication,routeHelper.getModelres);
 router.post('/assignedProducts/post',auth.authentication,routeHelper.assignProducts);
 
 //get the client list for modelers
-router.get('/clientsForModalers/Get/:email',auth.authentication,routeHelper.getClientForModaler);
+router.get('/clientsForModalers/Get/:modRollNo',auth.authentication,routeHelper.getClientForModaler);
 
 //get the assigned products for modelers
 router.get('/modeler-products/Get/:id/:modRollNo',auth.authentication,routeHelper.getModalerPro);
@@ -39,10 +39,10 @@ router.get('/modeler-products/Get/:id/:modRollNo',auth.authentication,routeHelpe
 router.post('/upload-modal/post',auth.authentication,routeHelper.savemodalFile);
 
 //get clients for QA
-router.get('/clientsForQa/Get/:email',auth.authentication,routeHelper.getClientsForQa);
+router.get('/clientsForQa/Get/:qaRollNo',auth.authentication,routeHelper.getClientsForQa);
 
 //get product list for QA
-router.get('/Qa-products/Get/:id',auth.authentication,routeHelper.getQaPro);
+router.get('/Qa-products/Get/:id/:qaRollNo',auth.authentication,routeHelper.getQaPro);
 
 //create comment by qa
 router.post('/QaComments/post',auth.authentication,routeHelper.createCommentQa);
@@ -217,7 +217,13 @@ router.get('/getNotificationForQA/get/:rollNo',auth.authentication,routeHelper.g
 router.post("/updateNotificationForQA/post",auth.authentication,routeHelper.updateNotificationForQA);
 
 //update the notification view for admin
-router.post('/updateNotificationViewForAdmin/post',auth.authentication,routeHelper.updateNotificationAdmin)
+router.post('/updateNotificationViewForAdmin/post',auth.authentication,routeHelper.updateNotificationAdmin);
+
+//reject the bonus eligibility fo the modeler.
+router.post('/rejectBonusEligibility/post',auth.authentication,routeHelper.rejectBonusEligibility);
+
+// update the invoice list in modelers list.
+router.post('/updateInvoicedList/post',auth.authentication,routeHelper.updateInvoicedList)
 
 
 

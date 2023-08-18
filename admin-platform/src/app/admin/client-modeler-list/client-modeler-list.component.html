@@ -88,8 +88,8 @@
                       <th scope="col">Products</th>
                       <th scope="col">Amount</th>
                       <th scope="col">Status</th>
-                      <th scope="col">Dead Line 1</th>
-                      <th scope="col">Dead Line 2</th>
+                      <th scope="col">Dead Line 1 (50%)</th>
+                      <th scope="col">Dead Line 2 (30%)</th>
                       <th scope="col">Bonus</th>
                     </tr>
                   </thead>
@@ -106,7 +106,7 @@
                       <td>{{modeler.totalProducts}}</td>
                       <td>€ {{modeler.totalAmount}} </td>
                       <td>{{modeler.percentage}}</td>
-                      <td class="deadLine"><input type="date" (input)="getDeadLineOne($event,modeler.modelerRollNo)" [value]="modeler?.deadLineOne | date:'yyyy-MM-dd' || null" name="" id=""></td>
+                      <td class="deadLine"><input type="date" (input)="getDeadLineOne($event,modeler.modelerRollNo,i)" [value]="modeler?.deadLineOne | date:'yyyy-MM-dd' || null" name="" id=""></td>
                       <td class="deadLine"><input type="date" (input)="getDeadLineTwo($event,modeler.modelerRollNo)" [value]="modeler?.deadLineTwo | date:'yyyy-MM-dd' || null" name="" id=""></td>
                       <td>
                         <div class="form-check">
@@ -117,7 +117,7 @@
                         </div>
                         
                         <div class="form-check">
-                          <input class="form-check-input" (change)=addBonus($event,modeler._id) type="checkbox" value="" id="flexCheckChecked">
+                          <input class="form-check-input" (change)=addBonus($event,modeler._id) type="checkbox" value="" id="flexCheckChecked" [checked]="modeler.deadLineOne">
                           <label class="form-check-label" for="flexCheckChecked">
                             50%
                           </label>

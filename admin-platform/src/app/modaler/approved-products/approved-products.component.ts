@@ -26,6 +26,7 @@ export class ApprovedProductsComponent {
   serachForModel:string = "";
   clientRequirement!:string|boolean
   subscription!:Subscription;
+  subscription1!:Subscription;
   
 
   ngOnInit(){
@@ -43,14 +44,15 @@ export class ApprovedProductsComponent {
   }
 
   scrapeImages(url:string,name:string,articleId:string){
-    this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
+    this.subscription1 = this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
       console.log(res);
       
     })
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    if(this.subscription)this.subscription.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe()
   }
 
    

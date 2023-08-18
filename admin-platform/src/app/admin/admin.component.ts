@@ -1,22 +1,20 @@
-import { AfterViewInit, ChangeDetectorRef, Component, DoCheck, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { BackendService } from '../services/backend.service';
-import { correctionData } from '../models/interface';
-import { CorrectionDilogComponent } from '../correction-dilog/correction-dilog.component';
-import { compilePipeFromMetadata } from '@angular/compiler';
 import { NotificationService } from '../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'admin-root',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
-export class AdminComponent implements OnInit{
+export class AdminComponent implements OnInit,OnDestroy{
   
 
-  title = 'Admin-Clients';
+  title = 'Admin';
   notifyData:Array<any> = [];
   checkUrl:any;
   closeBtn:boolean = false;
@@ -26,15 +24,20 @@ export class AdminComponent implements OnInit{
   notificationLen:number = 0;
   seeMoreToggle:boolean = true;
   userName!:string|null;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+
   
   constructor(private titleService:Title,private route:Router,private backEnd:BackendService,private dialog : MatDialog,private search:NotificationService,private router:ActivatedRoute,private cdr: ChangeDetectorRef,private notificationService:NotificationService){
 
   }
 
   ngOnInit() {
-    this.titleService.setTitle("Admin-Clients");
+    this.titleService.setTitle(this.title);
     this.userName = localStorage.getItem("userName") || null
-    this.search.enableSearch.subscribe((flag)=>{
+    this.subscription1 = this.search.enableSearch.subscribe((flag)=>{
       if(flag){
         this.searchBtn = true;
       }else{
@@ -42,12 +45,12 @@ export class AdminComponent implements OnInit{
       }
       this.cdr.detectChanges();
     })
-    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription2 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
-      this.notificationService.notification_admin.subscribe((data)=>{
-      console.log(data);
+      this.subscription3 = this.notificationService.notification_admin.subscribe((data)=>{
+      console.log({data});
       this.notifyData = [...data];
-      this.notificationLen += this.notifyData.length;
+      this.notificationLen = this.notifyData.length;
       })
       
     })
@@ -59,7 +62,7 @@ export class AdminComponent implements OnInit{
   }
 
   viewModelersList(modelerId:string,clientId:string){
-    this.backEnd.updateNotificationViewForAdmin(modelerId,clientId).subscribe(()=>{})
+    this.subscription4 = this.backEnd.updateNotificationViewForAdmin(modelerId,clientId).subscribe(()=>{})
     this.route.navigate(['admin/modeler/productList',modelerId])
   }
 
@@ -78,5 +81,12 @@ export class AdminComponent implements OnInit{
   logOut(){
     localStorage.clear();
     this.route.navigate(['/'])
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe()  
   }
 }

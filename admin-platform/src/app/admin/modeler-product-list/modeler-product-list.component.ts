@@ -19,27 +19,32 @@ export class ModelerProductListComponent implements OnInit,OnDestroy{
   page:number = 1;
   serachForModel:string = "";
   subscriptionModelList!:Subscription;
-  
-
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+ 
   ngOnInit(): void {
     try {
-      this.modelerId = this.route.snapshot.params['modelerId'];
-    this.subscriptionModelList = this.backEndService.getAllModelListForModeler(this.modelerId).subscribe((res)=>{
+      this.subscription2 = this.route.params.subscribe((params)=>{
+        this.modelerId = params['modelerId']
+        this.subscriptionModelList = this.backEndService.getAllModelListForModeler(this.modelerId).subscribe((res)=>{
       console.log(res);
       this.modelList = res
       res[0].models.forEach((obj:any)=>{
         this.totalRecords = obj.models.length + this.totalRecords
       })
     })
+      })
     } catch (error) {
       console.log(error);
     }
-    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription1 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
   }
 
   ngOnDestroy(): void {
-    this.subscriptionModelList.unsubscribe();
+    if(this.subscriptionModelList)this.subscriptionModelList.unsubscribe();
+    if(this.subscription1)this.subscription1.unsubscribe();
+    if(this.subscription2)this.subscription2.unsubscribe();
   }
 }

@@ -9,7 +9,10 @@
         currentPage: page,
         totalItems: totalRecords
       };let i = index">
-            <a (click)="preview(img,i)" class="onHover">
+        <!-- <div class="d-flex hp-wish-button hp-cursor-pointer remix-icon">
+        <i class="hp-text-color-dark-0 ri-close-fill" style="margin-left: auto;"></i>
+        </div>  -->
+            <a (click)="preview(img,i)" class="onHover">     
                 <div class="rounded myborder px-8 py-12" appActive>
                     <div class="row align-items-center justify-content-center">
                         <div class="col px-0 hp-flex-none w-auto hp-mr-4">
@@ -28,8 +31,11 @@
         <div class="input-group">
             <input type="file" class="form-control" name="images" multiple (change)="onFileSelected($event)"
                 id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-            <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" type="submit"
-                id="inputGroupFileAddon04">Upload</button>
+            <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" type="submit" id="inputGroupFileAddon04">
+                <span *ngIf="!isLoading">Upload</span>
+                <span *ngIf="isLoading" class="spinner-grow spinner-grow-sm me-8" role="status" aria-hidden="true"></span>
+                <span *ngIf="isLoading">Uploading...</span> 
+            </button>
         </div>
     </form>
 </div>
@@ -69,8 +75,11 @@
                     <div class="input-group">
                         <input type="file" class="form-control" name="images" multiple (change)="onFileSelected($event)"
                             id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                        <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" type="submit"
-                            id="inputGroupFileAddon04">upload</button>
+                        <button class="btn btn-outline-primary text-primary hp-hover-text-color-black-0" type="submit" id="inputGroupFileAddon04">
+                            <span *ngIf="!isLoading">Upload</span>
+                            <span *ngIf="isLoading" class="spinner-grow spinner-grow-sm me-8" role="status" aria-hidden="true"></span>
+                              <span *ngIf="isLoading">Uploading...</span> 
+                        </button>
                     </div>
                 </form>
 

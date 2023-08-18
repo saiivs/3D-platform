@@ -66,7 +66,8 @@ export interface productList{
   version?:number,
   reallocate?:Boolean,
   additionalInfo?:Boolean,
-  extraInfo?:string
+  extraInfo?:string,
+  list?:number|null
 }
 
 export interface team{
@@ -89,7 +90,7 @@ export interface messageInfo{
 }
 
 export interface modelerLanding{
-  ClientData:Array<any>,
+  clientData:Array<any>,
   modelerData:Array<any>,
   QATeamName:string,
   approvedClient:Boolean,
@@ -98,7 +99,8 @@ export interface modelerLanding{
   modelerName:string,
   modelerRollNo:string,
   _id:string,
-  modalFile?:any
+  modalFile?:any,
+  listCompleted?:string
 }
 
 export interface QaLanding{

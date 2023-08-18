@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import "@google/model-viewer"
+import { Subscription } from 'rxjs';
 import { model } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -11,7 +12,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './all-models.component.html',
   styleUrls: ['./all-models.component.css']
 })
-export class AllModelsComponent implements OnInit{
+export class AllModelsComponent implements OnInit, OnDestroy{
 
   constructor(private backEndService:BackendService,private route:ActivatedRoute,private searchService:NotificationService){
 
@@ -22,12 +23,14 @@ export class AllModelsComponent implements OnInit{
   modeler:Array<any> = [];
   models:Array<any> = [];
   recieved:string = "";
-  staticUrl:string = environment.staticUrl
+  staticUrl:string = environment.staticUrl;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
 
   ngOnInit(){
     this.modelerId = this.route.snapshot.params[('modelerId')];
     this.searchService.checkUrlForSearchBtn(true);
-    this.backEndService.getAllModelsOfModeler(this.modelerId).subscribe((res)=>{      
+    this.subscription1 = this.backEndService.getAllModelsOfModeler(this.modelerId).subscribe((res)=>{      
       this.modeler = [...res];
       this.modeler[0].models.forEach((client:any)=>{
         this.models = [...client.models]
@@ -36,12 +39,17 @@ export class AllModelsComponent implements OnInit{
     this.searchService.searchValue.subscribe((data)=>{
       this.recieved = data;
     })
-    this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription2 = this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.searchService.setNotificationForAdmin(data);
     })
   }
 
   nameLoad(modeler:string){
     localStorage.setItem('interactive-modeler',modeler)
+    }
+
+    ngOnDestroy(): void {
+      if(this.subscription1)this.subscription1.unsubscribe()
+      if(this.subscription2)this.subscription2.unsubscribe()
     }
 }

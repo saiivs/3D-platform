@@ -1,17 +1,18 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import '@google/model-viewer'
 import { BackendService } from '../services/backend.service';
 import { environment } from '../../environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { TestComponent } from '../test/test.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-gallery',
   templateUrl: './gallery.component.html',
   styleUrls: ['./gallery.component.css']
 })
-export class GalleryComponent implements OnInit {
+export class GalleryComponent implements OnInit,OnDestroy {
 
   constructor(private backEndService: BackendService, private route: ActivatedRoute, private renderer: Renderer2, private changeDetectorRef: ChangeDetectorRef, private sanitizer: DomSanitizer) {
 
@@ -37,10 +38,14 @@ export class GalleryComponent implements OnInit {
   initialImg: string = "";
   fileCount: Boolean = false;
   imgSrc: Array<any> = [];
+  isLoading:Boolean = false;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+ 
 
   galleryFn(articleId: string, clientId: string) {
     if (!this.fileCount) {
-      this.backEndService.getClientDetailsById(clientId, articleId).subscribe((res) => {
+      this.subscription1 = this.backEndService.getClientDetailsById(clientId, articleId).subscribe((res) => {
         this.clientDetails = res.client;
         this.product = res.clientPro
         console.log("galleryy");
@@ -113,25 +118,34 @@ export class GalleryComponent implements OnInit {
   }
 
   onSubmit() {
+    console.log("Asdfasdfadsfad");
+    console.log(this.onSelectedFiles);
+    
     let formData = new FormData();
+    if(this.onSelectedFiles){
+    this.isLoading = true;
     this.onSelectedFiles.forEach((file, index) => {
-
       this.convertToJpg(file).then((convertedFile: any) => {
         let fileName = `${index + 1}.jpg`
         formData.append('images', convertedFile, fileName);
         this.countConvertedfile = this.countConvertedfile + 1;
 
         if (this.countConvertedfile === this.onSelectedFiles.length) {
-          this.backEndService.uploadReferenceManually(formData, this.articleId, this.clientDetails.clientName).subscribe((res) => {
+          this.subscription2 = this.backEndService.uploadReferenceManually(formData, this.articleId, this.clientDetails.clientName).subscribe((res) => {
 
             if (res) {
+              this.isLoading = false;
               this.countConvertedfile = 0;
               this.galleryFn(this.articleId, this.clientId)
             }
           });
         }
       })
-    })
+        })
+    } else{
+      console.log("no images selected");
+      
+    }
   }
 
   convertToJpg(file: File) {
@@ -166,5 +180,9 @@ export class GalleryComponent implements OnInit {
 
   }
 
+  ngOnDestroy(): void {
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+  }
   
 }

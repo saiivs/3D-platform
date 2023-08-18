@@ -216,16 +216,25 @@ module.exports = {
             console.log({QAname});
             let resData;
             if(!req.body.reallocation){
-            resData = await database.assignPro(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo)
+                console.log("reallocation false");
+            resData = await database.assignPro(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo);
+            if(resData.status){
+                res.status(200).json(resData)
+               }else{
+                    throw new Error("something went wrong in product assignment!!")
+               }
             }else{
+            console.log("reallocation");
+            console.log(req.body);
             resData = await database.reallocationModel(req.body,modelerName.name,modelerName.email,QAname.name,rollNo,QaRollNo);
             console.log({resData});
+            if(resData.status){
+                res.status(200).json(resData)
+               }else{
+                    throw new Error("something went wrong in product assignment!!")
+               }
             }
-           if(resData){
-            res.status(200).json(true)
-           }else{
-                throw new Error("something went wrong in product assignment!!")
-           }
+           
         } catch (error) {
             console.log(error);
             res.status(500).json(false)
@@ -234,9 +243,8 @@ module.exports = {
 
     getClientForModaler:async(req,res)=>{
         try {
-            let email = req.params.email;
-            let modeler = modelers.find(obj => obj.email == email)
-            let clients = await database.dbGetClientForModaler(modeler.rollNo);
+            let modRollNo = req.params.modRollNo;
+            let clients = await database.dbGetClientForModaler(modRollNo);
             if(clients){
                 res.status(200).json(clients)
             }else{
@@ -322,10 +330,9 @@ module.exports = {
 
     getClientsForQa:async(req,res)=>{
         try {
-            let userEmail = req.params.email;
-            console.log({userEmail});
-            let Qa = credentials.find(obj => obj.email == userEmail);
-            let clients = await database.dbGetClientsForQa(Qa.rollNo);
+            console.log("reachedddd");
+            let qaRollNo = req.params.qaRollNo;
+            let clients = await database.dbGetClientsForQa(qaRollNo);
             if(clients){
                 res.status(200).json(clients)
             }else{
@@ -338,8 +345,8 @@ module.exports = {
 
     getQaPro:async(req,res)=>{
         try {
-            let Id = req.params.id;
-            let products = await database.dbGetQaPro(Id)
+            let {id,qaRollNo} = req.params;
+            let products = await database.dbGetQaPro(id,qaRollNo)
             if(products){
                 res.status(200).json(products);
             }else{
@@ -389,9 +396,9 @@ module.exports = {
     approveModal:async(req,res)=>{
         try {
             console.log(req.body);
-            let {clientId,articleId,status,rollNo,modelerName,correction,modelName,modelerRollNo,productName} = req.body;
+            let {clientId,articleId,status,rollNo,modelerName,correction,modelName,modelerRollNo,productName,list} = req.body;
             let QaName = credentials.find(obj => obj.rollNo == rollNo);
-            let update = await database.dbAprroveModal(clientId,articleId,status,QaName.name,modelerName,correction,modelName,modelerRollNo,rollNo,productName);
+            let update = await database.dbAprroveModal(clientId,articleId,status,QaName.name,modelerName,correction,modelName,modelerRollNo,rollNo,productName,list);
             if(update){
                 res.status(200).json(true)
             }else{
@@ -540,8 +547,8 @@ module.exports = {
 
     updateModelPrice:async(req,res)=>{
         try {
-            let {price,clientId,articleId,modelerRollNo,budgetExceed} =  req.body;
-            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed);
+            let {price,clientId,articleId,modelerRollNo,budgetExceed,updatedBudget,list} =  req.body;
+            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed,updatedBudget,list);
             if(priceUpdated){
                 res.status(200).json(true);
             }else{
@@ -694,8 +701,8 @@ module.exports = {
     createInvoice:async(req,res)=>{
         try { 
            let pdf = req.files.pdfFile;
-           let {invoiceId,modelerId,modelerRollNo} = req.body;
-           let invoiceSaved = await database.dbCreateInvoice(invoiceId,modelerId,modelerRollNo);
+           let {invoiceId,modelerId,bonus} = req.body;
+           let invoiceSaved = await database.dbCreateInvoice(invoiceId,modelerId,bonus);
            if(invoiceSaved.status){
             if(pdf){
                 pdf.mv(`./public/invoices/${invoiceId}.pdf`,(err,data)=>{
@@ -1290,8 +1297,14 @@ module.exports = {
             console.log("reached");
             let {date,status,modRoll,clientId} = req.body;
             const result = await database.dbCreateDeadLineForModeler({date,status,modRoll,clientId});
-        } catch (error) {
-            
+            if(result){
+                res.status(200).json(true);
+            }else{
+                throw new Error("something went wrong while updating deadline for modeler")
+            }
+        }catch(error) {
+            console.log(error);
+            res.status(500).json(false);
         }
       },
 
@@ -1398,6 +1411,39 @@ module.exports = {
             console.log(error);
             res.status(500).json(false);
         }
+      },
+
+      rejectBonusEligibility:async(req,res)=>{
+        try {
+            const {modelerRollNo,list,clientId} = req.body;
+            console.log(req.body);
+            let rejectBonus = await database.dbRejectBonus(modelerRollNo,list,clientId);
+            if(rejectBonus){
+                res.status(200).json(true);
+            }else{
+                throw new Error("something went wrong while update bonus eligibility")
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      updateInvoicedList:async(req,res)=>{
+        try {
+            console.log(req.body);
+            const invoiceList = req.body.invoiceList;
+            for(let list of invoiceList){
+                console.log("loop run");
+                await database.dbUpdateInvoiceList(list);
+            }
+            console.log("promise completed");
+            res.status(200).json(true);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
       }
+
 }
 

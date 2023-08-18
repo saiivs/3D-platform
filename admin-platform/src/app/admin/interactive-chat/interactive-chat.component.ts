@@ -47,6 +47,12 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
   flag: Boolean = true;
   correctionInvalid: string = "";
   subscription!: Subscription
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  subscription5!:Subscription;
+ 
 
   validateGlbFile(data: any) {
     let modelData = data.gltfData;
@@ -116,7 +122,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
         this.router.navigate(['/error'])
       }
     })
-    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+   this.subscription1 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
   }
@@ -146,7 +152,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
       this.flag = true;
       this.comntRef.nativeElement.value = ""
 
-      this.backEnd.pushComment(this.QaComment, this.clientId, this.articleId, localStorage.getItem('userEmail')).subscribe((res) => {
+      this.subscription2 = this.backEnd.pushComment(this.QaComment, this.clientId, this.articleId, localStorage.getItem('userEmail')).subscribe((res) => {
 
       })
 
@@ -162,7 +168,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
         this.flag = true;
       });
       this.comntRef.nativeElement.value = ""
-      this.backEnd.pushComment(this.QaComment, this.clientId, this.articleId, localStorage.getItem('userEmail')).subscribe((res) => {
+      this.subscription3 = this.backEnd.pushComment(this.QaComment, this.clientId, this.articleId, localStorage.getItem('userEmail')).subscribe((res) => {
       })
     }
   }
@@ -182,7 +188,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
         cancelButtonText: 'cancel'
       }).then((result) => {
         if (result.value) {
-          this.backEnd.approveModal(this.clientId, articleId, status, localStorage.getItem('rollNo'), this.modelDetails.assigned, this.correctionValue, this.modelDetails.productName, this.modRollNo).subscribe((res) => {
+          this.subscription4 = this.backEnd.approveModal(this.clientId, articleId, status, localStorage.getItem('rollNo'), this.modelDetails.assigned, this.correctionValue, this.modelDetails.productName, this.modRollNo,this.modelDetails.list).subscribe((res) => {
             this.QaCommentArr[0].modalStatus = status
           })
         } else {
@@ -203,7 +209,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
   getCorrection(status: string, modal: any) {
     this.correctionValue = this.correction.nativeElement.value;
     if (this.correctionValue != "") {
-      this.backEnd.approveModal(this.clientId, this.articleId, status, localStorage.getItem('rollNo'), this.modelDetails.assigned, this.correctionValue, this.modelDetails.productName, this.modRollNo).subscribe((res) => { })
+      this.subscription5 = this.backEnd.approveModal(this.clientId, this.articleId, status, localStorage.getItem('rollNo'), this.modelDetails.assigned, this.correctionValue, this.modelDetails.productName, this.modRollNo,this.modelDetails.list).subscribe((res) => { })
     } else {
 
       this.correctionInvalid = "Invalid correction field";
@@ -227,6 +233,10 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
+    if(this.subscription5)this.subscription5.unsubscribe() 
   }
 }

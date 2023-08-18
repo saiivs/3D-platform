@@ -40,6 +40,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   totalCompletedModels: number = 0;
   totalCorrectionModels: number = 0;
   page: number = 1;
+  pageAllSelectTracker:Array<any> = [];
   budget: number = 0;
   tempPrice: number = 0;
   checkUrl: string = "";
@@ -58,6 +59,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
   priceUpdated: boolean = true;
   subscription1!: Subscription;
   subscription2!: Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  subscription5!:Subscription;
+  subscription6!:Subscription;
+  subscription7!:Subscription;
+  subscription8!:Subscription;
+  subscription9!:Subscription;
+  subscription10!:Subscription;
+  subscription11!:Subscription;
+  subscription12!:Subscription;
+  subscription13!:Subscription;
   recieved: string = "";
   countForMasterCheckBox: number = 50;
   canClose: Boolean = false;
@@ -84,12 +96,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res) => {
       console.log(res.requirement);
       
+      
       this.clientName = res.Arr[2].clientName
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientName.replace(regex, '_')
       this.budget = res.Arr[1].budgetValue;
       this.updatedBudget = res.Arr[1].budgetValue;
-
       if (res.requirement.length != 1) { 
         this.clientOverallRequirement = ""
       } else {
@@ -98,6 +110,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       // this.requirementData = res.requirement[0]
       this.clientId = res.Arr[0].clientId
       this.products = [...res.Arr[0].productList];
+      console.log(this.products);
 
       if(res.requirement.length > 1){
         for(let pro of this.products){
@@ -109,7 +122,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       }
       }
       
-      this.backEndService.getTagCollections().subscribe((res) => {
+      this.subscription3 = this.backEndService.getTagCollections().subscribe((res) => {
         if (res) {
           this.tagList = [...res]
           this.tagNameDrpdown = Array(this.products.length).fill('Tags');
@@ -131,11 +144,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
         if (pro.productStatus == 'Approved') this.totalCompletedModels++;
         else if (pro.productStatus == 'Correction') this.totalCorrectionModels++;
         else if (pro.productStatus == 'Uploaded') this.totalUploadedModels++;
-        else if (pro.productStatus == 'Not uploaded') this.totalNotUploaded++;
+        else if (pro.productStatus == 'Not Uploaded') this.totalNotUploaded++;
         pro.isSelected = false;
-      }
-      if (this.totalPrice != 0) {
-        this.updatedBudget -= this.totalPrice;
       }
       this.subscription2 = this.backEndService.getModalers().subscribe((modelers: team) => {
         this.QATeamArr = [...modelers.QAarr]
@@ -152,12 +162,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.reactiveForm = new FormGroup({
       modelerName: new FormControl(null)
     })
-    this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription4 = this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.searchService.setNotificationForAdmin(data);
     })
   }
 
   checkBoxChange() {
+    this.pageAllSelectTracker[this.page] = this.masterCheckBox
     let limit = this.page * 50 - 1
     this.products.forEach((pro, i) => {
       let count = (this.page - 1) * 50 + i
@@ -178,22 +189,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   onPageChange(event: number) {
     this.page = event;
-    let flag = false;
-    let limit = this.page * 50 - 1;
-    for (let i = 0; i < this.products.length; i++) {
-      let count = (this.page - 1) * 50 + i
-      if (count <= limit) {
-        flag = this.products[count].isSelected ? false : true;
-        if (flag) {
-          break;
-        }
-      }
-    }
-    this.masterCheckBox = flag ? false : true;
+    this.masterCheckBox = this.pageAllSelectTracker[event];
   }
 
   MultiSelectionModeler(index: any, rollNo: string) {
-
     let ArrIndex = index;
     this.modelerRollNo = rollNo
     this.ModelerName = `${this.modelersArr[ArrIndex].name}(3D)`
@@ -244,9 +243,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   aasignProduct() {
-    
     this.isChecked = false;
+    let retainBudget = 0
     this.checkedItems = this.products.filter(pro => pro.isSelected == true);
+    if(this.reallocation){
+      this.checkedItems.forEach((pro)=>{
+        retainBudget += Number(pro.price);
+      })
+      console.log("budget checking");
+      
+      console.log(retainBudget);
+      
+      this.updatedBudget += retainBudget;
+    }
     if (this.checkedItems.length != 0 && this.modelerRollNo != "" && this.QARollNo != "") {
       this.isLoading = true;
       let modeler = this.modelersArr.find(obj => obj.rollNo == this.modelerRollNo);
@@ -260,19 +269,47 @@ export class ProductsComponent implements OnInit, OnDestroy {
         cancelButtonText: 'cancel'
       }).then((result) => {
         if (result.value) {
-          this.backEndService.assignedPro(this.checkedItems, this.modelerRollNo, this.clientId, this.QARollNo, this.reallocation).subscribe((res) => {
-            if (res) {
+         this.subscription5 = this.backEndService.assignedPro(this.checkedItems, this.modelerRollNo, this.clientId, this.QARollNo, this.reallocation).subscribe((res) => {
+            if (res.status) {
+              if(res.bonusEligibility){
+                console.log(res);
+                
+                   swal.fire({
+                      position: 'center',
+                      title: `Is ${res.modeler.modelerName} eligible for bonus`,
+                      text: `Please confirm.`,
+                      showCancelButton: true,
+                      confirmButtonText: 'Yes',
+                      cancelButtonText: 'No'
+                    }).then((result) => {
+                      if (result.value) {
+                        
+                      } else if (result.dismiss === swal.DismissReason.cancel) {
+                        this.subscription6 = this.backEndService.rejectBonusEligibility(res.list,res.modeler.modelerRollNo,res.modeler.clientId).subscribe((res)=>{
+                          if(res) this.toaster.success('success', 'Bonus removed successfully');
+                          else this.toaster.error('Error', 'Something went wrong. Please try again later');
+                        })
+                      }
+                    })
+              }
+           
+              console.log("go the response");
+              console.log(res);
+              
               this.products = this.products.filter((item) => {
                 if (item.isSelected == true) {
+                  item.price = "";
                   item.assigned = modeler.name
                   item.QaTeam = Qa.name
                   item.modRollno = modeler.rollNo;
                   item.isSelected = false;
+                  item.list = res.list
                 }
                 if(item.reallocate){
                   item.isSelected = false;
                   item.reallocate = false;
                   this.reallocation = false;
+                  item.list = res.list
                 }
                 return [...this.products]
               })
@@ -304,11 +341,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   reallocateModel() {
-    
     swal.fire({
       position: 'center',
-      title: 'Are you sure?',
-      text: `Reallocate this model`,
+      title: 'Are you sure to?',
+      text: `Reallocate the models`,
       showCancelButton: true,
       confirmButtonText: 'Yes',
       cancelButtonText: 'cancel'
@@ -317,7 +353,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.reallocation = true;
         this.products.forEach((pro)=>{
           if(pro.assigned){
-            pro.price = ""
             pro.reallocate = true;
             pro.isSelected = true;
           }
@@ -326,6 +361,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
       }
     })
+  }
+
+  modelerDeadLine(){
+    this.router.navigate(['admin/client_modelers',this.clientId]);
   }
 
   // downloadFile(articleId:string){
@@ -360,6 +399,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   getPrice(price: string, articleId: string, modelerRollno: string, index: number) {
     let i = (this.page - 1) * 50 + index;
     let priceValue = Number(price);
+    let list:any = this.products[i].list;
     this.totalPrice += priceValue;
     if (this.totalPrice > this.budget) {
       swal.fire({
@@ -374,11 +414,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
         if (result.isConfirmed) {
           this.updatedBudget = this.totalPrice
           this.budgetExceeded = 'Monthly budget has been exceeded';
-          this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno, this.budgetExceeded).subscribe((res) => {
+          this.subscription7 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.updatedBudget, this.budgetExceeded,list).subscribe((res) => {
             if (res) {
               this.products[i].priceAdded = false;
               this.products[i].price = price;
-              this.backEndService.updateBudgetExceed().subscribe((res) => {
+              this.subscription8 = this.backEndService.updateBudgetExceed().subscribe((res) => {
                 console.log(res);
 
               })
@@ -392,7 +432,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       } else {
         this.updatedBudget -= priceValue;
       }
-      this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno, this.budgetExceeded).subscribe((res) => {
+     this.subscription9 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.updatedBudget,this.budgetExceeded,list).subscribe((res) => {
         if (res) {
           this.tempPrice = 0;
           this.products[i].priceAdded = false;
@@ -415,12 +455,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
       confirmButtonText: 'Submit',
       showLoaderOnConfirm: true,
       preConfirm: (url) => {
-        this.backEndService.updateRefference(url, articleId, this.clientId, ProductName).subscribe((res) => {
+        this.subscription10 = this.backEndService.updateRefference(url, articleId, this.clientId, ProductName).subscribe((res) => {
           if (res) {
             this.products[i].Reff = url;
             this.toaster.success('success', 'Url is updated');
           }
-
         })
       },
       allowOutsideClick: () => !swal.isLoading(),
@@ -435,7 +474,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   getTagName() {
     if (this.tagName) {
       this.tagList.push({ tagName: this.tagName });
-      this.backEndService.createTags(this.tagName).subscribe((res) => {
+      this.subscription11 = this.backEndService.createTags(this.tagName).subscribe((res) => {
         if (res) this.tagName = "";
       })
     } else {
@@ -447,7 +486,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     let i = (this.page - 1) * 50 + index;
     this.tagNameDrpdown[i] = tagName;
     this.products[i].tag = tagName
-    this.backEndService.assignTag(tagName, articleId, this.clientId).subscribe((res) => {
+    this.subscription12 = this.backEndService.assignTag(tagName, articleId, this.clientId).subscribe((res) => {
     })
   }
 
@@ -455,8 +494,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
   getRequirement() {
     let prodcuts = [];
     prodcuts = this.products.filter(pro => pro.additionalInfo||pro.isSelected);
+    console.log({prodcuts});
+    
     this.requirementData = this.requirement.nativeElement.value;
-    this.backEndService.saveRequirement(this.requirementData, this.clientId,prodcuts).subscribe((res) => {
+    this.subscription13 = this.backEndService.saveRequirement(this.requirementData, this.clientId,prodcuts).subscribe((res) => {
       if(res){
         this.toaster.success("success","Additional info added successfully")
         this.addRequirement = false;
@@ -474,6 +515,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
     })
   }
 
+  toggleAdditionalInfo(event:any,index:number){
+    const i = (this.page - 1) * 50 + index;
+    const isChecked = event.target.checked;
+    if(this.addRequirement){
+      this.products[i].additionalInfo = isChecked;
+    }
+  }
+
   checkValue(event: any) {
     if (event.target.value == "") {
       this.canClose = false;
@@ -483,8 +532,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscription1.unsubscribe();
-    this.subscription2.unsubscribe();
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
+    if(this.subscription5)this.subscription5.unsubscribe()
+    if(this.subscription6)this.subscription6.unsubscribe()
+    if(this.subscription7)this.subscription7.unsubscribe()
+    if(this.subscription8)this.subscription8.unsubscribe()
+    if(this.subscription9)this.subscription9.unsubscribe()
+    if(this.subscription10)this.subscription10.unsubscribe()
+    if(this.subscription11)this.subscription11.unsubscribe()
+    if(this.subscription12)this.subscription12.unsubscribe()
   }
-
 }

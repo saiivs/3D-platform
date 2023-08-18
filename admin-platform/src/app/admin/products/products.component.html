@@ -19,7 +19,8 @@
             <div class="col-6 hp-flex-none w-auto">
               <div
                 class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
-                <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
+                <i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-line" style="font-size: 24px;color: green;"></i>
+                
               </div>
             </div>
 
@@ -79,7 +80,8 @@
             <div class="col-6 hp-flex-none w-auto">
               <div
                 class="avatar-item d-flex align-items-center justify-content-center avatar-lg bg-primary-4 hp-bg-color-dark-primary rounded-circle">
-                <i class="iconly-Light-People text-primary hp-text-color-dark-primary-2" style="font-size: 24px;"></i>
+                <i class="hp-text-color-dark-0 ri-2x ri-file-upload-line" style="font-size: 24px;"></i>
+                
               </div>
             </div>
 
@@ -150,10 +152,16 @@
       </div>
 
       <div class="ReqReaBtn">
-        <button *ngIf="requirementSelectFlag" (click)="selectModeForRequirements()" class="btn btn-lg btn-dark" >Add Special Requirements</button>
-        <button *ngIf="addRequirement" type="button" class="btn btn-lg btn-primary" data-bs-toggle="modal"
+        <button *ngIf="requirementSelectFlag" (click)="selectModeForRequirements()" class="btn btn-dark deadlineBtn" ><i class="hp-text-color-dark-0 ri-1x ri-information-line"></i>
+          <span>Add Requirements</span></button>
+        <button *ngIf="addRequirement" type="button" class="btn btn-primary" data-bs-toggle="modal"
         data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add</button>
-        <button class="btn btn-lg btn-dark" (click)="reallocateModel()">Reallocate</button>
+        <button class="btn btn-dark deadlineBtn" (click)="reallocateModel()"><i class="hp-text-color-dark-0 ri-1x ri-repeat-line"></i>
+          <span>Reallocate</span></button>
+        <button (click)="modelerDeadLine()" class="btn btn-primary deadlineBtn">
+          <i class="hp-text-color-dark-0 ri-1x ri-timer-line"></i>
+          <span>Set Deadline</span>
+      </button>
       </div>
       
 
@@ -254,7 +262,7 @@
                     <ng-container  
                       *ngIf="recieved === ''||(pro.tag.toLowerCase().includes(recieved))||(pro.articleId.toLowerCase().includes(recieved))||(pro.productName.toLowerCase().includes(recieved))">
 
-                      <td *ngIf="!pro.assigned || pro?.reallocate || pro?.additionalInfo;else done"><input class="form-check-input" [(ngModel)]="pro.isSelected"
+                      <td *ngIf="!pro.assigned || pro?.reallocate || pro?.additionalInfo;else done"><input class="form-check-input" (change)="toggleAdditionalInfo($event,i)" [(ngModel)]="pro.isSelected"
                           type="checkbox" id="flexCheckDefault"></td>
                       <ng-template #done>
                         <td>
@@ -334,7 +342,7 @@
                       <ng-template #notAssigned>
                         <td class="text-danger">Not Assigned</td>
                       </ng-template>
-                      <td *ngIf="pro.productStatus == 'Not uploaded';else notApproved" class="text-danger">
+                      <td *ngIf="pro.productStatus == 'Not Uploaded';else notApproved" class="text-danger">
                         {{pro.productStatus}}</td>
                       <ng-template #notApproved>
                         <td
@@ -343,7 +351,7 @@
                       </ng-template>
                       <td>
                         <button class="btn btn-sm btn-outline-primary"
-                          *ngIf="pro.productStatus != 'Not uploaded';else NoData">
+                          *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
                           <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover"
                             [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]">View model</a>
                         </button>

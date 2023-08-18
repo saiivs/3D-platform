@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
 import '@google/model-viewer'
 import { environment } from '../../environments/environment';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -8,6 +8,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ToastrService } from 'ngx-toastr';
 import { CorrectionImageComponent } from '../correction-image/correction-image.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './qa-do.component.html',
   styleUrls: ['./qa-do.component.css']
 })
-export class QaDoComponent implements OnInit, AfterViewInit{
+export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
 
   constructor(private backEndService:BackendService,private route : ActivatedRoute,private renderer:Renderer2,private sanitizer:DomSanitizer,private toastr: ToastrService,private openDilog:MatDialog,private router:Router,private el:ElementRef){
 
@@ -65,15 +66,22 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   emptyField:String = "";
   editMode:Boolean = false;
   trackEditedCorrection:Array<any> = [];
-  label:Array<any> = []
+  label:Array<any> = [];
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  subscription5!:Subscription;
+  subscription6!:Subscription;
+  subscription7!:Subscription;
   
   
   ngOnInit(): void {
     this.articleId = this.route.snapshot.params['articleId'];
     this.clientId = this.route.snapshot.params['clientId'];
     this.version = this.route.snapshot.params['version'];
-    this.backEndService.updateModelUnderQa(this.clientId,this.articleId,true).subscribe(()=>{})
-    this.backEndService.getClientDetailsForQADo(this.clientId).subscribe((res)=>{
+    this.subscription1 = this.backEndService.updateModelUnderQa(this.clientId,this.articleId,true).subscribe(()=>{})
+    this.subscription2 = this.backEndService.getClientDetailsForQADo(this.clientId).subscribe((res)=>{
       if(res){
         const regex = /[^a-zA-Z0-9]/g;
         let clientName = res.clientName.replace(regex,"_")
@@ -90,7 +98,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
   }
 
   correction(){
-    this.backEndService.getLatestCorrection(this.clientId,this.articleId).subscribe((res)=>{ 
+    this.subscription3 = this.backEndService.getLatestCorrection(this.clientId,this.articleId).subscribe((res)=>{ 
       if(res.status){
         if(!res.update)
       {  
@@ -177,7 +185,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
       if(version != this.latestVersion){
         this.removeAllHotspot()
         
-        this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
+       this.subscription4 = this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
           this.historyHotspot = res;
           this.showHistoryHotspotOverModel(version);
         })
@@ -320,7 +328,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
       formData.append('hotspotId',hotSpot.hotspotId);
       formData.append('clientName',this.clientName);
   
-      this.backEndService.editCorrection(formData).subscribe((res)=>{
+      this.subscription5 = this.backEndService.editCorrection(formData).subscribe((res)=>{
         if(!res){
           this.hotSpotData[index].editFlag = false
           this.toastr.error('Error', 'edit disabled')
@@ -340,16 +348,20 @@ export class QaDoComponent implements OnInit, AfterViewInit{
     }  
   }
 
-  openCorrectionImg(imgLink:string){
-    let url = imgLink
+  openCorrectionImg(imgLink:string,correction:string){
+    let obj = {
+      url:imgLink,
+      correction:correction
+    } 
    this.openDilog.open(CorrectionImageComponent,{
       width:"60rem",
-      data:url
+      data:obj
     })
   }
 
   editCorrectionNew(){
     console.log("click the edit button");
+    this.label = [];
     console.log(this.hotSpotData);
     if(this.correctionUpdatedTime){
      this.timeValidation(this.correctionUpdatedTime)
@@ -431,7 +443,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
     }
   })
 
-  this.backEndService.EditExistingCorrection(formData).subscribe((res)=>{
+  this.subscription7 = this.backEndService.EditExistingCorrection(formData).subscribe((res)=>{
       if(res){
         this.editFlag = false;
         this.hotSpotData = [...this.editedCorrectionArr]
@@ -449,7 +461,7 @@ export class QaDoComponent implements OnInit, AfterViewInit{
 }
 
 deleteCorrection(hotspotName:string,hotSpotId:string){
-  this.backEndService.deleteCorrection(hotspotName,this.clientName,this.articleId,this.version).subscribe((res)=>{
+  this.subscription6 = this.backEndService.deleteCorrection(hotspotName,this.clientName,this.articleId,this.version).subscribe((res)=>{
     if(res == 'Deleted'){ 
       this.latestHotspotData = this.latestHotspotData.filter(obj=> obj.hotspotId != hotSpotId);
       this.hotSpotData = [...this.latestHotspotData]
@@ -474,6 +486,16 @@ deleteCorrection(hotspotName:string,hotSpotId:string){
 
   fullScreen(){
     this.router.navigate(['/3d-model/viewer',this.clientName,this.articleId,this.version])
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
+    if(this.subscription5)this.subscription5.unsubscribe()
+    if(this.subscription6)this.subscription6.unsubscribe()
+    if(this.subscription7)this.subscription7.unsubscribe()
   }
 
 }

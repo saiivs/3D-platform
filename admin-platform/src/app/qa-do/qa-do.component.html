@@ -83,7 +83,7 @@
                                                         </div> -->
                                                         
                                                         <div class="col px-0 hp-ecommerce-app-checkout-item-img imageEnlarge" style="flex: 0 0 74px;padding: 3px 0;">
-                                                                <img *ngIf="hotspot.corrImg;else noCorrImg" (click)="openCorrectionImg(hotspot.corrImg)" style="border:1px solid black;height: 3rem;" (error)="imageNotFound(hotspot.version,i)" [src]="hotspot.corrImg" alt="image">
+                                                                <img *ngIf="hotspot.corrImg;else noCorrImg" (click)="openCorrectionImg(hotspot.corrImg,hotspot.correction)" style="border:1px solid black;height: 3rem;" (error)="imageNotFound(hotspot.version,i)" [src]="hotspot.corrImg" alt="image">
                                                                 <ng-template #noCorrImg>
                                                                     <i class="hp-text-color-dark-0 ri-2x ri-file-forbid-line"></i>
                                                                 </ng-template>  

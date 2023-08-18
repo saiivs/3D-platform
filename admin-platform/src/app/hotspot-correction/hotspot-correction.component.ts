@@ -1,13 +1,14 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChange, SimpleChanges, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, QueryList, SimpleChange, SimpleChanges, ViewChildren } from '@angular/core';
 import { BackendService } from '../services/backend.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hotspot-correction',
   templateUrl: './hotspot-correction.component.html',
   styleUrls: ['./hotspot-correction.component.css']
 })
-export class HotspotCorrectionComponent implements OnInit,OnChanges{
+export class HotspotCorrectionComponent implements OnInit,OnChanges,OnDestroy{
 formBuilder: any;
 
 constructor(private backEndService:BackendService,private cdr: ChangeDetectorRef){}
@@ -29,9 +30,12 @@ latest:Array<any> = [];
 noCorrectionForm:Boolean = true;
 tabPanels = Array(3).fill(1).map((_, index) => `version ${index+1}`);
 labels:Array<any> = [];
+subscription1!:Subscription;
+subscription2!:Subscription;
+ 
 
 ngOnInit(): void {
-  this.backEndService.checkForHotspots(this.clientId,this.articleId).subscribe((res)=>{ 
+  this.subscription1 = this.backEndService.checkForHotspots(this.clientId,this.articleId).subscribe((res)=>{ 
     this.productLink = this.backEndService.getProductLink();   
    if(res.status){
     this.noCorrectionForm = res.msg == "no updates" ? false : true;
@@ -116,7 +120,14 @@ createCorrection()
   console.log("hotsPot submit");
   
   this.noCorrectionForm = !this.noCorrectionForm
-  this.backEndService.updateHotspotCorrectionImg(formData).subscribe((res)=>{
+  this.subscription2 = this.backEndService.updateHotspotCorrectionImg(formData).subscribe((res)=>{
     }) 
+}
+
+ngOnDestroy(): void {
+  if(this.subscription1)this.subscription1.unsubscribe()
+  if(this.subscription2)this.subscription2.unsubscribe()
+    
+    
 }
 }

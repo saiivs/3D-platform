@@ -46,17 +46,17 @@
                 let i = index
               ">
                     <td scope="row">{{ i + 1 }}</td>
-                    <td>{{ client.ClientData[0].clientName }}</td>
-                    <td>{{ productCount }}</td>
+                    <td>{{ client.clientData[0].clientName }}</td>
+                    <td>{{ client.assignedPro.length }}</td>
                     <td>
                       <button  class="btn btn-sm btn-outline-primary myhover">
-                        <a class="myhover" (click)="QaNameLoad(client.QATeamName,client.ClientData[0]?.clientName)" [routerLink]="['modeler-products',client._id]"
+                        <a class="myhover" (click)="QaNameLoad(client.QATeamName,client.clientData[0]?.clientName)" [routerLink]="['modeler-products',client._id]"
                           >View Here</a>
                       </button>
                     </td>
                     <td *ngIf="client.approvedClient;else notApproved"  style="font-size: 1rem;color: green;font-weight: 600;">Complete</td>
                     <ng-template #notApproved>
-                      <td class="text-danger" style="font-size: 1rem;font-weight: 600;">Incomplete</td>
+                      <td [ngStyle]="{color: client.listCompleted == 'Complete' ? 'green' :'red'}" style="font-size: 1rem;font-weight: 600;">{{client.listCompleted}}</td>
                     </ng-template>
                   </tr>
                 </tbody>

@@ -1,10 +1,10 @@
-<div class="col-12 col-xl-4 bonus">
+<div *ngIf="tableData" class="col-12 col-xl-4 bonus">
   <div class="card bonusBorder">
       <div class="card-body">
           
           <div class="row g-24">
               <div class="col-12">
-                  <div class="row align-items-center justify-content-between bonus">
+                  <div class="row align-items-center justify-content-between bonus" *ngIf="deadLineOne">
                       <div class="col hp-flex-none w-auto">
                           <div class="d-flex align-items-center">
                             <i class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" style="font-size: 24px;"></i>
@@ -12,32 +12,38 @@
 
                               <div>
                                   <h5 *ngIf="deadLineOne" class="mb-0">{{deadLineOne | date:'dd-MM-yyyy'}}</h5>
-                                  <p class="mb-0 hp-badge-text fw-normal">Dead Line</p>
+                                  <p *ngIf="deadLineOne" class="mb-0 hp-badge-text fw-normal">Dead Line</p>
                               </div>
                           </div>
                       </div>
 
                       <div class="col hp-flex-none w-auto">
-                          <div class="form-check form-switch">
-                              Bonus 30%
+                          <div *ngIf="deadLineOne" class="form-check form-switch">
+                              Bonus 50%
                           </div>
                       </div>
                   </div>
-                  <div class="row align-items-center justify-content-between" *ngIf="deadLineTwo">
+                  <div class="row align-items-center justify-content-between" >
                       <div class="col hp-flex-none w-auto">
                           <div class="d-flex align-items-center">
-                            <i class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" style="font-size: 24px;"></i>
+                            <i *ngIf="deadLineTwo;else deadlineIcon" class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" style="font-size: 24px;"></i>
+                            <ng-template #deadlineIcon>
+                              <i class="hp-text-color-dark-0 ri-1x ri-timer-line" style="margin-right: 4px;font-size: 1.5em;"></i>
+                            </ng-template>
 
                               <div >
-                                  <h5  class="mb-0">{{deadLineTwo | date:'yyyy-MM-dd'}}</h5>
-                                  <p class="mb-0 hp-badge-text fw-normal">Dead Line</p>
+                                  <h5 *ngIf="deadLineTwo"  class="mb-0">{{deadLineTwo | date:'dd-MM-yyyy'}}</h5>
+                                  <p *ngIf="deadLineTwo;else noDeadLine" class="mb-0 hp-badge-text fw-normal">Dead Line</p>
+                                  <ng-template #noDeadLine>
+                                    Please wait the deadlines will be updated soon.
+                                  </ng-template>
                               </div>
                           </div>
                       </div>
 
                       <div class="col hp-flex-none w-auto">
-                          <div class="form-check form-switch">
-                              Bonus 50%
+                          <div *ngIf="deadLineTwo" class="form-check form-switch">
+                              Bonus 30%
                           </div>
                       </div>
                   </div>
@@ -55,6 +61,9 @@
             <div class="col pe-md-32 pe-md-120" >
               <h4>Products</h4>
             </div>
+            <div class="hp-header-search searchContainer col">
+              <input type="text" style="width: 40%;" [(ngModel)]="serachForModel" class="form-control" placeholder="Search..." id="header-search" autocomplete="off">
+          </div>
             <ng-template #emptyTable>
               <div class="emptyTable">
                 <p class="hp-p1-body emptyTable">
@@ -88,7 +97,7 @@
                       currentPage: page,
                       totalItems: totalRecords
                     };let i = index">
-                    <ng-container>
+                    <ng-container *ngIf="serachForModel === ''||(pro.tag.toLowerCase().includes(serachForModel))||(pro.articleId.toLowerCase().includes(serachForModel))||(pro.productName.toLowerCase().includes(serachForModel))">
                       <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                     <td>{{pro.articleId}}</td>
                     <td ><i *ngIf="pro.extraInfo;else noInfo" class="hp-text-color-dark-0 ri-2x ri-information-line" (click)="aditionalInfoDilog(pro.extraInfo)" style="font-size: 1.5em;color: blue;cursor: pointer;"></i>

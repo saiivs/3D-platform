@@ -47,9 +47,16 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   QaTeamName:string = "";
   correctionValue:string = "";
   canCloseModal:boolean = false;
+  warningShow:Boolean = true;
   correctionInvalid:string = "";
-  subscription!:Subscription
-
+  subscription!:Subscription;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  subscription5!:Subscription;
+  subscription6!:Subscription
+  
   validateGlbFile(data:any){
     let modelData = data.gltfData;
     function getFileExtension(fileName:string) {
@@ -68,7 +75,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
         if(format == 'png') extnsWrng =`png files used`
-        if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+        if(obj.image.height > 2048) imgHieghtWrng = `Higher resolution used`
       }
     })
     if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){
@@ -87,11 +94,11 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     }else{
       this.canCloseModal = true;
     }
-    this.clientId = this.route.snapshot.params['clientId'];
-    this.articleId = this.route.snapshot.params['articleId'];
-    this.version = this.route.snapshot.params['version']
-
-    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
+    this.subscription6 = this.route.params.subscribe(params => {
+      this.clientId = params['clientId'];
+      this.articleId = params['articleId'];
+      this.version = params['version'];
+      this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.validateGlbFile(data);
@@ -126,9 +133,12 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         this.router.navigate(['/error'])
       }
     })
-    this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
+    this.subscription1 = this.notficationService.getNotificationForQA(localStorage.getItem("rollNo")).subscribe((data)=>{ 
       this.notficationService.setNotificationForQA(data);
     })
+      // You can now use these values to update your component's state or perform actions
+    });
+    
   }
 
   scrollToBottom() {
@@ -156,7 +166,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     this.comntRef.nativeElement.value = ""
     this.flag = true;
    
-    this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+    this.subscription2 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         
     })
 
@@ -172,7 +182,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         this.flag = true;
       });
       this.comntRef.nativeElement.value = ""
-      this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+      this.subscription3 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
 
     })
     }
@@ -196,7 +206,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       if(result.value){
         console.log("calleddddddd updtion");
         
-          this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{
+          this.subscription4 = this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo,this.modelerDetails.list).subscribe((res)=>{
             this.QaCommentArr[0].modalStatus = status
           })
       }else{
@@ -217,7 +227,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   getCorrection(status:string,modal:any){
     this.correctionValue = this.correction.nativeElement.value;
     if(this.correctionValue != ""){
-      this.backEnd.approveModal(this.clientId,this.articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo).subscribe((res)=>{
+      this.subscription5 = this.backEnd.approveModal(this.clientId,this.articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo,this.modelerDetails.list).subscribe((res)=>{
         if(res){
           this.QaCommentArr[0].modalStatus = status
         }
@@ -244,6 +254,11 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
+    if(this.subscription5)this.subscription5.unsubscribe()
+    if(this.subscription6)this.subscription6.unsubscribe()
   }
 }

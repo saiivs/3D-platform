@@ -27,8 +27,11 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
   budgetExceeded: string = ""
   noMonthlyStatus: Boolean = false;
   emptyData: boolean = false;
-  subcription1!:Subscription;
-  subcription2!:Subscription;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  
 
 
   constructor(private backEnd: BackendService, private router: Router,private notificationService:NotificationService) {
@@ -36,7 +39,7 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
   }
 
   ngOnInit(): void {
-    this.subcription1 = this.backEnd.getClientandExpense().subscribe((res) => {
+    this.subscription1 = this.backEnd.getClientandExpense().subscribe((res) => {
       if (res.status) {
         this.emptyData = false;
         this.clientList = [...res.clients];
@@ -51,7 +54,7 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
           }
         }
         this.totalExpence += expense;
-        this.subcription2 = this.backEnd.getModelersStatus().subscribe((data) => {
+        this.subscription2 = this.backEnd.getModelersStatus().subscribe((data) => {
           this.allModelers = [...data.allModelers];
           if (this.allModelers.length != 0) {
             this.totalRecords = this.allModelers.length;
@@ -172,13 +175,13 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
       }
 
     })
-    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription3 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
   }
 
   dateInputValue(date: string) {
-    this.backEnd.submitDate(date).subscribe((data) => {
+    this.subscription4 = this.backEnd.submitDate(date).subscribe((data) => {
       if (data.length == 0) {
         this.noMonthlyStatus = true;
       } else {
@@ -289,8 +292,14 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subcription1.unsubscribe();
-    this.subcription2.unsubscribe()
+    if (this.subscription1) {
+      this.subscription1.unsubscribe();
+    }
+    if (this.subscription2) {
+      this.subscription2.unsubscribe();
+    }
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
   }
 
 }

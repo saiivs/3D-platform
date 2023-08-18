@@ -83,6 +83,7 @@
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
                     <th scope="col">Price</th>
+                    <th scope="col">Modeler</th>
                     <th scope="col">Product Status</th>
                     <th scope="col">Preview</th>
                     <th scope="col">Admin Status</th>
@@ -116,6 +117,7 @@
                       <td class="text-danger">NO LINK</td>
                     </ng-template>
                     <td>€ {{pro.price}}</td>
+                    <td>{{pro.assigned}}</td>
                     <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
                     <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                     <td >

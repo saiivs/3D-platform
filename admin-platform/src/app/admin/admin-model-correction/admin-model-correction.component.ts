@@ -1,7 +1,8 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CorrectionImageComponent } from 'src/app/correction-image/correction-image.component';
 import { BackendService } from 'src/app/services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -12,7 +13,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './admin-model-correction.component.html',
   styleUrls: ['./admin-model-correction.component.css']
 })
-export class AdminModelCorrectionComponent implements OnInit {
+export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
 
   constructor(private route: ActivatedRoute, private backEndService: BackendService, private renderer: Renderer2, private openDilog: MatDialog,private notificationService:NotificationService) { }
 
@@ -27,17 +28,25 @@ export class AdminModelCorrectionComponent implements OnInit {
   clientDetails: any = {};
   clientName: string = "";
   hotspots: Array<any> = [];
+  noCorrections:boolean = false;
+  subscription1!:Subscription
+  subscription2!:Subscription
+  subscription3!:Subscription
+  subscription4!:Subscription
 
   ngOnInit(): void {
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
     this.version = this.route.snapshot.params['version'];
-    this.backEndService.getClientDetailsForQADo(this.clientId).subscribe((res) => {
+    this.subscription1 = this.backEndService.getClientDetailsForQADo(this.clientId).subscribe((res) => {
+
       this.clientDetails = res
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientDetails.clientName.replace(regex, "_")
 
-      this.backEndService.getLatestCorrection(this.clientId, this.articleId).subscribe((res) => {
+      this.subscription2 = this.backEndService.getLatestCorrection(this.clientId, this.articleId).subscribe((res) => {
+        console.log({res});
+        
         if (res) {
           console.log({ res });
 
@@ -58,11 +67,13 @@ export class AdminModelCorrectionComponent implements OnInit {
           this.hotspots.forEach((hotspot, index) => {
             this.addHotspotInitially(hotspot.normalValue, hotspot.positionValue, hotspot.hotspotName, index + 1)
           })
+        }else{
+          this.noCorrections = true;
         }
 
       })
     })
-    this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription3 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
 
@@ -77,7 +88,7 @@ export class AdminModelCorrectionComponent implements OnInit {
       this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
     }
 
-    this.backEndService.getHotspotwithVersion(version, this.clientId, this.articleId).subscribe((res) => {
+    this.subscription4 = this.backEndService.getHotspotwithVersion(version, this.clientId, this.articleId).subscribe((res) => {
       if (res) {
         this.hotspots = res;
         this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
@@ -113,4 +124,10 @@ export class AdminModelCorrectionComponent implements OnInit {
     this.modelTest.nativeElement.appendChild(hotspot);
   }
 
+  ngOnDestroy(): void {
+    if(this.subscription1)this.subscription1.unsubscribe()
+    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription3)this.subscription3.unsubscribe()
+    if(this.subscription4)this.subscription4.unsubscribe() 
+  }
 }
