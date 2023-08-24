@@ -117,6 +117,8 @@ onUpload(id:string,index:number){
   this.isLoading = true;
   index = (this.page - 1) * 50 + index;
   let list = this.products[index].list;
+  console.log({list});
+  
   const formData = new FormData();
   formData.append('file',this.uploadedFile,this.uploadedFile.name);
   formData.append('id',id);
@@ -139,6 +141,10 @@ onUpload(id:string,index:number){
 
 proNameLoad(proName:string){
 this.backEndService.getProName(proName)
+}
+
+loadModelReviewPage(articleId:string,clientId:string,version:number){
+  this.router.navigate(['modeler/reviews',articleId,clientId,version])
 }
 
 ngOnDestroy(): void {

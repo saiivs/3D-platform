@@ -117,10 +117,7 @@ export class GalleryComponent implements OnInit,OnDestroy {
     this.onSelectedFiles = Array.from(files);
   }
 
-  onSubmit() {
-    console.log("Asdfasdfadsfad");
-    console.log(this.onSelectedFiles);
-    
+  onSubmit() {  
     let formData = new FormData();
     if(this.onSelectedFiles){
     this.isLoading = true;
@@ -134,6 +131,7 @@ export class GalleryComponent implements OnInit,OnDestroy {
           this.subscription2 = this.backEndService.uploadReferenceManually(formData, this.articleId, this.clientDetails.clientName).subscribe((res) => {
 
             if (res) {
+              this.onSelectedFiles = [];
               this.isLoading = false;
               this.countConvertedfile = 0;
               this.galleryFn(this.articleId, this.clientId)

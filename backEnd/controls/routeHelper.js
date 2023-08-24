@@ -118,7 +118,6 @@ module.exports = {
     userLogin:async(req,res)=>{
         let userEmail = req.body.email;
         let getUser = credentials.find(user => user.email == userEmail);
-        console.log(getUser);
         if(getUser){
             let passTrue = getUser.password == req.body.password ? true :false;
             if(passTrue) {
@@ -126,6 +125,7 @@ module.exports = {
                 let userName = getUser.name
                 getUserJson = JSON.stringify(getUser);
                 let accessToken = await jwt.sign(getUserJson,process.env.ACC_TOKEN_SECRET);
+                res.cookie('auth-token', accessToken);
                 res.json({token:accessToken,userRole:role,userEmail:getUser.email,rollNo:getUser.rollNo,userName: userName})
             }else{
                 res.json({password:true})
@@ -137,6 +137,7 @@ module.exports = {
 
     checkUser:(req,res)=>{
         let header = req.headers['authorise'];
+        let a  = req.cookies['auth-token'];
         if(header == null){
             res.status(200).json({prevent: true})
         }else{
@@ -154,11 +155,12 @@ module.exports = {
         let clientInfo = await database.dbcreateClient(client[0]);
         console.log({clientInfo});
         if(clientInfo){
-            let id = clientInfo._id.toString()
-            let proListInfo = await database.dbcreatePro(proList,id);
+            let id = clientInfo.client._id.toString()
+            console.log(id);
+            let proListInfo = await database.dbcreatePro(proList,id,clientInfo.exist);
             console.log({proListInfo});
             if(proListInfo){
-            res.json(clientInfo)
+            res.json(clientInfo.client)
             }else{
                 throw new Error
             }
@@ -547,8 +549,8 @@ module.exports = {
 
     updateModelPrice:async(req,res)=>{
         try {
-            let {price,clientId,articleId,modelerRollNo,budgetExceed,updatedBudget,list} =  req.body;
-            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed,updatedBudget,list);
+            let {price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list} =  req.body;
+            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list);
             if(priceUpdated){
                 res.status(200).json(true);
             }else{

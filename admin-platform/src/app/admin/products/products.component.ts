@@ -55,6 +55,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   tagNameDrpdown: string[] = [];
   totalPrice: number = 0;
   search: string = "";
+  totalExpense:number = 0;
+  remainingBudget:number = 0;
   budgetExceeded: string = "";
   priceUpdated: boolean = true;
   subscription1!: Subscription;
@@ -71,6 +73,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   subscription12!:Subscription;
   subscription13!:Subscription;
   recieved: string = "";
+  exactBudget:number = 0;
   countForMasterCheckBox: number = 50;
   canClose: Boolean = false;
   requirementData: string = "";
@@ -94,14 +97,23 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
     this.productId = this.route.snapshot.params['id'];
     this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res) => {
-      console.log(res.requirement);
+
+      console.log(res);
       
       
       this.clientName = res.Arr[2].clientName
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientName.replace(regex, '_')
+      this.remainingBudget = res.Arr[1].budgetValue;
       this.budget = res.Arr[1].budgetValue;
       this.updatedBudget = res.Arr[1].budgetValue;
+      this.exactBudget = res.Arr[1].exactBudget;
+      this.totalExpense = res.Arr[1].totalExpense
+      if(this.budget == 0){
+        this.budgetExceeded = "Monthly budget has been exceeded"
+        this.updatedBudget = res.Arr[1].totalExpense
+      } 
+
       if (res.requirement.length != 1) { 
         this.clientOverallRequirement = ""
       } else {
@@ -140,7 +152,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
         pro.priceAdded = false
         if (pro.price) this.totalPrice += parseInt(pro.price);
         else pro.price = ""
-        if (this.totalPrice > this.budget) this.budgetExceeded = 'Monthly budget has been exceeded';
+        
         if (pro.productStatus == 'Approved') this.totalCompletedModels++;
         else if (pro.productStatus == 'Correction') this.totalCorrectionModels++;
         else if (pro.productStatus == 'Uploaded') this.totalUploadedModels++;
@@ -240,6 +252,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
       showCancelButton: false,
       focusConfirm: false,
     })
+  }
+
+  modalReview(articleId:string,clientId:any,version:any){
+    this.router.navigate(['admin/reviews',articleId,clientId,version])
   }
 
   aasignProduct() {
@@ -387,11 +403,18 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   EditPrice(index: number) {
+    console.log("ajhjasdhfkjashdb");
+    
     let i = (this.page - 1) * 50 + index;
     this.tempPrice = parseInt(this.products[i].price);
-    this.totalPrice -= this.tempPrice;
-    this.budgetExceeded = "";
-    this.updatedBudget = this.budget - this.totalPrice
+    this.totalExpense -= this.tempPrice;
+    if(this.totalExpense < this.exactBudget) {
+      this.remainingBudget = this.exactBudget - this.totalExpense;
+      this.budgetExceeded = ""; 
+    }else{
+      this.budgetExceeded = "Monthly budget has been exceeded";
+    }
+    this.updatedBudget = this.totalExpense
     this.products[i].price = "";
     this.products[i].priceAdded = true;
   }
@@ -400,8 +423,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
     let i = (this.page - 1) * 50 + index;
     let priceValue = Number(price);
     let list:any = this.products[i].list;
-    this.totalPrice += priceValue;
-    if (this.totalPrice > this.budget) {
+    this.totalExpense += priceValue;
+    if (this.exactBudget < this.totalExpense) {
       swal.fire({
         title: 'Are you sure?',
         text: "Monthly budget has been exeeded.",
@@ -412,9 +435,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
         confirmButtonText: 'Yes'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.updatedBudget = this.totalPrice
+          this.remainingBudget = 0;
           this.budgetExceeded = 'Monthly budget has been exceeded';
-          this.subscription7 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.updatedBudget, this.budgetExceeded,list).subscribe((res) => {
+          this.subscription7 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.totalExpense,this.remainingBudget, this.budgetExceeded,list).subscribe((res) => {
             if (res) {
               this.products[i].priceAdded = false;
               this.products[i].price = price;
@@ -424,15 +447,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
               })
             }
           })
+        }else{
+          this.totalExpense -= priceValue
         }
       })
     } else {
-      if (this.tempPrice == 0) {
-        this.updatedBudget -= priceValue;
-      } else {
-        this.updatedBudget -= priceValue;
-      }
-     this.subscription9 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.updatedBudget,this.budgetExceeded,list).subscribe((res) => {
+     this.remainingBudget -= priceValue;
+     this.subscription9 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.totalExpense,this.remainingBudget,this.budgetExceeded,list).subscribe((res) => {
         if (res) {
           this.tempPrice = 0;
           this.products[i].priceAdded = false;
@@ -495,9 +516,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
     let prodcuts = [];
     prodcuts = this.products.filter(pro => pro.additionalInfo||pro.isSelected);
     console.log({prodcuts});
-    
+    if(prodcuts.length != 0){
     this.requirementData = this.requirement.nativeElement.value;
-    this.subscription13 = this.backEndService.saveRequirement(this.requirementData, this.clientId,prodcuts).subscribe((res) => {
+    if(this.requirementData != ""){
+      this.subscription13 = this.backEndService.saveRequirement(this.requirementData, this.clientId,prodcuts).subscribe((res) => {
       if(res){
         this.toaster.success("success","Additional info added successfully")
         this.addRequirement = false;
@@ -510,9 +532,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
           }
         })
       }else{
-        this.toaster.error("error","Something went wrong!!")
+        this.toaster.error("Error","Something went wrong!!")
       }
     })
+    }else{
+      this.toaster.error("Error","Please add your requirements")
+    }
+    }else{
+      this.toaster.error("Error","Please select the models")
+    }
   }
 
   toggleAdditionalInfo(event:any,index:number){

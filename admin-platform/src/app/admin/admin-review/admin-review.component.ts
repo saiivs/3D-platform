@@ -38,6 +38,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
   clientName:string = "";
+  gltfData:any = {};
   polygonCount!:number;
   srcFile:string = ""
   subscription!:Subscription;
@@ -58,15 +59,15 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     let imgHieghtWrng;
     let invalidModel;
     if(modelData.info.totalTriangleCount > 150000){
-       polygonWarng = `Polygon Count Exceeded`
+       polygonWarng = `Polygon count exceeded`
     }else{
       invalidModel = `Invalid model detected`
     }
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`png files used`
-        if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+        if(format == 'png') extnsWrng =`PNG files used`
+        if(obj.image.height > 2048) imgHieghtWrng = `High resolution is used`
       }
     })
     if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){
@@ -93,6 +94,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         const regex = /[^a-zA-Z0-9]/g;
         this.clientName = this.modelDetails[0].clientDetails[0].clientName.replace(regex,"_");
         this.validateGlbFile(data);
+        this.gltfData = data.gltfData.info;
         this.polygonCount = data.gltfData.info.totalTriangleCount;
         this.QaCommentArr = [...data.Arr];
         console.log(this.QaCommentArr);

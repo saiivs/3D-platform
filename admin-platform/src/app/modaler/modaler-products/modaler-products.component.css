@@ -18,7 +18,7 @@ label {
 }
 
 .text-with-dots {
-  width: 87px; /* Set the desired width */
+  width: 250px; /* Set the desired width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

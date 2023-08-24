@@ -11,7 +11,7 @@
 }
 
 .text-with-dots {
-  width: 87px; /* Set the desired width */
+  width: 265px; /* Set the desired width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -85,6 +85,7 @@
 
 .tableHead{
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
 

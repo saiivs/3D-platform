@@ -90,16 +90,16 @@
                         | paginate
                           : {
                               id: 'listing_pagination',
-                              itemsPerPage: 6,
+                              itemsPerPage: 50,
                               currentPage: page,
                               totalItems: totalRecords
                             };
                       let i = index
                     ">
-                    <td scope="row">{{ i + 1 }}</td>
+                    <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                     <td>{{ client.clientName }}</td>
                     <td>{{ client.productCount }}</td>
-                    <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.per }}%</td>
+                    <td [ngStyle]="{color: client.status == 'Approved' ? 'green' : 'red'}">{{ client.per ? client.per + '%' : '0%' }}</td>
                     <td>
                       <div class="dropdown" *ngIf="client.account_Manager == '';else manager">
                         <a class="btn btn-primary dropdown-toggle" href="javascript:;" role="button"

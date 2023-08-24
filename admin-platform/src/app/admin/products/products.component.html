@@ -95,7 +95,105 @@
       </div>
     </div>
     <div class="container">
+       <div class="card" style="width: 50%;border-radius: 8px;border: 1px solid #00010c;margin-top: 1rem;">
+      <div class="card-body">
+        <div class="row">
+            <div class="col-6">
+                <div class="row align-items-start justify-content-between">
+                    <h5 class="mb-24">Monthly Budget</h5>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="row g-1 justify-content-between hp-bestSellingCategories">
+                    <div class="col-12">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col hp-flex-none w-auto">
+                                <div class="row g-8 align-items-center">
+                                    <div class="col hp-flex-none w-auto">
+                                        
+                                    </div>
+
+                                    <div class="col hp-flex-none w-auto">
+                                        <p class="mb-4 text-black-100 hp-text-color-dark-0 hp-badge-text fw-medium">Budget</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col hp-flex-none w-auto">
+                                <p class="mb-4 hp-p1-body">€ {{exactBudget}}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col hp-flex-none w-auto">
+                                <div class="row g-8 align-items-center">
+                                    <div class="col hp-flex-none w-auto">
+                                        
+                                    </div>
+
+                                    <div class="col hp-flex-none w-auto">
+                                        <p class="mb-4 text-black-100 hp-text-color-dark-0 hp-badge-text fw-medium">Remaining Budget</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col hp-flex-none w-auto">
+                                <p class="mb-4 hp-p1-body">€ {{remainingBudget | number:'.2-2'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col hp-flex-none w-auto">
+                                <div class="row g-8 align-items-center">
+                                    <div class="col hp-flex-none w-auto">
+                                        
+                                    </div>
+
+                                    <div class="col hp-flex-none w-auto">
+                                        <p class="mb-4 text-black-100 hp-text-color-dark-0 hp-badge-text fw-medium">Total Expense</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col hp-flex-none w-auto">
+                                <p class="mb-4 hp-p1-body">€ {{totalExpense | number:'.2-2'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col hp-flex-none w-auto">
+                                <div class="row g-8 align-items-center">
+                                    <div class="col hp-flex-none w-auto">
+                                        
+                                    </div>
+
+                                    <div class="col hp-flex-none w-auto">
+                                        <p class="mb-4 text-danger fw-medium">{{budgetExceeded}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+            
+        
+    </div>
+    </div>
+    
+    </div>
+   
+    <div class="container">
       <div class="row mobDev">
+        
         <div class="col-xs-12 col-lg-3">
           <div class="btn-group" style="width: 100%;">
 
@@ -132,6 +230,7 @@
             </ul>
           </div>
         </div>
+        
         <div class="col-xs-12 col-lg-3">
           <div>
             <button class="btn btn-lg btn-primary" (click)="aasignProduct()">
@@ -141,6 +240,7 @@
             </button>
           </div>
         </div>
+        
         <div class="col-lg-3">
           <div class="input-group mb-16 addTagBox">
             <input type="text" [(ngModel)]="tagName" class="form-control" placeholder="Tag Name" aria-label="Tag Name"
@@ -208,16 +308,6 @@
           <div class="row justify-content-between">
             <div class="col pe-md-9 pe-md-9 tableHead">
               <h4>Products</h4>
-              <div>
-                <p class="hp-p1-body budgetStatus" style="margin-bottom: 0rem;" *ngIf="updatedBudget == budget">Monthly
-                  budget - <span>€{{budget}}</span></p>
-                <p class="hp-p1-body budgetStatus" *ngIf="updatedBudget != budget && updatedBudget < budget"
-                  style="margin-bottom: 0rem;">Monthly budget remaining-<span>€ {{updatedBudget | number:
-                    '.2-2'}}</span></p>
-                <p class="hp-p1-body budgetStatus" *ngIf="budgetExceeded" style="margin-bottom: 0rem;">Total
-                  Expense-<span>€ {{updatedBudget | number: '.2-2'}}</span></p>
-                <small *ngIf="budgetExceeded" class="text-danger ">{{budgetExceeded}}</small>
-              </div>
             </div>
             <ng-template #emptyTable>
               <p class="hp-p1-body emptyTable">
@@ -235,14 +325,14 @@
                           (change)="checkBoxChange()" id="flexCheckDefault">
                       </div>
                     </th>
-                    <th scope="col">Sl No</th>
-                    <th scope="col">Article Id</th>
+                    <th scope="col">No</th>
+                    <th scope="col">ID</th>
                     <th scope="col" matTooltip="Additional Infromation" matTooltipPosition="above">Info</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Product Link</th>
-                    <th scope="col">Assigned Modeler</th>
-                    <th scope="col">Assigned QA</th>
-                    <th scope="col">Product Status</th>
+                    <th scope="col">Modeler</th>
+                    <th scope="col">QA</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Preview</th>
                   </tr>
                 </thead>
@@ -309,13 +399,13 @@
                               class="hp-text-color-dark-0 ri-2x ri-upload-cloud-2-fill" style="font-size: 1.3rem;"></i>
                           </div>
                           <ng-template #ReffUrl>
-                            <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click here</a>
+                            <div><a style="font-size: smaller;" target="_blank" href="{{pro.Reff}}">Click</a>
                             </div>
                           </ng-template>
                         </div>
                       </td>
                       <td *ngIf="pro.productLink;else noLink"><a target="_blank" href="{{pro.productLink}}"
-                          style="cursor: pointer;">Click here</a>
+                          style="cursor: pointer;">Click</a>
                       </td>
                       <ng-template #noLink>
                         <td class="text-danger">NO LINK</td>
@@ -350,10 +440,9 @@
                           style="font-weight: bold;">{{pro.productStatus}}</td>
                       </ng-template>
                       <td>
-                        <button class="btn btn-sm btn-outline-primary"
+                        <button (click)="modalReview(pro.articleId,clientId,pro.version)" class="btn btn-sm btn-outline-primary"
                           *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
-                          <a (click)="nameLoad(pro.assigned,pro.productName)" class="myhover"
-                            [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]">View model</a>
+                          View model
                         </button>
                         <ng-template #NoData>
                           <button class="btn btn-sm btn-danger">

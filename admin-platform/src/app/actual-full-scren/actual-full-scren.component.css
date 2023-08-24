@@ -4,3 +4,10 @@ model-viewer {
     height: 49vw;
     width: 100%;
   }
+
+  .exitFullScreen{
+    margin-top: 11px;
+    padding-left: 11px;
+    position: absolute;
+    z-index: 1;
+  }

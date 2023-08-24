@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart, NavigationEnd, NavigationError  } from '@angular/router';
 import "@google/model-viewer"
 import { BackendService } from 'src/app/services/backend.service';
 import { environment } from '../../environments/environment';

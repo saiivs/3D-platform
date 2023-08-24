@@ -176,9 +176,9 @@ p.meta{
 .QAbtn{
   position: absolute;
   z-index: 2;
-  bottom: 8px;
+  bottom: 4px;
+  left: 4px;
   right: 0;
-  left: 6px;
   width: 100%;
 }
 
@@ -189,8 +189,8 @@ color: white;
 model-viewer {
   position: relative;
   float: left;
-  height: 40vw;
-  width: 80%;
+  height: 44vw;
+  width: 100%;
 }
 
 .fullScreen{position: absolute;}

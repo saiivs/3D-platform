@@ -1,6 +1,10 @@
 <div class="container">
     <div class="row">
+        
         <div class="col-12">
+            <div class="exitFullScreen">
+                <span><i (click)="exitFullScreenMode()" matTooltip="Exit Full Screen" matTooltipPosition="below" style="font-size: large;" class="hp-text-color-dark-0 ri-2x ri-fullscreen-exit-fill"></i></span>
+            </div>
             <model-viewer #modelTest
             camera-controls
             camera-orbit="45deg 55deg 115%"

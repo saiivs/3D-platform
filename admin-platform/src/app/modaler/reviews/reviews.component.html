@@ -66,15 +66,34 @@
             <ul class="proDetails">
               <li>Product Status: <span [ngStyle]="{color : QaCommentArr[0]?.modalStatus == 'Approved' ? 'green' : 'orange'}">{{QaCommentArr[0]?.modalStatus}}</span><span *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
-              <li>Polygon Count: <span>{{polygonCount}}</span></li>
-              <li>Admin Status: <span [ngStyle]="{color : QaCommentArr[0]?.adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0]?.adminStatus}}</span><span *ngIf="QaCommentArr[0]?.adminStatus == 'Approved'"><i style="font-size: 0.9rem;
-                margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
+              <li>Polygon Count : <span>{{gltfData?.totalTriangleCount}}</span></li>
+              <li>Material Count : <span>{{gltfData?.materialCount}}</span></li>
+              <li>Draw Calls : <span>{{gltfData?.drawCallCount}}</span></li>
+              <li>Vertices : <span>{{gltfData?.totalVertexCount}}</span></li>
+              <li>Animations : <span>{{gltfData?.animationCount}}</span></li>
+              <!-- <li>Admin Status: <span [ngStyle]="{color : QaCommentArr[0]?.adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0]?.adminStatus}}</span><span *ngIf="QaCommentArr[0]?.adminStatus == 'Approved'"><i style="font-size: 0.9rem;
+                margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li> -->
             </ul>
             <div class="row align-items-center justify-content-between mt-24 pe-42">
-                <div class="col-12 col-md-4">
+                <div class="col-6 col-md-4">
                     <div class="row mx-0 align-items-center">
-                      <button class="btn btn-sm btn-primary" (click)="helpCall()">HELP?</button>    
-                    </div>
+                      <button class="btn btn-sm btn-primary" (click)="helpCall()">HELP</button> 
+                    </div> 
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="row mx-0 align-items-center">
+                      <input type="file" id="actual-btn" (input)="getModelFile($event)" hidden/><label *ngIf="uploadToggle; else uploadBtn" class="btn btn-sm btn-primary" for="actual-btn">Choose File</label>
+                      <ng-template #uploadBtn>
+                        <div>
+                          <button class="btn btn-sm btn-primary" (click)="uploadModel()">
+                            <span *ngIf="!isLoading">Upload</span>
+                          <div *ngIf="isLoading" class="spinner-border text-white" role="status" style="width: 1.2rem;height: 1.2rem;">
+                          </div>
+                          </button> 
+                          <span class="closeBtn" (click)="reset()">X &nbsp;Reset</span>
+                        </div>
+                      </ng-template>
+                    </div> 
                 </div>
                 <div class="col hp-flex-none w-auto mt-24 mt-sm-0">
                     <div class="row align-items-center mb-4">

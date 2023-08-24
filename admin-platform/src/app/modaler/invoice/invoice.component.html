@@ -1,4 +1,4 @@
-<div class="hp-main-layout-content">
+<div class="hp-main-layout-content" style="width: 100%;max-width: 100%;">
     <div class="col-12">
     <div class="row g-32">
         <div class="col-12 col-xl-8">
@@ -41,9 +41,7 @@
 
                 <div class="col-12">
                     <h4>{{modelerName}}</h4>
-                    <p style="margin-bottom: 0.5rem;">{{bankDetails[0]?.address}}</p>
                     <p style="margin-bottom: 0.5rem;">demo@gmail.com</p>
-                    <p style="margin-bottom: 0.5rem;">{{bankDetails[0]?.mob}}</p>
                 </div>
             </div>
 
@@ -51,23 +49,21 @@
             <h2 style="color: #283592;">INVOICE</h2>
 
             <div class="row justify-content-between">
-                <div class="col-12 col-md-4 pb-16 hp-print-info">
+                <div class="col-12 col-md-6 pb-16 hp-print-info">
                     <p class="hp-text-color-dark-0 hp-input-label" style="color: #283592;">Invoice for:</p>
+                    <p style="margin-bottom: 0.5rem;">Account Holder Name - <span>{{bankDetails[0]?.accountHolderName}}</span></p>
                     <p style="margin-bottom: 0.5rem;">Bank Name - <span>{{bankDetails[0]?.bankName}}</span></p>
-                    <p style="margin-bottom: 0.5rem;">Bank Acc-Nr - <span>{{bankDetails[0]?.accountNumber}}</span> </p>
-                    <p style="margin-bottom: 0.5rem;">Street Address - <span>{{bankDetails[0]?.address}}</span></p>
-                    <p style="margin-bottom: 0.5rem;">City,State,Zip - <span>{{bankDetails[0]?.pincode}}</span></p>
+                    <p style="margin-bottom: 0.5rem;">IBAN/Account Number - <span>{{bankDetails[0]?.accountNumber}}</span> </p>
                     <p style="margin-bottom: 0.5rem;">BIC/SWIFT code - <span>{{bankDetails[0]?.swiftCode}}</span></p>
-                    <p style="margin-bottom: 0.5rem;">Mobile No - <span>{{bankDetails[0]?.mob}}</span></p>
                 </div>
 
-                <div class="col-12 col-md-4 pb-16 hp-print-info">
+                <div class="col-12 col-md-3 pb-16 hp-print-info">
                     <p class="hp-text-color-dark-0 hp-input-label" style="color: #283592;">Payable to:</p>
                     <p style="margin-bottom: 0.5rem;">{{modelerName}}</p>
                     
                 </div>
 
-                <div class="col-12 col-md-4 text-start text-sm-end hp-print-info">
+                <div class="col-12 col-md-3 text-start text-sm-end hp-print-info">
                     <p style="margin-bottom: 0.5rem;">Date Issue: <span>{{curDate | date : 'dd/MM/yyyy'}}</span></p>
                     
                 </div>

@@ -264,14 +264,14 @@
                                     <span class="hp-p1-body">Email</span>
                                     <span class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0">{{userData?.email}}</span>
                                 </li>
-                                <li class="mt-18 proInputFields">
+                                <!-- <li class="mt-18 proInputFields">
                                     <span class="hp-p1-body">Phone</span>
                                     <a class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0" href="tel:+900374323">+{{userData?.phone}}</a>
                                 </li>
                                 <li class="mt-18 proInputFields">
                                     <span class="hp-p1-body">Address</span>
                                     <span class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0">{{userData?.address}}</span>
-                                </li>
+                                </li> -->
                             </ul>
                         </div>
                     </div>
@@ -294,22 +294,28 @@
                                     <div class="row g-24">
                                         
                                         <div class="col-6"> 
+                                            <label for="fullName" class="form-label">Account Holder Name</label>
+                                            <input type="text" formControlName="accountHolderName" class="form-control" id="fullName">
+                                            <small class="text-danger" *ngIf="!reactiveForm.get('accountHolderName')?.valid&&reactiveForm.get('accountHolderName')?.touched">Required field</small>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <label for="displayName" class="form-label">IBAN/Account Number</label>
+                                            <input type="text" formControlName="accountNumber" class="form-control" id="displayName">
+                                            <small class="text-danger" *ngIf="!reactiveForm.get('accountNumber')?.valid&&reactiveForm.get('accountNumber')?.touched">Required field</small>
+                                        </div>
+
+                                        <div class="col-12"> 
                                             <label for="fullName" class="form-label">Bank Name</label>
                                             <input type="text" formControlName="bankName" class="form-control" id="fullName">
                                             <small class="text-danger" *ngIf="!reactiveForm.get('bankName')?.valid&&reactiveForm.get('bankName')?.touched">Required field</small>
                                         </div>
 
-                                        <div class="col-6">
-                                            <label for="displayName" class="form-label">Account Number</label>
-                                            <input type="text" formControlName="accountNumber" class="form-control" id="displayName">
-                                            <small class="text-danger" *ngIf="!reactiveForm.get('accountNumber')?.valid&&reactiveForm.get('accountNumber')?.touched">Required field</small>
-                                        </div>
-
-                                        <div class="col-12">
+                                        <!-- <div class="col-12">
                                             <label for="address" class="form-label">Street Address</label>
                                             <textarea formControlName="address" name="address" id="address" class="form-control"></textarea>
                                             <small class="text-danger" *ngIf="!reactiveForm.get('address')?.valid&&reactiveForm.get('address')?.touched">Required field</small>
-                                        </div>
+                                        </div> -->
 
                                         <div class="col-12">
                                             <label for="email" class="form-label">BIC/SWIFT code</label>
@@ -317,12 +323,12 @@
                                             <small class="text-danger" *ngIf="!reactiveForm.get('swiftCode')?.valid&&reactiveForm.get('swiftCode')?.touched">Required field</small>
                                         </div>
 
-                                        <div class="col-12">
+                                        <!-- <div class="col-12">
                                             <label for="phone" class="form-label">Mobile No.</label>
                                             <input type="text" formControlName="mob" class="form-control" id="phone">
                                             <small class="text-danger" *ngIf="reactiveForm.get('mob')?.errors?.['required']">mobile number is required.</small>
                                             <small class="text-danger" *ngIf="reactiveForm.get('mob')?.errors?.['pattern']">Invalid mobile number</small>
-                                        </div>
+                                        </div> -->
 
                                         <div class="col-6">
                                             <button type="submit" data-bs-dismiss="modal" [disabled]="!reactiveForm.valid" class="btn btn-primary w-100">Edit</button>
@@ -367,17 +373,14 @@
                                     <a class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0" href="tel:+900374323">{{}}</a>
                                 </li> -->
                                 <li class="mt-18 proInputFields">
-                                    <span class="hp-p1-body">Street address</span>
-                                    <span class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0">{{bankInfo.address}}</span>
+                                    <span class="hp-p1-body">Bank Holder Name</span>
+                                    <span class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0">{{bankInfo.accountHolderName}}</span>
                                 </li>
                                 <li class="mt-18 proInputFields">
                                     <span class="hp-p1-body">BIC/SWIFT code</span>
                                     <span class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0">{{bankInfo.swiftCode}}</span>
                                 </li>
-                                <li class="mt-18 proInputFields">
-                                    <span class="hp-p1-body">Mobile Number</span>
-                                    <span class="mt-0 mt-sm-4 hp-p1-body text-black-100 hp-text-color-dark-0">{{bankInfo.mob}}</span>
-                                </li>
+            
                             </ul>
                         </div>
                         <ng-template #noBankInfo>

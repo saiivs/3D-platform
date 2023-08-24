@@ -42,6 +42,8 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   currentDate: any ="";
   clientName:string = "";
   polygonCount!:number ;
+  materialCount!:number;
+  gltfData:any = {};
   warningMsg:string = "";
   srcFile:string = "";
   QaTeamName:string = "";
@@ -68,13 +70,13 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     let imgHieghtWrng;
     let invalidModel;
     if(modelData?.info?.totalTriangleCount > 150000){
-       polygonWarng = `Polygon Count Exceeded`
+       polygonWarng = `Polygon count exceeded`
     }
     if(!modelData.info.totalTriangleCount) invalidModel = `Invalid model detected`
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`png files used`
+        if(format == 'png') extnsWrng =`PNG files used`
         if(obj.image.height > 2048) imgHieghtWrng = `Higher resolution used`
       }
     })
@@ -101,12 +103,14 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
+        console.log(data);
         this.validateGlbFile(data);
         this.clientDetails = data.modelDetails[0].clientDetails;
         this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
             if(obj.articleId == this.articleId) return obj
           })
         this.modRollNo = this.modelerDetails.modRollno
+        this.gltfData = data.gltfData.info;
         this.polygonCount = data.gltfData.info.totalTriangleCount;
         this.QaCommentArr = [...data.Arr]
         if(this.QaCommentArr[0].comments.length == 0){
@@ -117,6 +121,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
         
         
         this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb`
+        
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -144,6 +149,10 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   scrollToBottom() {
     const chatBody = this.chatBodyRef.nativeElement;
     chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  startQA(articleId:string,clientId:string,version:number){
+    this.router.navigate(['/QA_panel',articleId,clientId,version])
   }
 
   getComment(event:any){

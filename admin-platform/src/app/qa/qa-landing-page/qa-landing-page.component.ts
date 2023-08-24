@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { QaLanding } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
@@ -11,7 +12,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class QaLandingPageComponent implements OnInit,OnDestroy{
 
-  constructor(private backEnd:BackendService,private notficationService:NotificationService){
+  constructor(private backEnd:BackendService,private notficationService:NotificationService,private router:Router){
 
   }
 
@@ -69,7 +70,10 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
 
   modalerName(clientName:string){
     this.backEnd.getClientName(clientName);
+  }
 
+  QaModelView(clientId:string){
+    this.router.navigate(['QA/Qa-products',clientId])
   }
 
   ngOnDestroy(): void {

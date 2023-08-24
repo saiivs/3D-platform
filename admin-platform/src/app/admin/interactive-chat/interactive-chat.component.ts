@@ -37,6 +37,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any = "";
   clientName: string = "";
+  gltfData:any = {};
   polygonCount!: number;
   warningMsg: string = "";
   clientDetails: Array<any> = [];
@@ -69,8 +70,8 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
     modelData.info.resources.forEach((obj: any) => {
       if (obj.image) {
         let format = getFileExtension(obj.mimeType);
-        if (format == 'png') extnsWrng = `Png files used`
-        if (obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+        if (format == 'png') extnsWrng = `PNG files used`
+        if (obj.image.height > 2048) imgHieghtWrng = `High resolution is used`
       }
     })
     if (polygonWarng || extnsWrng || imgHieghtWrng) {
@@ -101,6 +102,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
           if (obj.articleId == this.articleId) return obj
         });
         this.modRollNo = this.modelDetails.modRollno;
+        this.gltfData = data.gltfData.info;
         this.polygonCount = data.gltfData.info.totalTriangleCount;
         this.QaCommentArr = [...data.Arr]
         if (this.QaCommentArr[0].comments.length == 0) {

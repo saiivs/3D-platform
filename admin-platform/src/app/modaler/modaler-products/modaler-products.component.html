@@ -52,7 +52,7 @@
       </div>
   </div>
 </div>
-<div class="hp-main-layout-content">
+<div class="hp-main-layout-content" style="width: 100%;max-width: 100%;">
   <div class="row mb-32 gy-32">
     <div class="col-12">
       <div class="card">
@@ -77,8 +77,8 @@
               <table  class="table table-bordered text-center" *ngIf="tableData;else emptyTable">
                 <thead>
                   <tr>
-                    <th scope="col">Sl No</th>
-                    <th scope="col">Article Id</th>
+                    <th scope="col">No</th>
+                    <th scope="col">ID</th>
                     <th scope="col" matTooltip="Additional Infromation" matTooltipPosition="above">Info</th>
                     <th scope="col">Product Name</th>
                     <th scope="col">Price</th>
@@ -112,7 +112,7 @@
                   <td>
                     € {{pro.price}}
                   </td>
-                    <td *ngIf="pro.productLink;else noLink"><a target="_blank"  href="{{pro.productLink}}" style="cursor: pointer;">Click here</a>
+                    <td *ngIf="pro.productLink;else noLink"><a target="_blank"  href="{{pro.productLink}}" style="cursor: pointer;">Click</a>
                     </td>
                     <ng-template #noLink>
                       <td class="text-danger">NO LINK</td>
@@ -131,9 +131,8 @@
                       </td>
                     </ng-template>
                     <td *ngIf="pro.productStatus != 'Not Uploaded';else NoData">
-                      <button class="btn btn-sm btn-outline-primary">
-                        <a (click)="proNameLoad(pro.productName)" class="myhover" [routerLink]="['../../reviews',pro.articleId,clientId,pro.version]"
-                          >View Model</a>
+                      <button (click)="loadModelReviewPage(pro.articleId,clientId,pro.version)" class="btn btn-sm btn-outline-primary">
+                        View Model
                       </button>
                     </td>
                     <ng-template #NoData>

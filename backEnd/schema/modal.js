@@ -160,6 +160,10 @@ let createBudget = new Schema({
         type:Boolean,
         required:true,
         default:false
+    },
+    totalExpense:{
+        type:Number,
+        required:true,
     }
 })
 

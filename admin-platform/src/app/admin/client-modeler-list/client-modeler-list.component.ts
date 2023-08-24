@@ -33,8 +33,8 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.clientId = this.route.snapshot.params['clientId']
     this.subscription1 = this.backEnd.getModelersProgress(this.clientId).subscribe((res) => {
-       
-      this.modelerList = [...res]
+      if(res.length != 0){
+        this.modelerList = [...res]
       this.modelerList = this.modelerList.map((obj) => {
         let count = 0;
         obj.models.forEach((model:any)=>{
@@ -46,6 +46,7 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
         return { ...obj, percentage: final }
       })
       this.totalRecords = this.modelerList.length;
+      }  
     })
     
     

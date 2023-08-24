@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import swal from "sweetalert2/dist/sweetalert2.js"
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
@@ -13,7 +13,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class QaProductsComponent implements OnInit,OnDestroy{
 
-  constructor(private backEnd:BackendService,private route:ActivatedRoute,private notficationService:NotificationService){
+  constructor(private backEnd:BackendService,private route:ActivatedRoute,private notficationService:NotificationService,private router:Router){
     
   }
 
@@ -65,6 +65,10 @@ export class QaProductsComponent implements OnInit,OnDestroy{
     this.subscription2 = this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
       console.log(res);  
     })
+  }
+
+  qaViewModel(articleId:string,clientId:string,version:number){
+    this.router.navigate(['QA/reviews',articleId,clientId,version])
   }
 
   aditionalInfoDilog(info:string){

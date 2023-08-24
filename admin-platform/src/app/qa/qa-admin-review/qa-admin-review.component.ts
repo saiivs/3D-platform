@@ -38,6 +38,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   clientName:string = "";
   version:number = 0;
   flag:Boolean = true;
+  gltfData:any = {};
   polygonCount!:number;
   warningMsg:string = "";
   warningShow:Boolean = true;
@@ -64,15 +65,15 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     let imgHieghtWrng;
     let invalidModel;
     if(modelData.info.totalTriangleCount > 150000){
-       polygonWarng = `Polygon Count Exceeded`
+       polygonWarng = `Polygon count exceeded`
     }else{
       invalidModel = `Invalid model detected`
     }
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`png files used`
-        if(obj.image.height > 2048) imgHieghtWrng = `height exceeded`
+        if(format == 'png') extnsWrng =`PNG files used`
+        if(obj.image.height > 2048) imgHieghtWrng = `Higher resolution is used`
       }
     })
     if(polygonWarng || extnsWrng || imgHieghtWrng || invalidModel){
@@ -104,6 +105,7 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
             if(obj.articleId == this.articleId) return obj
           })
         this.modRollNo = this.modelerDetails.modRollno;
+        this.gltfData = data.gltfData.info;
         this.polygonCount = data.gltfData.info.totalTriangleCount;
         this.QaCommentArr = [...data.Arr];
         if(this.QaCommentArr[0].comments.length == 0){

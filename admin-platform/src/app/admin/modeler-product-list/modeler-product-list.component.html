@@ -38,13 +38,13 @@
                        <tr *ngFor="let modelObj of client.models | paginate
                     : {
                         id: 'listing_pagination',
-                        itemsPerPage: 6,
+                        itemsPerPage: 50,
                         currentPage: page,
                         totalItems: totalRecords
                       };let i = index">
                     <ng-container
                       *ngIf="serachForModel == ''||(modelObj?.tag.toLowerCase().includes(serachForModel))||(modelObj?.articleId.toLowerCase().includes(serachForModel))||(modelObj?.productName.toLowerCase().includes(serachForModel))">
-                      <td scope="row">{{i+1}}</td>
+                      <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                       <td>{{client.clientDetails.clientName}}</td>
                       <td>{{modelObj.articleId}}</td>
                       <td>

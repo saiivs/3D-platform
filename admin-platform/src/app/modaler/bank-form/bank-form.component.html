@@ -7,51 +7,35 @@
     <form [formGroup]="reactiveForm" (ngSubmit)="formSubmit()">
           <div class="bankContent">
     <mat-form-field>
-        <mat-label>Bank Name</mat-label>
-        <input matInput formControlName="bankName">
-        <mat-error *ngIf="reactiveForm.get('bankName')?.invalid && (reactiveForm.get('bankName')?.dirty ||reactiveForm.get('bankName')?.touched)">
-            <span *ngIf="reactiveForm.get('bankName')?.errors?.['required']">Bank name is required.</span>
+        <mat-label>Account Holder Name</mat-label>
+        <input matInput formControlName="accountHolderName">
+        <mat-error *ngIf="reactiveForm.get('accountHolderName')?.invalid && (reactiveForm.get('accountHolderName')?.dirty ||reactiveForm.get('accountHolderName')?.touched)">
+            <small *ngIf="reactiveForm.get('accountHolderName')?.errors?.['required']">Name is required.</small>
         </mat-error>    
     </mat-form-field>
     <mat-form-field>
-        <mat-label>Account Number</mat-label>
-        <input matInput formControlName="accountNumber">
-        <mat-error *ngIf="reactiveForm.get('accountNumber')?.invalid && (reactiveForm.get('accountNumber')?.dirty ||reactiveForm.get('accountNumber')?.touched)">
-            <span *ngIf="reactiveForm.get('accountNumber')?.errors?.['required']">Account number is required.</span>
-        </mat-error>
+        <mat-label>Bank Name</mat-label>
+        <input matInput formControlName="bankName">
+        <mat-error *ngIf="reactiveForm.get('bankName')?.invalid && (reactiveForm.get('bankName')?.dirty ||reactiveForm.get('bankName')?.touched)">
+            <small *ngIf="reactiveForm.get('bankName')?.errors?.['required']">Bank name is required.</small>
+        </mat-error>    
     </mat-form-field>
     </div>
-    <mat-form-field class="example-full-width">
-        <mat-label>Address</mat-label>
-        <textarea matInput formControlName="address"></textarea>
-        <mat-error *ngIf="reactiveForm.get('address')?.invalid && (reactiveForm.get('address')?.dirty ||reactiveForm.get('address')?.touched)">
-            <span *ngIf="reactiveForm.get('address')?.errors?.['required']">Adddress is required.</span>
-        </mat-error>
-    </mat-form-field>
     <div class="bankContent">
-        <mat-form-field>
-            <mat-label>PIN code</mat-label>
-            <input matInput formControlName="pincode">
-            <mat-error *ngIf="reactiveForm.get('pincode')?.invalid && (reactiveForm.get('pincode')?.dirty ||reactiveForm.get('pincode')?.touched)">
-                <span *ngIf="reactiveForm.get('pincode')?.errors?.['required']">PIN code is required.</span>
-                <span *ngIf="reactiveForm.get('pincode')?.errors?.['pattern']">Invalid PIN code</span>
+        <mat-form-field style="width: 100%;">
+            <mat-label>IBAN/Account Number</mat-label>
+            <input matInput formControlName="accountNumber">
+            <mat-error *ngIf="reactiveForm.get('accountNumber')?.invalid && (reactiveForm.get('accountNumber')?.dirty ||reactiveForm.get('accountNumber')?.touched)">
+                <small *ngIf="reactiveForm.get('accountNumber')?.errors?.['required']">IBAN/Account number is required.</small>
             </mat-error>
         </mat-form-field>
-        <mat-form-field>
-            <mat-label>SWIFT code</mat-label>
+    </div>
+    <div class="bankContent">
+        <mat-form-field style="width: 100%;">
+            <mat-label>BIC/SWIFT</mat-label>
             <input matInput formControlName="swiftCode">
             <mat-error *ngIf="reactiveForm.get('swiftCode')?.invalid && (reactiveForm.get('swiftCode')?.dirty ||reactiveForm.get('swiftCode')?.touched)">
-                <span *ngIf="reactiveForm.get('swiftCode')?.errors?.['required']">SWIFT code is required.</span>
-            </mat-error>
-        </mat-form-field>
-        </div>
-    <div class="bankContent">
-        <mat-form-field class="example-full-width"> 
-            <mat-label>Mobile Number</mat-label>
-            <input type="tel" matInput formControlName="mob">
-            <mat-error *ngIf="reactiveForm.get('mob')?.invalid && (reactiveForm.get('mob')?.dirty ||reactiveForm.get('mob')?.touched)">
-                <span *ngIf="reactiveForm.get('mob')?.errors?.['required']">mobile number is required.</span>
-                <span *ngIf="reactiveForm.get('mob')?.errors?.['pattern']">Invalid mobile number</span>
+                <small *ngIf="reactiveForm.get('swiftCode')?.errors?.['required']">BIC/SWIFT code is required.</small>
             </mat-error>
         </mat-form-field>
     </div>

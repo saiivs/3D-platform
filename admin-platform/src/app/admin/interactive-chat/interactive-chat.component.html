@@ -53,12 +53,16 @@
             *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span>
         </li>
-        <li>Polygon Count : <span>{{polygonCount}}</span></li>
-        <li>Admin Status : <span
+        <li>Polygon Count : <span>{{gltfData?.totalTriangleCount}}</span></li>
+            <li>Material Count : <span>{{gltfData?.materialCount}}</span></li>
+            <li>Draw Calls : <span>{{gltfData?.drawCallCount}}</span></li>
+            <li>Vertices : <span>{{gltfData?.totalVertexCount}}</span></li>
+            <li>Animations : <span>{{gltfData?.animationCount}}</span></li>
+        <!-- <li>Admin Status : <span
             [ngStyle]="{color : QaCommentArr[0]?.adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0]?.adminStatus}}</span><span
             *ngIf="QaCommentArr[0]?.adminStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span>
-        </li>
+        </li> -->
       </ul>
       <div class="row align-items-center justify-content-between mt-24 pe-42">
         <!-- modal -->

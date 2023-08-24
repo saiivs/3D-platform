@@ -39,19 +39,18 @@
                   | paginate
                     : {
                         id: 'listing_pagination',
-                        itemsPerPage: 6,
+                        itemsPerPage: 50,
                         currentPage: page,
                         totalItems: totalRecords
                       };
                 let i = index
               ">
-                    <td scope="row">{{ i + 1 }}</td>
+                    <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                     <td>{{ client.clientData[0].clientName }}</td>
                     <td>{{ client.assignedPro.length }}</td>
                     <td>
-                      <button  class="btn btn-sm btn-outline-primary myhover">
-                        <a class="myhover" (click)="QaNameLoad(client.QATeamName,client.clientData[0]?.clientName)" [routerLink]="['modeler-products',client._id]"
-                          >View Here</a>
+                      <button (click)="viewProList(client._id)" class="btn btn-sm btn-outline-primary myhover">
+                        View Here
                       </button>
                     </td>
                     <td *ngIf="client.approvedClient;else notApproved"  style="font-size: 1rem;color: green;font-weight: 600;">Complete</td>

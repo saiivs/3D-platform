@@ -331,7 +331,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
       this.subscription5 = this.backEndService.editCorrection(formData).subscribe((res)=>{
         if(!res){
           this.hotSpotData[index].editFlag = false
-          this.toastr.error('Error', 'edit disabled')
+          this.toastr.error('Error', 'Edit disabled')
           hotSpot.corrImg = corrImg;
           hotSpot.correction = correction;
         }else{
@@ -390,7 +390,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
     this.hotspotDenied = false;
     this.nextHotspotId = this.hotSpotData.length; 
     }else{
-      this.toastr.error('Error', 'time exceeded');
+      this.toastr.error('Error', 'Time Exceeded');
     } 
   }
 
@@ -452,7 +452,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
         // this.latestHotspotData = [...this.editedCorrectionArr]
         this.hotspotDenied = true;
       }else{
-        this.toastr.error('Error', 'time exceeded');
+        this.toastr.error('Error', 'Time Exceeded');
         this.editFlag = false;
         this.hotspotDenied = false;
         this.editedCorrectionArr = [];

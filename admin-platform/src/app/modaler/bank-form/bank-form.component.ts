@@ -22,12 +22,10 @@ export class BankFormComponent implements OnInit,OnDestroy{
   
   ngOnInit(){   
     this.reactiveForm = new FormGroup({
+      accountHolderName: new FormControl(null,Validators.required),
       bankName: new FormControl(null , Validators.required),
       accountNumber: new FormControl(null, Validators.required),
-      address: new FormControl(null, Validators.required),
-      pincode: new FormControl(null,[Validators.required,Validators.pattern('[0-9]+')]),
       swiftCode: new FormControl(null,Validators.required),
-      mob: new FormControl(null,[Validators.required,Validators.pattern('[0-9]{10}')]),
     })
   }
 

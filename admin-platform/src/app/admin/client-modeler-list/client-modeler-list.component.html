@@ -70,17 +70,17 @@
         <div class="card">
           <div class="card-body">
             <div class="row justify-content-between">
-              <div class="col pe-md-32 pe-md-120" >
+              <div class="col pe-md-32 pe-md-120" *ngIf="modelerList.length != 0;else emptyTable">
                 <h4>Modelers with their product status.</h4>
               </div>
               <ng-template #emptyTable>
                 <p class="hp-p1-body emptyTable">
-                  No data to view. Try adding new client.
+                  Please assign the products to the modelers & come back to set the deadline.
                 </p>
                 <img class="emptyImg" src="assets/myImg/empty-folder.png" alt="" />
               </ng-template>
               <div class="table-responsive col-12 mt-16">
-                <table  class="table table-bordered text-center">
+                <table  class="table table-bordered text-center" *ngIf="modelerList.length != 0">
                   <thead>
                     <tr>
                       <th scope="col">Sl No</th>
@@ -127,7 +127,7 @@
                   </tbody>
                 </table>
                 <div>
-                  <pagination-controls id="listing_pagination" [maxSize]="5" [directionLinks]="true"
+                  <pagination-controls *ngIf="modelerList.length != 0" id="listing_pagination" [maxSize]="5" [directionLinks]="true"
                   (pageChange)="page = $event"></pagination-controls>
                 </div>
               </div>

@@ -92,6 +92,10 @@ subscription2!:Subscription;
   this.backEndService.getClientName(clientName)
  }
 
+ viewProList(clientId:string){
+  this.router.navigate(['modeler/modeler-products', clientId]);
+ }
+
  ngOnDestroy(): void {
    if(this.subscription)this.subscription.unsubscribe();
    if(this.subscription2)this.subscription2.unsubscribe();

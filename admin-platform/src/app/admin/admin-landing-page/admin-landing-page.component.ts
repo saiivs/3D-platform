@@ -42,19 +42,27 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
     this.searchService.checkUrlForSearchBtn(false);
     this.subscription = this.backEndService.getClient().subscribe((data) => {
       this.clientTableData = data.data
+      console.log(data);
+      
       data.productDetails.forEach(() => {
         for (let model of data.productDetails) {
           let clientId = model._id;
-
+          
+          
           let modelDetailIndex = data.data.findIndex(obj => obj._id == clientId);
           let modelDetail = this.clientTableData[modelDetailIndex];
 
           if (modelDetail) {
+            console.log("asdfasdfa");
+            
             let proCount = parseInt(modelDetail.productCount);
             let approvedcount = model.count;
             if (approvedcount == 0) {
+              console.log("runnnned");
+              
               this.clientTableData[modelDetailIndex].per = 0;
             } else {
+              console.log("runnnned");
               let percentage = ((approvedcount / proCount) * 100).toFixed(2);
               this.clientTableData[modelDetailIndex].per = Number(percentage);
             }
@@ -160,6 +168,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       })
 
     } else {
+      this.isLoading = false;
       this.toastr.error('Error', 'Please select a file');
     }
   }

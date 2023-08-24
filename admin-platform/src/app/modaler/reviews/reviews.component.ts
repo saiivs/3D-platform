@@ -43,10 +43,14 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
   clientName:string="";
+  gltfData:any = {};
   polygonCount!:number;
   warningMsg:string = "";
   warningShow:Boolean = true;
   version:number = 0;
+  uploadedFile!:File
+  isLoading:Boolean = false;
+  uploadToggle:Boolean = true;
   srcFile:string = "";
   subscription!:Subscription;
   subscription1!:Subscription;
@@ -70,13 +74,13 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     console.log(modelData?.info?.totalTriangleCount);
     
     if(modelData?.info?.totalTriangleCount > 150000){
-       polygonWarng = `Polygon Count Exceeded`
+       polygonWarng = `Polygon count exceeded`
     }
     if(!modelData?.info?.totalTriangleCount) invalidModel =`Invalid model detected`
     modelData?.info?.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
-        if(format == 'png') extnsWrng =`png files used`
+        if(format == 'png') extnsWrng =`PNG files used`
         if(obj.image.height > 2048) imgHieghtWrng = `Higher resolution used`
       }
     })
@@ -99,46 +103,55 @@ export class ReviewsComponent implements OnInit,OnDestroy{
       this.clientId = params['clientId'];
       this.articleId = params['articleId'];
       this.version = params['version'];
-      this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
-        this.currentDate = new Date().toLocaleDateString('en-GB');
-        if(data){
-          if(data.pngExist){
-            this.pngExist = true;
-          }
-          this.validateGlbFile(data);
-          this.clientDetails = data.modelDetails[0].clientDetails;
-          this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
-            if(obj.articleId == this.articleId) return obj
-          })
-          this.polygonCount = data.gltfData?.info?.totalTriangleCount;
-          this.QaCommentArr = [...data.Arr]
-          
-          if(this.QaCommentArr[0]?.comments.length == 0){
-            this.flag = false;
-          }
-          const regex = /[^a-zA-Z0-9]/g;
-           this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
-          const cacheBuster = new Date().getTime();
-          this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb?cache=${cacheBuster}`
-          this.QaCommentArr[0]?.comments.forEach((message: any) => {
-            const conDate = new Date(message.date)
-            const date = new Date(conDate).toLocaleDateString('en-GB');
-            if (!this.groupedMessages[date]) {
-              this.groupedMessages[date] = [];
-            }
-            this.groupedMessages[date].push(message);
-          });
-          setTimeout(()=>{
-            this.scrollToBottom();
-          },10)
-        }
-      })
       // You can now use these values to update your component's state or perform actions
+      this.loadglbModel();
     });
       
       this.subscription1 = this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
         this.notificatinService.setNotificationDAta(data);
       })
+  }
+
+  loadglbModel(){
+    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
+      this.currentDate = new Date().toLocaleDateString('en-GB');
+      if(data){
+        if(data.pngExist){
+          this.pngExist = true;
+        } 
+        this.validateGlbFile(data);
+        this.clientDetails = data.modelDetails[0].clientDetails;
+        this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
+          if(obj.articleId == this.articleId) return obj
+        })
+        console.log("asdfasdfasdfasdfasdfa");
+        
+        console.log(this.modelerDetails);
+        
+        this.gltfData = data.gltfData.info;
+        this.polygonCount = data.gltfData?.info?.totalTriangleCount;
+        this.QaCommentArr = [...data.Arr]
+        
+        if(this.QaCommentArr[0]?.comments.length == 0){
+          this.flag = false;
+        }
+        const regex = /[^a-zA-Z0-9]/g;
+         this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
+        const cacheBuster = new Date().getTime();
+        this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb?cache=${cacheBuster}`
+        this.QaCommentArr[0]?.comments.forEach((message: any) => {
+          const conDate = new Date(message.date)
+          const date = new Date(conDate).toLocaleDateString('en-GB');
+          if (!this.groupedMessages[date]) {
+            this.groupedMessages[date] = [];
+          }
+          this.groupedMessages[date].push(message);
+        });
+        setTimeout(()=>{
+          this.scrollToBottom();
+        },10)
+      }
+    }) 
   }
 
   scrollToBottom() {
@@ -235,4 +248,48 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     if(this.subscription5)this.subscription5.unsubscribe() 
   }
 
+  isValidZipFile(file: any):boolean{
+    if(file.name.endsWith(".zip")||file.name.endsWith(".glb")){
+      return true
+    }else{
+      return false
+    }
+  }
+
+  getModelFile(event:any){
+    if(this.isValidZipFile(event.target.files[0])){
+      this.uploadToggle = false;
+      this.uploadedFile = event.target.files[0]
+   }else{
+     this.toaster.error('Error', 'Please select a .glb file')
+   }
+  }
+
+  reset(){
+    this.uploadToggle = true
+    }
+
+uploadModel(){
+  this.isLoading = true;
+  const formData = new FormData();
+  let list = this.modelerDetails.list;
+  formData.append('file',this.uploadedFile,this.uploadedFile.name);
+  formData.append('id',this.articleId);
+  formData.append('clientId',this.clientId)
+  formData.append('modRollNo',localStorage.getItem('rollNo')||"");
+  formData.append('list',list)
+  this.subscription2 = this.backEnd.uploadModal(formData).subscribe((res)=>{
+    if(res.status){
+      this.isLoading = false;
+      this.uploadToggle = true;
+      this.version = res.version;
+      this.loadglbModel();
+      this.toaster.success('success','model successfully uploaded');
+      
+    }else{
+      this.isLoading = false;
+      this.toaster.error('Error','Sorry model is under QA.');
+    }
+  })
+    }
 }

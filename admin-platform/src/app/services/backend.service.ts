@@ -17,6 +17,7 @@ export class BackendService {
   constructor(private http:HttpClient,private router:Router) {   }
 
   private productLink!:string
+  private cachedURL:string = "";
 
 
   readonly url = environment.apiUrl;
@@ -225,8 +226,8 @@ export class BackendService {
     return this.http.post<boolean>(`${this.url}/setDeadLine/post`,{date,clientId,type}).pipe((catchError(this.erroHandler)))
   }
 
-  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,updatedBudget:number,budgetExceed:string,list:any):Observable<boolean>{
-    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed,updatedBudget,list}).pipe((catchError(this.erroHandler)))
+  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,totalExpense:number,remainingBudget:number,budgetExceed:string,list:any):Observable<boolean>{
+    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list}).pipe((catchError(this.erroHandler)))
   }
 
   createBudget(budgetPrice:number):Observable<boolean>{
@@ -423,6 +424,18 @@ export class BackendService {
 
   updateInvoicedList(invoiceList:Array<any>):Observable<any>{
     return this.http.post<any>(`${this.url}/updateInvoicedList/post`,{invoiceList}).pipe((catchError(this.erroHandler)));
+  }
+
+  cacheModelForReview(url:string){
+    this.cachedURL = url;
+  }
+
+  getCachedURL(){
+    return this.cachedURL;
+  }
+
+  clearCachedUrl(){
+    this.cachedURL = ""
   }
 
   logout(){

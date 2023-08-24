@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 
@@ -10,7 +10,7 @@ import { BackendService } from 'src/app/services/backend.service';
 })
 export class ApprovedModelsComponent implements OnInit,OnDestroy{
 
-  constructor(private backEnd:BackendService,private route:ActivatedRoute){
+  constructor(private backEnd:BackendService,private route:ActivatedRoute,private router:Router){
     
   }
 
@@ -37,6 +37,10 @@ export class ApprovedModelsComponent implements OnInit,OnDestroy{
       })
       this.totalRecords = count;
     })
+  }
+
+  qaViewModel(articleId:string,clientId:string,version:number){
+    this.router.navigate(['QA/reviews',articleId,clientId,version])
   }
 
   ngOnDestroy(): void {

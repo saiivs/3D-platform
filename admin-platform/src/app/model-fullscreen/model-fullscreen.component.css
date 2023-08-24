@@ -1,8 +1,8 @@
 model-viewer {
     position: relative;
     float: left;
-    height: 27vw;
-    width: 80%;
+    height: 40vw;
+    width: 100%;
   }
 
   .modelDetails{

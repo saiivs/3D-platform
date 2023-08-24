@@ -28,24 +28,22 @@ export class ModelerProfileComponent implements OnInit,OnDestroy{
     this.reactiveForm = new FormGroup({
       bankName: new FormControl(this.bankInfo.bankName||"",Validators.required),
       accountNumber: new FormControl(this.bankInfo.accountNumber||"",Validators.required),
-      address:new FormControl(this.bankInfo.address||"",Validators.required),
+      accountHolderName: new FormControl(this.bankInfo.accountHolderName,Validators.required),
       swiftCode:new FormControl(this.bankInfo.swiftCode||"",Validators.required),
-      mob:new FormControl(this.bankInfo.mob||"",Validators.required),
-      pincode:new FormControl(this.bankInfo.pincode||"",Validators.required),
     })
     
     this.subscription1 = this.backEndService.getUserDetailsForProfile(userEmail).subscribe((res)=>{
       if(res){
         this.userData = res.userData;
         this.bankInfo = res.data ? res.data : false;
+        console.log(this.bankInfo);
+        
         
           this.reactiveForm = new FormGroup({
           bankName: new FormControl(this.bankInfo.bankName,Validators.required),
           accountNumber: new FormControl(this.bankInfo.accountNumber,Validators.required),
-          address:new FormControl(this.bankInfo.address,Validators.required),
+          accountHolderName: new FormControl(this.bankInfo.accountHolderName,Validators.required),
           swiftCode:new FormControl(this.bankInfo.swiftCode,Validators.required),
-          mob:new FormControl(this.bankInfo.mob,[Validators.required,Validators.pattern('[0-9]{10}')]),
-          pincode:new FormControl(this.bankInfo.pincode,[Validators.required,Validators.pattern('[0-9]+')]),
         })
         
       }else{
