@@ -38,7 +38,7 @@
               <div>
                 <ng-container>
                   <p class="text-white hp-p1-body " *ngIf="budget != 0">Monthly Budget - ${{budget}}</p>
-                  <input type="text" placeholder="$" class="text-center budgetInput" #budgetPrice>
+                  <input type="number" placeholder="$" class="text-center budgetInput" #budgetPrice>
                   <button class="btn btn-sm btn-primary" (click)="addBudget()" style="margin-left: 4px;">Add
                     Budget</button>
                 </ng-container>
