@@ -34,10 +34,15 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
   subscription3!:Subscription
   subscription4!:Subscription
 
+  @ViewChild('modelTests', { static: false }) modelTest!: ElementRef;
   ngOnInit(): void {
-    this.clientId = this.route.snapshot.params['clientId'];
-    this.articleId = this.route.snapshot.params['articleId'];
-    this.version = this.route.snapshot.params['version'];
+    this.route.params.subscribe(params => {
+      this.clientId = params['clientId'],
+      this.articleId = params['articleId'],
+      this.version = params['version']
+    })
+    console.log(this.version);
+    
     this.subscription1 = this.backEndService.getClientDetailsForQADo(this.clientId).subscribe((res) => {
 
       this.clientDetails = res
@@ -54,6 +59,8 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
           // this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
           this.tabPanels.reverse()
           this.hotspots = res.data;
+          console.log(this.hotspots);
+          
           this.correctionsWithVersions = this.hotspots.reduce((result, hotspot) => {
             const { version } = hotspot;
             if (!result[version]) result[version] = [];
@@ -65,6 +72,7 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
           })
 
           this.hotspots.forEach((hotspot, index) => {
+            hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`
             this.addHotspotInitially(hotspot.normalValue, hotspot.positionValue, hotspot.hotspotName, index + 1)
           })
         }else{
@@ -91,7 +99,7 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
     this.subscription4 = this.backEndService.getHotspotwithVersion(version, this.clientId, this.articleId).subscribe((res) => {
       if (res) {
         this.hotspots = res;
-        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot._id}.jpg`)
+        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`)
       }
     })
   }
@@ -100,15 +108,19 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
     this.hotspots[index].corrImg = false;
   }
 
-  openCorrectionImg(imgLink: string) {
+  openCorrectionImg(imgLink: string,correction:string) {
+    let obj = {
+      url:imgLink,
+      correction:correction
+    }
     let url = imgLink
     this.openDilog.open(CorrectionImageComponent, {
-      width: "32rem",
-      data: url
+      width: "60rem",
+      data: obj
     })
   }
 
-  @ViewChild('modelTest', { static: true }) modelTest!: ElementRef;
+  
   addHotspotInitially(normal: string, position: string, name: string, hotSpotId: number) {
     const hotspot = this.renderer.createElement('button');
     this.renderer.addClass(hotspot, 'hotspot');
@@ -121,6 +133,8 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
     this.renderer.setStyle(hotspot, 'font-size', '10px');
     this.renderer.appendChild(hotspot, buttonText);
     this.renderer.setAttribute(hotspot, 'data-visibility-attribute', 'visible');
+    console.log(this.modelTest);
+    
     this.modelTest.nativeElement.appendChild(hotspot);
   }
 

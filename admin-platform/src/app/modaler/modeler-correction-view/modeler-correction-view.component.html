@@ -43,7 +43,7 @@
                             <mat-tab-group (selectedTabChange)="onTabChange($event)">
                                 <mat-tab [label]="tab" *ngFor="let tab of tabPanels">
                                     <div class="col-12 correctionPoints" *ngFor="let correction of hotspots;let i= index">
-                                        <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{correction.hotspotId}}</span> 
+                                        <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{i + 1}}</span> 
                                         <div class="px-sm-32 rounded border border-black-40 hp-border-color-dark-80 bg-black-0 hp-bg-color-dark-100" style="width: 100%;">
                                             <div class="row align-items-center justify-content-between">
                                                 <div class="col-12">

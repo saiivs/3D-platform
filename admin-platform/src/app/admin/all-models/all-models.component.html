@@ -31,9 +31,9 @@
 
                                         <div class="col-12">
                                             <div class="text-center mb-24">
-                                                <a [routerLink]="['../../interactive-section',model.articleId,model.clientId,model.version]"
+                                                <a [routerLink]="['../../reviews',model.articleId,model.clientId,model.version]"
                                                     (click)="nameLoad(modeler[0].modelerName)" class="d-block">
-                                                    <img src="{{staticUrl}}/pngFiles/{{model.articleId}}&&{{model.clientId}}.png"
+                                                    <img src="{{staticUrl}}/pngFiles/{{model.clientId}}/{{model.articleId}}.png"
                                                         alt="">
                                                 </a>
                                             </div>

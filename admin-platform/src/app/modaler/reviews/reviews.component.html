@@ -1,10 +1,11 @@
 
 <div class="card-body" style="padding-top: 0;">
     <div class="row">
-        <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
+        <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0" id="model-viewer-div">
             <div class="swiper hp-ecommerce-app-detail-slider-1">
               
-              <span><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+              <span *ngIf="fullScreenToggle"><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+              <span *ngIf="!fullScreenToggle"><i (click)="exitFullScreenMode()" matTooltip="Exit Full Screen" matTooltipPosition="below" style="font-size: large;" class="hp-text-color-dark-0 ri-2x ri-fullscreen-exit-fill"></i></span>
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
                         <div class="d-flex align-items-center justify-content-center">
@@ -56,7 +57,7 @@
    
         </div>
   
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-6" *ngIf="fullScreenToggle">
             <h5 class="mb-8">{{modelerDetails.productName}}</h5>
   
             <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
@@ -82,7 +83,7 @@
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="row mx-0 align-items-center">
-                      <input type="file" id="actual-btn" (input)="getModelFile($event)" hidden/><label *ngIf="uploadToggle; else uploadBtn" class="btn btn-sm btn-primary" for="actual-btn">Choose File</label>
+                      <input type="file" id="actual-btn" (input)="getModelFile($event)" hidden/><label *ngIf="uploadToggle; else uploadBtn" class="btn btn-sm btn-primary" for="actual-btn">Upload Model</label>
                       <ng-template #uploadBtn>
                         <div>
                           <button class="btn btn-sm btn-primary" (click)="uploadModel()">
@@ -111,7 +112,7 @@
             </div>
             <div class="divider"></div>
             <div>
-              <h2 (click)=onModelLoad()>Modeler-QA Exchange</h2>
+              <h2 >Modeler-QA Exchange</h2>
             </div>
             <div class="container bootstrap snippets bootdeys mybg">
               <div class="col-md-12 col-xs-12 col-md-offset-2">

@@ -44,47 +44,43 @@ export class GalleryComponent implements OnInit,OnDestroy {
  
 
   galleryFn(articleId: string, clientId: string) {
-    if (!this.fileCount) {
-      this.subscription1 = this.backEndService.getClientDetailsById(clientId, articleId).subscribe((res) => {
-        this.clientDetails = res.client;
-        this.product = res.clientPro
-        console.log("galleryy");
-        
-        this.backEndService.setProductLink(this.product.productLink);
-        this.fileCount = true
-
-        if (res.fileCount != 0) {
-          for (let i = 0; i < res.fileCount; i++) {
-            const regex = /[^a-zA-Z0-9]/g;
-            this.clientName = this.clientDetails.clientName.replace(regex, "_");
-            const cacheBuster = new Date().getTime();
-            this.imgSrc.push(`${environment.staticUrl}/images/${this.clientName}/${this.articleId}/${i + 1}.jpg?cache=${cacheBuster}`);
+      const regex = /[^a-zA-Z0-9]/g;
+      this.clientName = this.clientDetails.clientName.replace(regex, "_");
+      const cacheBuster = new Date().getTime();
+      this.subscription1 = this.backEndService.getCountOfReferenceImages(clientId, articleId).subscribe((res) => {
+        if (res != 0) {
+          if(this.imgSrc.length != 0){
+            for(let i= 0;i<this.onFileSelected.length;i++){
+              let imgCount = this.imgSrc.length
+              this.imgSrc.push(`${environment.staticUrl}/images/${this.clientName}/${this.articleId}/${imgCount + 1}.jpg?cache=${cacheBuster}`);
+              this.totalRecords = this.imgSrc.length;
+            }
+          }else{
+           for (let i = 0; i < res; i++) {
+            let imgCount = this.imgSrc.length
+            this.imgSrc.push(`${environment.staticUrl}/images/${this.clientName}/${this.articleId}/${imgCount + 1}.jpg?cache=${cacheBuster}`);
             this.totalRecords = this.imgSrc.length;
           }
           this.initialImg = this.imgSrc[0];
+          this.noImgForGallery = "";
+          this.changeDetectorRef.detectChanges();
+          }  
         } else {
           this.noImgForGallery = 'Image not found. Please visit the site and upload the images manually.'
         }
       })
-    } else {
-      for (let i = 0; i < this.onSelectedFiles.length; i++) {
-        const regex = /[^a-zA-Z0-9]/g;
-        this.clientName = this.clientDetails.clientName.replace(regex, "_");
-        const cacheBuster = new Date().getTime();
-        let imgCount = this.imgSrc.length
-        this.imgSrc.push(`${environment.staticUrl}/images/${this.clientName}/${this.articleId}/${imgCount + 1}.jpg?cache=${cacheBuster}`);
-        this.totalRecords = this.imgSrc.length;
-      }
-      this.initialImg = this.imgSrc[0];
-      this.noImgForGallery = "";
-      this.changeDetectorRef.detectChanges();
-    }
   }
 
   ngOnInit(): void {
     this.articleId = this.route.snapshot.params['articleId'];
     this.clientId = this.route.snapshot.params['clientId'];
-    this.galleryFn(this.articleId, this.clientId);
+    this.backEndService.getClientDetailsById(this.clientId, this.articleId).subscribe((res)=>{
+      this.clientDetails = res.client;
+      this.product = res.clientPro
+      this.backEndService.setProductLink(this.product.productLink);
+      this.galleryFn(this.articleId, this.clientId);
+    })
+    
   }
 
   preview(imgUrl: string, index: number) {
@@ -134,6 +130,8 @@ export class GalleryComponent implements OnInit,OnDestroy {
               this.onSelectedFiles = [];
               this.isLoading = false;
               this.countConvertedfile = 0;
+              console.log("called the fun gallery again");
+              
               this.galleryFn(this.articleId, this.clientId)
             }
           });

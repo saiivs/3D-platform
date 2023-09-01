@@ -50,10 +50,11 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
       
       this.subscription2 = this.backEndService.getLatestCorrectionForModeler(this.clientId,this.articleId).subscribe((res)=>{
         if(res){
+          this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${res[0].version}/${this.articleId}.glb`;
           this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `Version ${index+1}`);
           let modelerViewStatus = res[0].modelerView;
           if(!modelerViewStatus)this.subscription3 = this.backEndService.updateNotificationViewForModeler(this.clientId,this.articleId,this.version,localStorage.getItem("rollNo"),true).subscribe((res)=>{})
-          // this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
+          this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
           this.tabPanels.reverse()
           this.hotspots = res;
           this.correctionsWithVersions = this.hotspots.reduce((result,hotspot)=>{
@@ -67,8 +68,11 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
            })
                       
           this.hotspots.forEach((hotspot,index)=>{
+            hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`
             this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1)
           })
+          console.log(this.hotspots);
+          
         }else{
           console.log(res);
           
@@ -87,16 +91,18 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
     let versionTxt= event.tab.textLabel;
     let version = Number(versionTxt.split(" ")[1]);
     this.versionTracker = `version-${version}`
-    if(version == this.version){
-      this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
-    }else if(version < this.version){
-      this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
-    } 
+    // if(version == this.version){
+    //   this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
+    // }else if(version == this.version - 1){
+    //   this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version - 1}/${this.articleId}.glb`;
+    // } 
     
     this.subscription5 = this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
       if(res){
         this.hotspots = res;
-        this.hotspots.forEach(hotspot => hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`)
+        this.hotspots.forEach((hotspot,index) =>{
+          hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`
+        })
       }   
     })
   }

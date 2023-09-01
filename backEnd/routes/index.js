@@ -20,6 +20,9 @@ router.post('/productList/post',auth.authentication,routeHelper.createPro);
 //Get the list of clients
 router.get('/clients/Get',auth.authentication,routeHelper.getClients);
 
+//get approved clients
+router.get('/getApprovedclients/get',auth.authentication,routeHelper.getApprovedClients)
+
 //get the list of products
 router.get('/products/get/:id',auth.authentication,routeHelper.getPro);
 
@@ -142,6 +145,9 @@ router.post('/scrapeImages/post',auth.authentication,routeHelper.scrapeImg);
 
 //get client details by id
 router.get('/getClientById/get/:clientId/:articleId',auth.authentication,routeHelper.getClientById);
+
+//get the count of reference images 
+router.get('/getCountOfReference/get/:clientId/:articleId',auth.authentication,routeHelper.getCountOfReferenceImage)
 
 //uploading the multiple reference images manually by the QA.
 router.post('/uploadRefManuall/post',auth.authentication,routeHelper.uploadRefManuall);

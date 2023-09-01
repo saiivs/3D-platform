@@ -96,6 +96,7 @@
                             };
                       let i = index
                     ">
+                    <ng-container>
                     <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                     <td>{{ client.clientName }}</td>
                     <td>{{ client.productCount }}</td>
@@ -120,9 +121,8 @@
                       </ng-template>
                     </td>
                     <td>
-                      <button class="btn btn-sm btn-outline-primary">
-                        <a class="myhover" (click)="sendClientName(client.clientName)"
-                          [routerLink]="['products',client._id]">View Here</a>
+                      <button (click)="viewProList(client._id)" class="btn btn-sm btn-outline-primary">
+                        View Here
                       </button>
                     </td>
                     <td><input *ngIf="client.project_deadline ==  '';else proDeadline" type="date" name=""
@@ -137,6 +137,8 @@
                         {{client.internal_deadline}}
                       </ng-template>
                     </td>
+                    </ng-container>
+             
                   </tr>
                 </tbody>
               </table>

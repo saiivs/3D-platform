@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { client } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
@@ -12,12 +13,12 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class ArchiveClientsComponent implements OnInit{
 
-  constructor(private backEndService: BackendService,private titleService:Title,private notificationService:NotificationService){
+  constructor(private backEndService: BackendService,private titleService:Title,private notificationService:NotificationService,private router:Router){
 
   }
 
   title:string = "Admin-archive";
-  clientTableData:client[] = [];
+  clientTableData:Array<any> = [];
   totalRecords:number = 0;
   page:number = 1
   subscription!:Subscription;
@@ -25,13 +26,21 @@ export class ArchiveClientsComponent implements OnInit{
 
   ngOnInit(){
     this.titleService.setTitle(this.title)
-    this.subscription = this.backEndService.getClient().subscribe((data)=>{
-        this.clientTableData = data.data.filter(obj => obj.status == "completed")
+    this.subscription = this.backEndService.getApprovedClients().subscribe((data)=>{
+      console.log(data);
+      
+        this.clientTableData = data
         this.totalRecords = this.clientTableData.length; 
     })
     this.subscription1 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
+  }
+
+  viewProList(clientId:any){
+    console.log(clientId);
+    
+    this.router.navigate(['admin/products',clientId]);
   }
 
   sendClientName(name:string){

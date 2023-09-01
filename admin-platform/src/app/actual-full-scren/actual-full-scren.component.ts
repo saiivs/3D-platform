@@ -3,6 +3,7 @@ import { BackendService } from '../services/backend.service';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-actual-full-scren',
@@ -20,25 +21,23 @@ export class ActualFullScrenComponent implements OnInit{
   private clientName!:string;
   private articleId!:string;
   private version!:string;
+  private clientId!:any;
   src!:string
   previousUrl:any
+  subscription!:Subscription
 
 
   ngOnInit(): void {
-    this.clientName = this.route.snapshot.params['client'];
-    this.articleId = this.route.snapshot.params['articleId'];
-    this.version = this.route.snapshot.params['version'];
-    this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
-    this.router.events.pipe(filter((event: any)=>event instanceof NavigationStart || event instanceof NavigationError)).subscribe((event)=>{
-      if (event instanceof NavigationStart) {
-        this.previousUrl = this.router.url;
-        console.log(this.previousUrl);  
-      }
+    this.subscription = this.route.params.subscribe(params =>{
+      this.clientName = params['client'],
+      this.articleId = params['articleId'],
+      this.version = params['version'],
+      this.clientId = params['clientId']
     })
-    
+    this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
   }
 
   exitFullScreenMode(){
-    console.log(this.previousUrl); 
+   this.router.navigate(['/QA_panel',this.articleId,this.clientId,this.version])
   }
 }

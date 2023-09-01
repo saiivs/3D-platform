@@ -65,7 +65,9 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
   editedCorrectionArr:Array<any> = [];
   emptyField:String = "";
   editMode:Boolean = false;
+  testArray:Array<any> = [];
   trackEditedCorrection:Array<any> = [];
+  fullScreenToggle:Boolean = true;
   label:Array<any> = [];
   subscription1!:Subscription;
   subscription2!:Subscription;
@@ -113,7 +115,8 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
         this.latestHotspotData = res.data;
         this.isNewModelAvailable = !this.isNewModelAvailable;
       }
-      this.hotSpotData = res.data;
+      this.hotSpotData = [...res.data];
+      this.testArray = [...res.data];
       this.latestVersion = res.data[0].version;
       this.tabPanels = Array(this.latestVersion).fill(1).map((_, index) => `Version ${index+1}`);
       this.tabPanels.reverse()
@@ -136,19 +139,15 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   showLatestHotspotOverModel(){
-    console.log(this.latestHotspotData);
-    
     if(this.isNewModelAvailable){
       this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${this.articleId}.glb`
     } 
-    this.versionTracker = `Recent version`
+    this.versionTracker = `Recent version`;
     if(this.latestHotspotData.length != 0){
       this.latestHotspotData.forEach((hotspot:any,index:number)=>{
         hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.latestVersion}/${hotspot.hotspotName}.jpg`
         this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1);
       })
-      console.log(this.latestHotspotUpdated);
-      
        this.hotSpotData = [...this.latestHotspotData]
     }
   }
@@ -161,9 +160,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
     this.historyHotspot.forEach((hotspot:any,index:number)=>{
       hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${version}/${hotspot.hotspotName}.jpg`
     })
-    
     this.hotSpotData = [...this.historyHotspot]
-   
   }
 
   imageNotFound(version:number,index:number){
@@ -175,6 +172,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   onTabChange(event:MatTabChangeEvent){
+    this.editFlag = false;
     this.hotspotDenied = event.index != 1 || this.latestHotspotUpdated && !this.editFlag ? true : false;
     if(event.index >= 2){
       this.hotspotDenied = true;
@@ -223,6 +221,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
     if(this.tempHotspot.length != 0){
       this.tempHotspot = this.tempHotspot.filter(hotspot => hotspot.hotspotId != hotspotId);
       this.hotSpotData = [...this.tempHotspot]
+      this.latestHotspotData = [...this.tempHotspot]
     }else{
       this.hotSpotData = this.hotSpotData.filter(hotspot => hotspot.hotspotId != hotspotId);
     }
@@ -291,6 +290,10 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   addHotspotInitially(normal:string,position:string,name:string,hotSpotId:number){ 
+    console.log("indexx");
+    
+    console.log(hotSpotId);
+    
     const hotspot = this.renderer.createElement('button');
     this.renderer.addClass(hotspot,'hotspot');
     this.renderer.setAttribute(hotspot,'slot',name);
@@ -359,10 +362,23 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
     })
   }
 
+  fullScreenMode(){
+    this.fullScreenToggle = false;
+    const divElement = document.getElementById('model-viewer-div'); 
+    divElement?.classList.remove('col-lg-6');
+    divElement?.classList.add('col-lg-12');
+  }
+
+  exitFullScreenMode(){
+    this.fullScreenToggle = true;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-12');
+    divElement?.classList.add('col-lg-6');
+  }
+
   editCorrectionNew(){
     console.log("click the edit button");
     this.label = [];
-    console.log(this.hotSpotData);
     if(this.correctionUpdatedTime){
      this.timeValidation(this.correctionUpdatedTime)
     }else{
@@ -385,6 +401,8 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
     let currTime:Date = new Date();
     let timeDifferenceInMinutes = Math.floor((currTime.getTime() - targetTime.getTime()) / 1000);
     timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
+    console.log({timeDifferenceInMinutes});
+    
     if(timeDifferenceInMinutes <= 5){
     this.editFlag = true;
     this.hotspotDenied = false;
@@ -423,6 +441,7 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
         hotspotName : `hotspot-${this.version}${count}`,
         normalValue: findItem.normalValue,
         positionValue:findItem.positionValue,
+        date:findItem.date,
         clientId:this.clientId,
         articleId:this.articleId,
         corrImg:`${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${this.version}/${findItem.hotspotName}.jpg?cache=${cacheBuster}`,
@@ -485,7 +504,7 @@ deleteCorrection(hotspotName:string,hotSpotId:string){
   }
 
   fullScreen(){
-    this.router.navigate(['/3d-model/viewer',this.clientName,this.articleId,this.version])
+    this.router.navigate(['/3d-model/viewer',this.clientId,this.clientName,this.articleId,this.version])
   }
 
   ngOnDestroy(): void {

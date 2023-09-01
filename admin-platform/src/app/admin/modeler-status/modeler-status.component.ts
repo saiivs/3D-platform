@@ -181,7 +181,9 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
   }
 
   dateInputValue(date: string) {
-    this.subscription4 = this.backEnd.submitDate(date).subscribe((data) => {
+   
+   if(date){
+     this.subscription4 = this.backEnd.submitDate(date).subscribe((data) => {
       if (data.length == 0) {
         this.noMonthlyStatus = true;
       } else {
@@ -281,14 +283,20 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
         chart.render();
       }
     })
+   } 
+   
   }
 
   clientModelerList(name: string) {
     this.router.navigate(['admin/client_modelers', name])
   }
 
-  sendClientName() {
+  viewAllModelsOfModelerTable(modelerId:any){
+    this.router.navigate(['admin/modeler/productList',modelerId])
+  }
 
+  viewAllModelsOfModelerPng(modelerId:any){
+    this.router.navigate(['admin/models',modelerId])
   }
 
   ngOnDestroy(): void {

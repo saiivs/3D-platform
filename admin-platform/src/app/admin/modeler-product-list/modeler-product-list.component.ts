@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -11,7 +11,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class ModelerProductListComponent implements OnInit,OnDestroy{
 
-  constructor(private route:ActivatedRoute,private backEndService:BackendService,private notificationService :NotificationService){};
+  constructor(private route:ActivatedRoute,private backEndService:BackendService,private notificationService :NotificationService,private router:Router){};
 
   modelerId:string = "";
   modelList:Array<any> = [];
@@ -40,6 +40,10 @@ export class ModelerProductListComponent implements OnInit,OnDestroy{
     this.subscription1 = this.notificationService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.notificationService.setNotificationForAdmin(data);
     })
+  }
+
+  viewModel(articleId:string,clientId:any,version:number){
+    this.router.navigate(['admin/reviews',articleId,clientId,version])
   }
 
   ngOnDestroy(): void {

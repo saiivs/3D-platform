@@ -87,7 +87,6 @@ checkImgFile(event:Event,index:number){
 createCorrection()
 {
   console.log(this.hotspotDataCorrection);
-  
   const formData = new FormData();
   this.correctionItems.forEach((itemRef:ElementRef<HTMLElement>,index:number)=>{
     const listItem = itemRef.nativeElement;  

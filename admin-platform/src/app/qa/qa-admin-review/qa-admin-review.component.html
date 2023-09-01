@@ -54,7 +54,7 @@
       </div>
 
       <div class="col-12 col-lg-6">
-          <h2 class="mb-8">{{modelerDetails.productName}}</h2>
+          <h5 class="mb-8">{{modelerDetails.productName}}</h5>
 
           <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
               By
@@ -134,9 +134,9 @@
           <div class="chatHead">
             
             <h2>QA-Admin Exchange</h2>
-            <button data-bs-toggle="tooltip" title="click for modeler chat"   class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary"><a [routerLink]="['../../../../reviews',QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version]">Modeler Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+            <button data-bs-toggle="tooltip" title="click for modeler chat" (click)="viewModelerchat(QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Modeler Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
               font-size: 1em;
-          "></i></span></a></button>
+          "></i></span></button>
            
           </div>
           <div class="container bootstrap snippets bootdeys mybg">

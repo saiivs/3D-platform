@@ -17,7 +17,7 @@ const polygonCounter = async(articleId,clientId,clientName,version)=>{
         let filename = 'file.gltf'
         let result = await validator.validateBytes(new Uint8Array(modelData), {
             uri: filename,
-            maxIssues: 10, // limit max number of output issues to 10
+            maxIssues: 16 * 1024, // limit max number of output issues to 10
             ignoredIssues: ['UNSUPPORTED_EXTENSION'], // mute UNSUPPORTED_EXTENSION issue
             severityOverrides: { 'ACCESSOR_INDEX_TRIANGLE_DEGENERATE': 0 }, // treat degenerate triangles as errors
             externalResourceFunction: (uri) =>
@@ -35,6 +35,7 @@ const polygonCounter = async(articleId,clientId,clientName,version)=>{
                 })
         })
         console.log({result});
+        console.log(result.issues.messages.length);
         return result 
     } catch (error) {
         console.log(error);
@@ -69,7 +70,7 @@ module.exports = {
         try{
             let clientExist = await db.clients.findOne({clientName:client.clientName});
             if(clientExist){
-                console.log("client allready exist");
+                await db.clients.updateOne({_id:new ObjectId(clientExist._id)},{$set:{productCount:clientExist.productCount + client.productCount}})
                 return {exist:true,client:clientExist}
             }else{
                 let data = new db.clients(client);
@@ -92,14 +93,15 @@ module.exports = {
         console.log("pro database");
         try{
             let res;
+            proData = proData.map((pro)=>{
+                return {...pro,assigned:false,QaTeam:false,approved:false,productStatus:"Not Uploaded",adminStatus:"Not Approved"}
+            })
             console.log(Id);
             if(clientExist){
-                res = await db.Products.updateOne({clientId:new ObjectId(Id)},{$set:{productList:{$each:proData}}})
+                res = await db.Products.updateOne({clientId:new ObjectId(Id)},{$push:{productList:{$each:proData}}});
+                await db.Products.updateOne({clientId:new ObjectId(Id)},{$set:{approvedClient:false}})
+                await db.clients.updateOne({_id:new ObjectId(Id)},{$set:{status:'Not Approved'}})
             }else{
-                
-                proData = proData.map((pro)=>{
-                    return {...pro,assigned:false,QaTeam:false,approved:false,productStatus:"Not Uploaded",adminStatus:"Not Approved"}
-                })
                 let newData = {
                     clientId:new ObjectId(Id),
                     productList:[...proData]
@@ -122,6 +124,7 @@ module.exports = {
 
     dbGetClients:async()=>{
         try{
+            
         let data = await db.clients.find({});
         let monthlyBudget = await db.budget.find({});
         let productDetails = await db.modelerProducts.aggregate([
@@ -144,6 +147,7 @@ module.exports = {
         ]);
         monthlyBudget = monthlyBudget.reverse();
         let budgetData = monthlyBudget.length != 0 ? monthlyBudget[0].budget : 0;
+        console.log({productDetails});
         if(data){
             if(Array.isArray(data)){
                 return {data,budgetData,productDetails};
@@ -160,9 +164,37 @@ module.exports = {
         }   
     },
 
+    dbGetapprovedClients:async()=>{
+        try {
+            let clients = await db.Products.aggregate([
+                {
+                    $match:{approvedClient:true}
+                },
+                {
+                    $lookup:{
+                        from:'clientlists',
+                        localField:'clientId',
+                        foreignField:'_id',
+                        as:'clientDetails'
+                    }
+                }
+            ])
+            if(clients){
+                return clients;
+            }else{
+                throw new Error("something went wrong while fetching the approved clients");
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    },
+
     dbGetPro:async(id)=>{
         try {
-            let proData = await db.Products.findOne({clientId:id});
+            console.log(id);
+            let proData = await db.Products.findOne({clientId:new ObjectId(id)});
+            console.log({proData});
             let clientData = await db.clients.findOne({_id:new ObjectId(id)});
             let budget = await db.budget.find().sort({ _id: -1 }).limit(1);
             let requirement = await db.requirement.find({clientId:new ObjectId(id)});
@@ -332,11 +364,12 @@ module.exports = {
             let list = 0;
             date.setHours(0, 0, 0, 0);
             let retainBudget = 0;
+            
             let currRemainingBudget = await db.budget.find({}).sort({ _id: -1 }).limit(1);
             data.products.forEach((pro)=>{
                 retainBudget += Number(pro.price)
             })
-            await db.budget.updateOne({_id:currRemainingBudget},{$set:{remainingBudget:currRemainingBudget[0].remainingBudget+retainBudget}})
+            await db.budget.updateOne({_id:currRemainingBudget[0]._id},{$set:{remainingBudget:currRemainingBudget[0].remainingBudget+retainBudget,totalExpense:currRemainingBudget[0].totalExpense - retainBudget}})
 
             console.log("done budget updating");
             data.products  =  data.products.map(obj => {
@@ -874,7 +907,7 @@ module.exports = {
                     }
                 }
             ])
-            let pngExist = fs.existsSync(`./public/pngFiles/${articleId}&&${clientId}.png`);
+            let pngExist = fs.existsSync(`./public/pngFiles/${clientId}/${articleId}.png`);
             console.log({modelDetails});
         console.log({commentData});
         if(commentData){
@@ -948,6 +981,12 @@ module.exports = {
                                 }
                               }},{$set:{'models.$.complete':false}});
                         }
+                    }
+                    let products = await db.Products.findOne({clientId:new ObjectId(clientId)});
+                    let clientCompleteCheck = products.productList.find(pro => pro.productStatus != 'Approved');
+                    if(!clientCompleteCheck){
+                        await db.Products.updateOne({clientId: new ObjectId(clientId)},{$set:{approvedClient:true}})
+                        await db.clients.updateOne({_id: new ObjectId(clientId)},{$set:{status:"Approved"}})
                     }
                 }
                 if(pro){
@@ -1961,6 +2000,7 @@ module.exports = {
                     console.log("got it",fileCount);
                    let files = fs.readdirSync(`./public/images/${clientName}/${articleId}`);
                    fileCount = files.length;
+                   console.log(fileCount);
                 }else{
                     console.log("not found");
                 }
@@ -1973,6 +2013,30 @@ module.exports = {
             console.log(error);
             return false;
         }   
+    },
+
+    dbGetCountOfReferenceImage:async(clientId,articleId)=>{
+        try {
+            let client = await db.clients.findOne({_id:new ObjectId(clientId)});
+            if(client){
+                const regex = /[^a-zA-Z0-9]/g;
+                let clientName = client.clientName.replace(regex,"_");
+                let fileCount = 0;
+                if(fs.existsSync(`./public/images/${clientName}/${articleId}`)){
+                    console.log("got it",fileCount);
+                   let files = fs.readdirSync(`./public/images/${clientName}/${articleId}`);
+                   fileCount = files.length;
+                   console.log(fileCount);
+                }else{
+                    console.log("not found");
+                }
+                return {status:true,count:fileCount} 
+                
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     },
 
     dbCreateHotspot:async(hotspotName,normal,position,articleId,clientId,nor)=>{
@@ -2177,25 +2241,43 @@ module.exports = {
                     }
                 }
             ])
+           console.log({maxVersion});
             if(maxVersion.length != 0){
-                let hotspots = await db.hotspot.find({clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne});
-                if(hotspots.length != 0){
-                    let targetTime = hotspots[0].date;
-                    let currTime = new Date();
-                    let timeDifferenceInMinutes = currTime - targetTime;
-                    timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
-                    timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
-                    if(timeDifferenceInMinutes > 5){
-                        console.log("correction is found");
-                        return {status:true,data:hotspots,msg:"data found"}
-                    }else{ 
-                        console.log(timeDifferenceInMinutes);
-                        console.log("model is under QA");
-                        return {status:true,msg:"under QA"}
-                    }
-                }else{
-                    throw new Error("no hotspots found!!")
-                } 
+                // let hotspots = await db.hotspot.find({clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne});
+                // if(hotspots.length != 0){
+                //     let targetTime = hotspots[0].date;
+                //     let currTime = new Date();
+                //     let timeDifferenceInMinutes = currTime - targetTime;
+                //     timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
+                //     timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
+                //     if(timeDifferenceInMinutes > 5){
+                //         console.log("correction is found");
+                //         return {status:true,data:hotspots,msg:"data found"}
+                //     }else{ 
+                //         console.log(timeDifferenceInMinutes);
+                //         console.log("model is under QA");
+                //         return {status:true,msg:"under QA"}
+                //     }
+                // }else{
+                //     throw new Error("no hotspots found!!")
+                // } 
+                // asdfasdfsadfasdf
+
+                let testhotspot = await db.hotspot.aggregate([
+                    {
+                        $match:{clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne,date:{$lte:new Date(new Date() - 5 * 60 * 1000)}}
+                    },
+                ])
+                console.log({testhotspot});
+                if(testhotspot.length != 0){
+                            console.log("correction is found");
+                            return {status:true,data:testhotspot,msg:"data found"}
+                        }else{ 
+                            
+                            console.log("model is under QA");
+                            return {status:true,msg:"under QA"}
+                        }
+                
             }else{
                 console.log("no correction is created");
                 return {status:true,msg:"No correction is created"}
@@ -2655,8 +2737,8 @@ module.exports = {
                 articleId:hotspotInfo.articleId,
                 version:hotspotInfo.version
             },{$set:{modelerView:true}});
-            console.log(updatedRes);
-            if(updatedRes.modifiedCount > 0){
+            console.log({updatedRes});
+            if(updatedRes.matchedCount > 0){
                 return true;
             }else{
                 return false;

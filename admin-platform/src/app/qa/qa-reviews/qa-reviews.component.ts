@@ -41,9 +41,11 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
   clientName:string = "";
+  toggleChatBtn:Boolean = false;
   polygonCount!:number ;
   materialCount!:number;
   gltfData:any = {};
+  fullScreenToggle:Boolean = true;
   warningMsg:string = "";
   srcFile:string = "";
   QaTeamName:string = "";
@@ -102,6 +104,8 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       this.version = params['version'];
       this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
+      console.log(this.currentDate);
+      
       if(data){
         console.log(data);
         this.validateGlbFile(data);
@@ -130,6 +134,8 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
           }
           this.groupedMessages[date].push(message);
         });
+        console.log(this.groupedMessages);
+        
         setTimeout(()=>{
             this.scrollToBottom()
         },10)
@@ -155,12 +161,66 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     this.router.navigate(['/QA_panel',articleId,clientId,version])
   }
 
+  viewAdminchat(articleId:string,clientId:any,version:number){
+    this.toggleChatBtn = true;
+    this.groupedMessages = {}
+    this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
+      if(data){
+        this.QaCommentArr = [...data.Arr];
+        if(this.QaCommentArr[0].comments.length == 0){
+          this.flag = false;
+        }
+        this.QaCommentArr[0]?.comments.forEach((message: any) => {
+          const conDate = new Date(message.date)
+          const date = new Date(conDate).toLocaleDateString();
+          if (!this.groupedMessages[date]) {
+            this.groupedMessages[date] = [];
+          }
+          this.groupedMessages[date].push(message);
+        });
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },10)
+      }
+    })
+  }
+
+  viewModelerchat(articleId:string,clientId:any,version:number){
+    this.flag = true;
+    this.toggleChatBtn = false;
+    this.groupedMessages = {};
+    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
+      this.currentDate = new Date().toLocaleDateString('en-GB');
+      if(data){
+        this.QaCommentArr = [...data.Arr]
+        if(this.QaCommentArr[0].comments.length == 0){
+          this.flag = false;
+        } 
+        this.QaCommentArr[0]?.comments.forEach((message: any) => {
+          const conDate = new Date(message.date)
+          const date = new Date(conDate).toLocaleDateString('en-GB');
+          if (!this.groupedMessages[date]) {
+            this.groupedMessages[date] = [];
+          }
+          this.groupedMessages[date].push(message);
+        });
+        setTimeout(()=>{
+            this.scrollToBottom()
+        },10)
+      
+      }else{ 
+        this.router.navigate(['/error'])
+      }
+    })
+  }
+
   getComment(event:any){
     this.QaComment = event.target.value
   }
 
-  pushComnts(){
-    let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+  pushComntsModeler(){
+    if(this.QaComment != ""){
+      let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
     let pushObj = {
       date:this.currentDate,
       time:time,
@@ -195,7 +255,31 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
 
     })
     }
+    }
     
+    
+  }
+
+  pushComntsAdmin(){
+    if(this.QaComment != ""){
+      let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+    let pushObj = {
+        date:this.currentDate,
+        time:time,
+        user:localStorage.getItem('userEmail'),
+        cmnt:this.QaComment
+      }
+    if (!this.groupedMessages[this.currentDate]) {
+      this.groupedMessages[this.currentDate] = [];
+    }
+    this.groupedMessages[this.currentDate].push(pushObj);
+    this.flag = true;
+    this.comntRef.nativeElement.value = ""
+   
+    this.subscription1 = this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+        console.log(res);
+    })
+    }  
   }
 
   getGroupedMessageKeys() {
@@ -255,11 +339,17 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
   }
 
   fullScreenMode(){
-    try {
-      this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientId,this.version]);
-    } catch (error) {
-      console.log(error);  
-    } 
+    this.fullScreenToggle = false;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-6');
+    divElement?.classList.add('col-lg-12');
+  }
+
+  exitFullScreenMode(){
+    this.fullScreenToggle = true;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-12');
+    divElement?.classList.add('col-lg-6');
   }
 
   ngOnDestroy(): void {

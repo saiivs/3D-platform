@@ -266,11 +266,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
       this.checkedItems.forEach((pro)=>{
         retainBudget += Number(pro.price);
       })
-      console.log("budget checking");
-      
-      console.log(retainBudget);
-      
-      this.updatedBudget += retainBudget;
+      this.remainingBudget += retainBudget;
+      this.totalExpense -= retainBudget;
     }
     if (this.checkedItems.length != 0 && this.modelerRollNo != "" && this.QARollNo != "") {
       this.isLoading = true;
@@ -403,8 +400,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   EditPrice(index: number) {
-    console.log("ajhjasdhfkjashdb");
-    
     let i = (this.page - 1) * 50 + index;
     this.tempPrice = parseInt(this.products[i].price);
     this.totalExpense -= this.tempPrice;
@@ -420,11 +415,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   getPrice(price: string, articleId: string, modelerRollno: string, index: number) {
+    if(price){
     let i = (this.page - 1) * 50 + index;
     let priceValue = Number(price);
     let list:any = this.products[i].list;
     this.totalExpense += priceValue;
-    if (this.exactBudget < this.totalExpense) {
+     if (this.exactBudget < this.totalExpense) {
       swal.fire({
         title: 'Are you sure?',
         text: "Monthly budget has been exeeded.",
@@ -461,7 +457,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
         }
       })
     }
-
+    }else{
+      console.log("invalid price value");
+      let i = (this.page - 1) * 50 + index;
+    this.products[i].priceAdded = false;
+      this.toaster.error('Error', 'Please use a valid price value.');
+    }
   }
 
   getRefference(index: number, articleId: string, ProductName: string) {

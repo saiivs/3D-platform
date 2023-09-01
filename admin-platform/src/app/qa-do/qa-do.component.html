@@ -8,13 +8,9 @@
             <div class="card" style="height: 100%;border-radius: 0px;">
                 <div class="card-body">
                     <div class="row">
-                        <!-- <span class="badge bg-primary-4 hp-bg-dark-primary text-primary border-none position-absolute top-0 left-0 w-auto m-16 my-sm-32 mx-sm-18 py-8 px-16 fw-medium">Featured</span> -->
-
-                        <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
-                            
-
+                       
+                        <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0" id="model-viewer-div">
                             <div class="swiper hp-ecommerce-app-detail-slider-2 modelView">
-                               
                                 <div class="swiper-wrapper">
                                     <div class="swiper-slide">
                                         <div class="d-flex align-items-center justify-content-center" #modelViewerContainer>
@@ -32,7 +28,8 @@
                                             </model-viewer>
                                             <div class="mywarning">
                                                 <span class="badge bg-primary-4 hp-bg-dark-primary text-primary border-none position-absolute top-0 left-0 w-auto m-16 my-sm-32 mx-sm-18 py-8 px-16 fw-medium">{{versionTracker}}</span>
-                                                <span (click)="fullScreen()" class="fullScreen"><i matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+                                                <span class="fullScreen" *ngIf="fullScreenToggle"><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+                                                <span class="fullScreen" *ngIf="!fullScreenToggle"><i (click)="exitFullScreenMode()" matTooltip="Exit Full Screen" matTooltipPosition="below" style="font-size: large;" class="hp-text-color-dark-0 ri-2x ri-fullscreen-exit-fill"></i></span>
                                               </div>
                                         </div>
                                     </div>
@@ -42,20 +39,20 @@
                             </div>
                         </div>
 
-                        <div class="col-12 col-lg-6 gallery">
+                        <div class="col-12 col-lg-6 gallery" [hidden]="!fullScreenToggle">
                          <mat-tab-group (selectedTabChange)="onTabChange($event)" >
-                            <mat-tab label="Gallery"><app-gallery></app-gallery></mat-tab>
+                            <mat-tab label="Gallery" style="overflow: hidden;"><app-gallery></app-gallery></mat-tab>
                             <mat-tab label="Correction"><app-hotspot-correction (childEventToInvokeHotspot)="removeHotspot($event)" (setTabPanelInvokeEvent)="setTabPanels($event)" [clientId]="clientId" [articleId]="articleId" [version]="version" [hotspotDataCorrection]="hotSpotData"></app-hotspot-correction></mat-tab>
                                 <mat-tab [label]="tab" *ngFor="let tab of tabPanels">
                                     <div class="text-end" *ngIf="tabVersionTracker == latestVersion">
                                        <button (click)="editCorrectionNew()"  class="btn btn-link text-primary hp-hover-text-color-primary-3">Edit Corrections <i class="hp-text-color-dark-0 ri-1x ri-edit-2-line"></i></button> 
                                     </div>
-                                    <div class="myClass">
+                                    <div class="myClass" >
                                         <ng-template #editForm>
                                           <ul>
                                               <li *ngFor="let correction of hotSpotData;let i = index" #editCorrection>
                                                <div class="listContainer">
-                                                   <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{i+1}}</span> 
+                                                <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{i+1}}</span> 
                                                <input style="width: 70%;" type="text" (input)="edited(i)" class="form-control mb-16" value="{{correction.correction}}" placeholder="type here.." aria-label="Username" aria-describedby="basic-addon1">
                                                <input type="file" (change)="checkImgFile($event,i)" (input)="edited(i)" id="{{correction.hotspotName}}" hidden>
                                                <label for="{{correction.hotspotName}}" class="btn btn-sm btn-primary">{{label[i] || "Image"}}</label>
@@ -64,16 +61,19 @@
                                            </li>  
                                        </ul>
                                        <div>
-                                           <button (click)="EditCorrectionNew()" class="btn btn-sm submit-btn">Submit</button>
+                                           <button (click)="EditCorrectionNew()" *ngIf="hotSpotData.length != 0" class="btn btn-sm submit-btn">Submit</button>
+                                           <ng-template>
+                                            <div>adddddd</div>
+                                           </ng-template>
                                            <small *ngIf="emptyField != ''">{{emptyField}}</small>
                                        </div>   
-                                      </ng-template>      
+                                      </ng-template> 
                                       </div>
                                       <ng-container  *ngIf="!editFlag;else editForm">
                                          <div class="col-12 correctionPoints" *ngFor="let hotspot of hotSpotData;let i = index">
                                         
                                         <ng-container>
-                                            <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{hotspot.hotspotId}}</span> 
+                                            <span class="bg-primary text-white border-primary border rounded-circle me-8 hp-caption lh-normal d-flex align-items-center justify-content-center" style="min-width: 20px; height: 20px;">{{i+1}}</span> 
                                         <div class="px-sm-32 rounded border border-black-40 hp-border-color-dark-80 bg-black-0 hp-bg-color-dark-100" style="width: 100%;">
                                             <div class="row align-items-center justify-content-between">
                                                 <div class="col-12">

@@ -40,6 +40,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
   gltfData:any = {};
   polygonCount!: number;
   warningMsg: string = "";
+  toggleChatBtn:Boolean = false;
   clientDetails: Array<any> = [];
   srcFile: string = "";
   QaTeamName: string = "";
@@ -108,7 +109,7 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
         if (this.QaCommentArr[0].comments.length == 0) {
           this.flag = false;
         }
-        this.srcFile = `${environment.staticUrl}/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
+        this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
@@ -201,6 +202,8 @@ export class InteractiveChatComponent implements OnInit,OnDestroy {
       })
     }
   }
+
+  
 
   checkInPut(event: any) {
     if (event.target.value == "") this.canCloseModal = false;

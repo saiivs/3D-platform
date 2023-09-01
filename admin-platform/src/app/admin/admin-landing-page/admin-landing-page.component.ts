@@ -7,6 +7,7 @@ import { csvData, clientData } from '../../csvRecord';
 import { BackendService } from '../../services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import * as Papa from 'papaparse';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-landing-page',
@@ -15,7 +16,7 @@ import * as Papa from 'papaparse';
 })
 export class AdminLandingPageComponent implements OnInit, OnDestroy {
 
-  constructor(private titleService: Title, private toastr: ToastrService, private backEndService: BackendService, private searchService: NotificationService) {
+  constructor(private titleService: Title, private toastr: ToastrService, private backEndService: BackendService, private searchService: NotificationService,private router:Router) {
 
   }
 
@@ -42,8 +43,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
     this.searchService.checkUrlForSearchBtn(false);
     this.subscription = this.backEndService.getClient().subscribe((data) => {
       this.clientTableData = data.data
-      console.log(data);
-      
+      this.clientTableData = this.clientTableData.filter(client => client.status != 'Approved')
       data.productDetails.forEach(() => {
         for (let model of data.productDetails) {
           let clientId = model._id;
@@ -157,7 +157,12 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       this.newClientTableData.push(clientInfo);
       this.backEndService.createProduct(this.csvArr, this.newClientTableData).subscribe((response) => {
         this.isLoading = false;
-        this.clientTableData.push(response)
+        if(response.exist){
+          let existingClient = this.clientTableData.find(client => client.clientName == response.client.clientName)
+         if(existingClient) existingClient.productCount += this.csvArr.length;
+        }else{
+          this.clientTableData.push(response.client)
+        }
         this.resetFile.nativeElement.value = ""
         this.csvArr = []
         this.newClientTableData = []
@@ -197,16 +202,19 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
     })
   }
 
-  sendClientName(name: string) {
-    this.backEndService.getClientName(name)
+  viewProList(clientId:any){
+    this.router.navigate(['admin/products',clientId])
   }
 
   @ViewChild('budgetPrice') budgetPrice!: ElementRef;
   addBudget() {
-    this.budget = this.budgetPrice.nativeElement.value;
-    this.backEndService.createBudget(this.budget).subscribe((res) => {
+    if(this.budgetPrice.nativeElement.value){
+      this.budget = this.budgetPrice.nativeElement.value;
+      this.backEndService.createBudget(this.budget).subscribe((res) => {
+        this.budgetPrice.nativeElement.value = ''
       console.log(res);
-    })
+    }) 
+    }
   }
 
   ngOnDestroy() {

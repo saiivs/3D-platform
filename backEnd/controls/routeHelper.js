@@ -160,7 +160,7 @@ module.exports = {
             let proListInfo = await database.dbcreatePro(proList,id,clientInfo.exist);
             console.log({proListInfo});
             if(proListInfo){
-            res.json(clientInfo.client)
+            res.json(clientInfo)
             }else{
                 throw new Error
             }
@@ -198,6 +198,20 @@ module.exports = {
             }
         }catch(error){
             res.status(500).json({status:error})
+        }
+    },
+
+    getApprovedClients:async(req,res)=>{
+        try {
+           let clients = await database.dbGetapprovedClients();
+           if(clients){
+            res.status(200).json(clients)
+           }else{
+            throw new Error;
+           }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
         }
     },
 
@@ -278,7 +292,13 @@ module.exports = {
     savemodalFile:async(req,res)=>{
         try {
            let file = req.files.file; 
-           console.log(file);
+           if(fs.existsSync(`./public/pngFiles/${req.body.clientId}/${req.body.id}.png`)){
+            fs.unlinkSync(`./public/pngFiles/${req.body.clientId}/${req.body.id}.png`,(err)=>{
+                if(err){
+                    console.log(`${err}-Something went wrong while deleting the png`);
+                }
+            })
+           }
         if(file){
             let status = "Uploaded"
             let data = await database.dbupdateProductStatus(req.body,status); 
@@ -304,6 +324,7 @@ module.exports = {
                     }
                                     }
                 let updateResult = await database.dbupdateVersion(req.body,status,count);
+
                 if(updateResult){
                    file.mv(`./public/models/${updatedClientName}/${req.body.id}/version-${count}/${req.body.id}.glb`,async(err,data)=>{
                     if(err){
@@ -825,8 +846,11 @@ module.exports = {
      savePng:(req,res)=>{
         try {
         let image = req.files.screenshot;
-        let {articleId,clientId} = req.body;
-        image.mv(`./public/pngFiles/${articleId}&&${clientId}.png`,(err,data)=>{
+        let {articleId,clientId,clientName} = req.body;
+        if(!fs.existsSync(`./public/pngFiles/${clientId}`)){
+            fs.mkdirSync(`./public/pngFiles/${clientId}`)
+        }
+        image.mv(`./public/pngFiles/${clientId}/${articleId}.png`,(err,data)=>{
             if(!err){
                 res.status(200).json(true);
             }else{
@@ -889,6 +913,23 @@ module.exports = {
             console.log(error);
             res.status(500).json(false);
         } 
+      },
+
+      getCountOfReferenceImage:async(req,res)=>{
+        try {
+            let {clientId,articleId} = req.params;
+            let fileCount = await database.dbGetCountOfReferenceImage(clientId,articleId);
+            console.log({fileCount});
+            if(fileCount.status){
+                res.status(200).json(fileCount.count);
+            }else{
+                console.log("asdfasdf");
+                res.status(500).json(false);
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
       },
 
       uploadRefManuall:(req,res)=>{

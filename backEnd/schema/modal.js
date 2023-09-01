@@ -15,6 +15,11 @@ let proList = new Schema({
         type: Array,
         default:[],
         required:true
+    },
+    approvedClient:{
+        type:Boolean,
+        required:true,
+        default:false
     }
 });
 
@@ -25,7 +30,7 @@ let clientInfo = new Schema({
         required:true
     },
     productCount:{
-        type:String,
+        type:Number,
         required:true
     },
     status:{

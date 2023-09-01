@@ -18,6 +18,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
 
   @ViewChild('comntRef') comntRef:any;
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
+  @ViewChild('chatBodyIn') chatBodyRefIn!: ElementRef;
   constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router){
 
   }
@@ -37,8 +38,11 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   modelerName :string = "";
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
+  toggleChatBtn:Boolean = false;
   clientName:string = "";
   gltfData:any = {};
+  warningShow:Boolean = true;
+  fullScreenToggle:Boolean = true;
   polygonCount!:number;
   srcFile:string = ""
   subscription!:Subscription;
@@ -119,13 +123,21 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     const chatBody = this.chatBodyRef.nativeElement;
     chatBody.scrollTop = chatBody.scrollHeight;
   }
+  
+  scrollBottomForIn(){
+    const chatBody = this.chatBodyRefIn.nativeElement;
+    console.log(chatBody);
+    
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
 
   getComment(event:any){
     this.QaComment = event.target.value
   }
 
   pushComnts(){
-    let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+    if(this.QaComment != ""){
+      let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
     let pushObj = {
       date:this.currentDate,
       time:time,
@@ -159,14 +171,50 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         console.log(res);
     })
     }
+    }
+  }
 
+  pushInteractiveComnts(){
+    if(this.QaComment != ""){
+    let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, hourCycle: 'h12' })
+    let pushObj = {
+      date: this.currentDate,
+      time: time,
+      user: localStorage.getItem('userEmail'),
+      cmnt: this.QaComment
+    }
+    if (this.QaCommentArr[0].comments.length != 0) {
+      if (!this.groupedMessages[this.currentDate]) {
+        this.groupedMessages[this.currentDate] = [];
+      }
+      this.groupedMessages[this.currentDate].push(pushObj);
+      this.comntRef.nativeElement.value = ""
+
+      this.subscription2 = this.backEnd.pushComment(this.QaComment, this.clientId, this.articleId, localStorage.getItem('userEmail')).subscribe((res) => {
+
+      })
+
+    } else {
+      this.QaCommentArr[0].comments.push(pushObj);
+      this.QaCommentArr[0]?.comments.forEach((message: any) => {
+        const conDate = new Date(message.date)
+        const date = new Date(conDate).toLocaleDateString('en-GB');
+        if (!this.groupedMessages[this.currentDate]) {
+          this.groupedMessages[this.currentDate] = [];
+        }
+        this.groupedMessages[this.currentDate].push(message);
+      });
+      this.comntRef.nativeElement.value = ""
+      this.subscription3 = this.backEnd.pushComment(this.QaComment, this.clientId, this.articleId, localStorage.getItem('userEmail')).subscribe((res) => {
+      })
+    }
+    }
   }
 
   getGroupedMessageKeys() {
     return Object.keys(this.groupedMessages);
   }
 
-  
   updateModalStatus(articleId:string|undefined,status:string){
     swal.fire({
       position: 'center',
@@ -196,8 +244,69 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     })
   }
 
+  viewInteractivechat(articleId:any,clientId:any,version:number){
+    this.toggleChatBtn = true;
+    this.groupedMessages = {}
+    this.subscription = this.backEnd.getQaComments(this.clientId, this.articleId, this.version).subscribe((data) => {
+      this.currentDate = new Date().toLocaleDateString('en-GB');
+      if (data) {
+        this.QaCommentArr = [...data.Arr]
+        this.QaCommentArr[0]?.comments.forEach((message: any) => {
+          const conDate = new Date(message.date)
+          const date = new Date(conDate).toLocaleDateString('en-GB');
+          if (!this.groupedMessages[date]) {
+            this.groupedMessages[date] = [];
+          }
+          this.groupedMessages[date].push(message);
+        });
+        setTimeout(() => {
+          this.scrollBottomForIn()
+        }, 10)
+      } else {
+        this.router.navigate(['/error'])
+      }
+    })
+  }
+
+  viewAdminchat(articleId:any,clientId:any,version:number){
+    this.toggleChatBtn = false;
+    this.groupedMessages = {}
+    this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
+      this.currentDate = new Date().toLocaleDateString('en-GB');
+      if(data){
+        this.QaCommentArr = [...data.Arr];
+        console.log(this.QaCommentArr);
+        this.QaCommentArr[0]?.comments.forEach((message: any) => {
+          const conDate = new Date(message.date)
+          const date = new Date(conDate).toLocaleDateString('en-GB');
+          if (!this.groupedMessages[date]) {
+            this.groupedMessages[date] = [];
+          }
+          this.groupedMessages[date].push(message);
+        }); 
+        setTimeout(()=>{
+          this.scrollToBottom()
+        },10)
+      }
+    })
+  }
+
+  viewCorrections(articleId:string,clientId:any,version:number){
+    this.router.navigate(['admin/model-correction',articleId,clientId,version])
+  }
+
   fullScreenMode(){
-    this.router.navigate(['admin/model-FullScreen',this.articleId,this.clientId,this.version]);
+    this.fullScreenToggle = false;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-6');
+    divElement?.classList.add('col-lg-12');
+  }
+
+  exitFullScreenMode(){
+    this.fullScreenToggle = true;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-12');
+    divElement?.classList.add('col-lg-6');
   }
 
   downloadFile(articleId:string|undefined){

@@ -211,6 +211,10 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     link.click()
   }
 
+  viewModelerchat(articleId:string,clientId:any,version:number){
+    this.router.navigate(['QA/reviews',articleId,clientId,version])
+  }
+
   fullScreenMode(){
     try {
       this.router.navigate(['QA/model-FullScreen',this.articleId,this.clientName,this.version]);

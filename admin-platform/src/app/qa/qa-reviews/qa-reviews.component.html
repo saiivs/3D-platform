@@ -1,9 +1,10 @@
 
 <div class="card-body" style="padding-top: 0;">
   <div class="row">
-      <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0">
+      <div class="col-12 col-lg-6 hp-ecommerce-app-detail-slider mt-24 mt-md-0 mb-64 mb-lg-0" id="model-viewer-div">
           <div class="swiper hp-ecommerce-app-detail-slider-1">
-            <span ><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+            <span *ngIf="fullScreenToggle"><i (click)="fullScreenMode()" matTooltip="Full Screen" matTooltipPosition="below" class="hp-text-color-dark-0 ri-2x ri-fullscreen-line" style="font-size: large;"></i></span>
+              <span *ngIf="!fullScreenToggle"><i (click)="exitFullScreenMode()" matTooltip="Exit Full Screen" matTooltipPosition="below" style="font-size: large;" class="hp-text-color-dark-0 ri-2x ri-fullscreen-exit-fill"></i></span>
               <div class="swiper-wrapper">
                   <div class="swiper-slide">
                       <div class="d-flex align-items-center justify-content-center">
@@ -54,7 +55,7 @@
  
       </div>
 
-      <div class="col-12 col-lg-6">
+      <div class="col-12 col-lg-6" *ngIf="fullScreenToggle">
           <h5 class="mb-8">{{modelerDetails.productName}}</h5>
 
           <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
@@ -135,10 +136,18 @@
           <div class="divider"></div>
           <div class="chatHead">
             
-            <h2 >QA-Modeler Exchange</h2>
-            <button data-bs-toggle="tooltip" title="click for admin chat"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary"><a [routerLink]="['../../../../admin',QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version]">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+            <h2 *ngIf="!toggleChatBtn;else adminHead">QA-Modeler Exchange</h2>
+            <ng-template #adminHead>
+              <h2>QA-Admin Exchange</h2>
+            </ng-template>
+            <button *ngIf="!toggleChatBtn;else adminChat" data-bs-toggle="tooltip" title="click for admin chat" (click)="viewAdminchat(QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
               font-size: 1em;
-          "></i></span></a></button>
+          "></i></span></button>
+          <ng-template #adminChat>
+            <button data-bs-toggle="tooltip" title="click for admin chat" (click)="viewModelerchat(QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Modeler Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+              font-size: 1em;
+          "></i></span></button>
+          </ng-template>
            
           </div>
           <div class="container bootstrap snippets bootdeys mybg">
@@ -161,9 +170,9 @@
                         <!-- <div style="text-align: center;padding: 0.5rem;">
                           <p>Today</p>
                         </div>  -->
-                        <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" *ngIf="date != currentDate;else today"><time >{{date}}</time></p>
+                        <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" *ngIf="date == currentDate;else today"><time >Today</time></p>
                         <ng-template #today>
-                          <p class="meta" style="margin-bottom: 1.5rem;text-align: center;"><time >Today</time></p>
+                          <p class="meta" style="margin-bottom: 1.5rem;text-align: center;"><time >{{date}}</time></p>
                         </ng-template>
                         <ng-container *ngFor="let message of groupedMessages[date]">
                           <div class="chat-content" *ngIf="message.user == userEmail" style="margin-bottom: 8px;background-color: #0010f78c;" >
@@ -231,7 +240,10 @@
                     <div class="input-group" style="gap: 0.5rem;">
                       <input type="text" #comntRef class="form-control" (input)="getComment($event)" placeholder="Say something">
                       <span class="input-group-btn">
-                        <button class="btn btn-primary" (click)="pushComnts()" type="button">Send</button>
+                        <button *ngIf="!toggleChatBtn;else adminSend" class="btn btn-primary" (click)="pushComntsModeler()" type="button">Send</button>
+                        <ng-template #adminSend>
+                          <button class="btn btn-primary" (click)="pushComntsAdmin()" type="button">Send</button>
+                        </ng-template>
                       </span>
                     </div>
                   </form>

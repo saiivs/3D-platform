@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BackendService } from 'src/app/services/backend.service';
@@ -20,7 +20,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
 
   @ViewChild('comntRef') comntRef:any;
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
-  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private toaster:ToastrService,private cdRef: ChangeDetectorRef,private notificatinService:NotificationService){
+  constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private toaster:ToastrService,private cdRef: ChangeDetectorRef,private notificatinService:NotificationService,private renderer:Renderer2){
     console.log("loaded");
     
   }
@@ -48,6 +48,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   warningMsg:string = "";
   warningShow:Boolean = true;
   version:number = 0;
+  fullScreenToggle:Boolean = true;
   uploadedFile!:File
   isLoading:Boolean = false;
   uploadToggle:Boolean = true;
@@ -117,6 +118,8 @@ export class ReviewsComponent implements OnInit,OnDestroy{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         if(data.pngExist){
+          console.log("checking png");
+          console.log(data.pngExist);
           this.pngExist = true;
         } 
         this.validateGlbFile(data);
@@ -124,10 +127,6 @@ export class ReviewsComponent implements OnInit,OnDestroy{
         this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
           if(obj.articleId == this.articleId) return obj
         })
-        console.log("asdfasdfasdfasdfasdfa");
-        
-        console.log(this.modelerDetails);
-        
         this.gltfData = data.gltfData.info;
         this.polygonCount = data.gltfData?.info?.totalTriangleCount;
         this.QaCommentArr = [...data.Arr]
@@ -162,6 +161,8 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   @ViewChild('modelElement', { static: true }) modelViewerRef!: ElementRef;
   onModelLoad(){
     if(!this.pngExist){
+      console.log("creating png");
+      
       const model = this.modelViewerRef.nativeElement;
       try {
         let pngfile = model.toDataURL('image/png');
@@ -178,6 +179,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     formData.append('screenshot',blob,'image.png');
     formData.append('articleId',this.QaCommentArr[0]?.articleId);
     formData.append('clientId',this.QaCommentArr[0]?.clientId);
+    formData.append('clientName',this.clientName)
     this.subscription2 = this.backEnd.sendpngOfModel(formData).subscribe((res)=>{});
   }
 
@@ -204,7 +206,8 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   pushComnts(){
-    let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+    if(this.QaComment != ""){
+     let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
     let pushObj = {
         date:this.currentDate,
         time:time,
@@ -219,16 +222,25 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     this.comntRef.nativeElement.value = ""
    this.subscription3 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
         console.log(res);
-    })  
+    })   
+    } 
   }
 
   fullScreenMode(){
-    try {
-      this.router.navigate(['modeler/model-FullScreen',this.articleId,this.clientId,this.version]);
-    } catch (error) {
-      console.log(error);  
-    } 
+    this.fullScreenToggle = false;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-6');
+    divElement?.classList.add('col-lg-12');
   }
+
+  exitFullScreenMode(){
+    this.fullScreenToggle = true;
+    const divElement = document.getElementById('model-viewer-div');
+    divElement?.classList.remove('col-lg-12');
+    divElement?.classList.add('col-lg-6');
+  }
+
+
 
   helpCall(){
     this.subscription4 = this.backEnd.helpLine(localStorage.getItem('rollNo'),this.articleId,this.clientId).subscribe((res)=>{

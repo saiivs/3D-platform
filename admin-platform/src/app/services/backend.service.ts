@@ -92,6 +92,10 @@ export class BackendService {
     return this.http.get<clientandBudget>(`${this.url}/clients/Get`).pipe((catchError(this.erroHandler)))
   }
 
+  getApprovedClients():Observable<any>{
+    return this.http.get<any>(`${this.url}/getApprovedclients/get`).pipe((catchError(this.erroHandler)))
+  }
+
   getProlist(id:any):Observable<any>{
     return this.http.get<products[]>(`${this.url}/products/get/${id}`).pipe((catchError(this.erroHandler)))
   }
@@ -308,6 +312,10 @@ export class BackendService {
 
   getClientDetailsById(clientId:any,articleId:string):Observable<any>{
     return this.http.get<any>(`${this.url}/getClientById/get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));
+  }
+
+  getCountOfReferenceImages(clientId:any,articleId:string):Observable<any>{
+    return this.http.get<any>(`${this.url}/getCountOfReference/get/${clientId}/${articleId}`).pipe((catchError(this.erroHandler)));
   }
 
   uploadReferenceManually(formData:FormData,articleId:string,clientName:string):Observable<any>{
