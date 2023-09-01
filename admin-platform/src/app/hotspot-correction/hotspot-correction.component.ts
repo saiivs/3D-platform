@@ -17,6 +17,8 @@ correctionArr:Array<any> = []
 @Input() hotspotDataCorrection!:Array<any>;
 @Output() childEventToInvokeHotspot = new EventEmitter();
 @Output() setTabPanelInvokeEvent = new EventEmitter();
+@Output() retainCorrectionValues = new EventEmitter();
+@Output() retainCorrectionImg = new EventEmitter();
 @Input() articleId!:string;
 @Input() clientId!:string;
 @Input() version:number = 0;
@@ -67,14 +69,15 @@ getCorrectionImg(event:Event,index:number){
 }
 
 getCorrection(event:Event,index:number){
-  // const inputElement = event.target as HTMLInputElement;
-  // this.payload[index].correction = inputElement.value;
-  // this.payload[index].hotspotName = `hotspot-${index+1}`;
-  
+  const inputElement = event.target as HTMLInputElement;
+  const value = inputElement.value;
+  this.retainCorrectionValues.emit({index,value})
 }
 
 checkImgFile(event:Event,index:number){
   let inputElement = event.target as HTMLInputElement;
+  let imgFile = inputElement?.files?.[0]
+  this.retainCorrectionImg.emit({imgFile,index});
   if(inputElement.files && inputElement.files.length > 0){
     this.labels[index] = "Selected";
   }else{
@@ -112,7 +115,11 @@ createCorrection()
      this.latest.push(obj)     
      const jsonString = JSON.stringify(obj);
      formData.append(`item${index+1}`,jsonString);
-     if(inputImg?.files?.[0]) formData.append(`image${index+1}`,inputImg?.files?.[0])
+     if(inputImg?.files?.[0]){
+      formData.append(`image${index+1}`,inputImg?.files?.[0])
+     }else if(findItem?.retainImg){
+      formData.append(`image${index+1}`,findItem?.retainImg)
+     } 
     }
   })
   this.setTabPanelInvokeEvent.emit(this.latest)

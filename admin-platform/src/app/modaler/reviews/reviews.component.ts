@@ -92,9 +92,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
       localStorage.removeItem("ModelWarning");
     }
     } catch (error) {
-      console.log(error);
-
-      
+      console.log(error); 
     }
     
   }
@@ -151,6 +149,10 @@ export class ReviewsComponent implements OnInit,OnDestroy{
         },10)
       }
     }) 
+  }
+
+  viewModelCorrections(articleId:string,clientId:any,version:number){
+    this.router.navigate(['modeler/model-correction',articleId,clientId,version])
   }
 
   scrollToBottom() {

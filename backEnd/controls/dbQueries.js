@@ -2484,13 +2484,14 @@ module.exports = {
     dbEditExistingCorrection:async(corrData,count,element)=>{
         try {
             let team;
-            let target = await db.hotspot.findOne({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId});
+            let target = await db.hotspot.findOne({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId,hotspotName:corrData.hotspotName});
             if(count == 1 && target){
                 team = target;
             }else{
                 let target = await db.hotspot.findOne({clientId:new ObjectId(element.clientId),articleId:element.articleId,version:element.version,hotspotId:element.hotspotId});
                 team = target
             }
+            console.log({target});
             if(target){
                 let targetTime = new Date(target.date);
                 console.log({targetTime});
@@ -2513,6 +2514,7 @@ module.exports = {
                     return {status:false,msg:"time exceeded"}
                 }
             }else{
+                console.log("newly added hotspot!!!11");
                 console.log(team);
                 corrData.date = team.date;
                 corrData.modeler = team.modeler;
@@ -2528,19 +2530,25 @@ module.exports = {
         }
     },
 
-    dbDeleteHotspot:async(hotspotName)=>{
+    dbDeleteHotspot:async(hotspotName,articleId,clientId)=>{
         try {
             let hotspot = await db.hotspot.findOne({hotspotName:hotspotName});
             let timeDifferenceInMinutes;
             if(hotspot){
                 let targetTime = new Date(hotspot.date);
                 let currTime = new Date();
-                timeDifferenceInMinutes = currTime - targetTime;
+                console.log(targetTime);
+                console.log(currTime);
+                timeDifferenceInMinutes = Math.floor((currTime.getTime() - targetTime.getTime()) / 1000);
                 timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
                 timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
             }
+            console.log("timing differences");
+            console.log({timeDifferenceInMinutes});
             if(timeDifferenceInMinutes <= 5){
-                let deleteRes = await db.hotspot.deleteOne({hotspotName:hotspotName});
+                console.log(hotspotName);
+                let deleteRes = await db.hotspot.deleteOne({hotspotName:hotspotName,articleId:articleId,clientId:new ObjectId(clientId)});
+                console.log(deleteRes);
                 if(deleteRes.deletedCount != 0){
                     return {status:true,msg:"Deleted"};
                 }
@@ -2738,7 +2746,7 @@ module.exports = {
                 version:hotspotInfo.version
             },{$set:{modelerView:true}});
             console.log({updatedRes});
-            if(updatedRes.matchedCount > 0){
+            if(updatedRes){
                 return true;
             }else{
                 return false;

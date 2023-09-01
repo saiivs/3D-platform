@@ -42,7 +42,7 @@
                         <div class="col-12 col-lg-6 gallery" [hidden]="!fullScreenToggle">
                          <mat-tab-group (selectedTabChange)="onTabChange($event)" >
                             <mat-tab label="Gallery" style="overflow: hidden;"><app-gallery></app-gallery></mat-tab>
-                            <mat-tab label="Correction"><app-hotspot-correction (childEventToInvokeHotspot)="removeHotspot($event)" (setTabPanelInvokeEvent)="setTabPanels($event)" [clientId]="clientId" [articleId]="articleId" [version]="version" [hotspotDataCorrection]="hotSpotData"></app-hotspot-correction></mat-tab>
+                            <mat-tab label="Correction"><app-hotspot-correction (retainCorrectionImg)="retainCorrectionImg($event)" (childEventToInvokeHotspot)="removeHotspot($event)" (retainCorrectionValues)="retainValue($event)" (setTabPanelInvokeEvent)="setTabPanels($event)" [clientId]="clientId" [articleId]="articleId" [version]="version" [hotspotDataCorrection]="hotSpotData"></app-hotspot-correction></mat-tab>
                                 <mat-tab [label]="tab" *ngFor="let tab of tabPanels">
                                     <div class="text-end" *ngIf="tabVersionTracker == latestVersion">
                                        <button (click)="editCorrectionNew()"  class="btn btn-link text-primary hp-hover-text-color-primary-3">Edit Corrections <i class="hp-text-color-dark-0 ri-1x ri-edit-2-line"></i></button> 
@@ -61,7 +61,7 @@
                                            </li>  
                                        </ul>
                                        <div>
-                                           <button (click)="EditCorrectionNew()" *ngIf="hotSpotData.length != 0" class="btn btn-sm submit-btn">Submit</button>
+                                           <button (click)="SubmitEditedCorrection()" *ngIf="hotSpotData.length != 0" class="btn btn-sm submit-btn">Submit</button>
                                            <ng-template>
                                             <div>adddddd</div>
                                            </ng-template>

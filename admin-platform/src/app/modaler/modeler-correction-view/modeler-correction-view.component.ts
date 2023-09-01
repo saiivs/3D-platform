@@ -55,6 +55,7 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
           let modelerViewStatus = res[0].modelerView;
           if(!modelerViewStatus)this.subscription3 = this.backEndService.updateNotificationViewForModeler(this.clientId,this.articleId,this.version,localStorage.getItem("rollNo"),true).subscribe((res)=>{})
           this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
+          this.versionTracker = `version-${res[0].version}`
           this.tabPanels.reverse()
           this.hotspots = res;
           this.correctionsWithVersions = this.hotspots.reduce((result,hotspot)=>{
@@ -90,7 +91,6 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
   onTabChange(event:MatTabChangeEvent){
     let versionTxt= event.tab.textLabel;
     let version = Number(versionTxt.split(" ")[1]);
-    this.versionTracker = `version-${version}`
     // if(version == this.version){
     //   this.src = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${version}/${this.articleId}.glb`;
     // }else if(version == this.version - 1){

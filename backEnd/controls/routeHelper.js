@@ -1283,6 +1283,7 @@ module.exports = {
                     if(images != null){
                         fs.mkdirSync(`./public/corrections/${item.clientName}/${item.articleId}/version-${item.version}`,{recursive:true});
                         let image = images[`image${count}`];
+                        console.log({image});
                         if(image != null){
                         image.mv(`./public/corrections/${item.clientName}/${item.articleId}/version-${item.version}/${item.hotspotName}.jpg`,(err,data)=>{
                             if(!err){
@@ -1312,17 +1313,19 @@ module.exports = {
 
       deleteCorrection:async(req,res)=>{
         try {
-            const {hotspotName,clientName,articleId,version} = req.body;
-            let result = await database.dbDeleteHotspot(hotspotName)
+            const {hotspotName,clientName,articleId,version,clientId} = req.body;
+            let result = await database.dbDeleteHotspot(hotspotName,articleId,clientId)
             if(result.msg == 'Deleted'){
                 let filePath = `./public/corrections/${clientName}/${articleId}/version-${version}/${hotspotName}.jpg`;
-                fs.unlinkSync(filePath,(err,data)=>{
+                if(fs.existsSync(filePath)){
+                    fs.unlinkSync(filePath,(err,data)=>{
                     if(!err){
                         console.log("correction deleted from direcotry");
                     }else{
                         console.log(err);
                     }
                 })
+                }   
             }
             if(result.status){
                 res.status(200).json(result.msg)

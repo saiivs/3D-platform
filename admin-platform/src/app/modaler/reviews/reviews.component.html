@@ -46,7 +46,7 @@
                           </div>
                           <div class="QAbtn">
                             <div class="col-6 col-md-3 col-xl-3" style="margin-right: auto;">
-                              <button class="btn btn-ghost btn-primary startQa"><a [routerLink]="['../../../../model-correction',articleId,clientId,version]">Corrections</a> </button>
+                              <button (click)="viewModelCorrections(articleId,clientId,version)" class="btn btn-ghost btn-primary startQa">Corrections</button>
                           </div>
                           </div>
                         </div>

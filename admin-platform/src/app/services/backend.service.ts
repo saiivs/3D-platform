@@ -410,8 +410,8 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/getApprovedModelsForModeler/get/${modelerRollNo}`).pipe((catchError(this.erroHandler)));
   }
 
-  deleteCorrection(hotspotName:string,clientName:string,articleId:string,version:number):Observable<any>{
-    return this.http.post<any>(`${this.url}/deleteCorrection/post`,{hotspotName,clientName,articleId,version}).pipe((catchError(this.erroHandler)));
+  deleteCorrection(hotspotName:string,clientName:string,articleId:string,version:number,clientId:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/deleteCorrection/post`,{hotspotName,clientName,articleId,version,clientId}).pipe((catchError(this.erroHandler)));
   }
 
   updateNotificationViewForModeler(clientId:string,articleId:string,version:number,modelerRollNo:string|null,status:Boolean):Observable<any>{
