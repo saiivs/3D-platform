@@ -1341,8 +1341,8 @@ module.exports = {
       createDeadLineForModeler:async(req,res)=>{
         try {
             console.log("reached");
-            let {date,status,modRoll,clientId} = req.body;
-            const result = await database.dbCreateDeadLineForModeler({date,status,modRoll,clientId});
+            let {date,status,modRoll,clientId,list} = req.body;
+            const result = await database.dbCreateDeadLineForModeler({date,status,modRoll,clientId,list});
             if(result){
                 res.status(200).json(true);
             }else{
@@ -1356,8 +1356,8 @@ module.exports = {
 
       updateBonusForModeler:async(req,res)=>{
         try {
-            let {flag,modelerId,clientId} = req.body;
-            let result = await database.dbUpdateBonusForModeler(flag,modelerId,clientId);
+            let {flag,modRoll,clientId,list} = req.body;
+            let result = await database.dbUpdateBonusForModeler(flag,modRoll,clientId,list);
             if(result){
                 res.status(200).json(true)
             }else{

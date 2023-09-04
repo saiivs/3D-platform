@@ -394,12 +394,12 @@ export class BackendService {
     return this.http.post<any>(`${this.url}/editExistingCorrection/post`,formData).pipe((catchError(this.erroHandler)));
   }
 
-  createModelerDeadLine(date:Date,status:String,modRoll:string,clientId:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/createModelerDeadLine/post`,{date,status,modRoll,clientId}).pipe((catchError(this.erroHandler)));
+  createModelerDeadLine(date:Date,status:String,modRoll:string,clientId:string,list:number):Observable<any>{
+    return this.http.post<any>(`${this.url}/createModelerDeadLine/post`,{date,status,modRoll,clientId,list}).pipe((catchError(this.erroHandler)));
   }
 
-  updateBonus(flag:boolean,modelerId:string,clientId:string):Observable<any>{
-    return this.http.post<any>(`${this.url}/updateBonus/post`,{flag,modelerId,clientId}).pipe((catchError(this.erroHandler)));
+  updateBonus(flag:boolean,modRoll:string,clientId:string,list:number):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateBonus/post`,{flag,modRoll,clientId,list}).pipe((catchError(this.erroHandler)));
   }
 
   getApprovedModelsForQa(qaRollNo:string|null):Observable<any>{

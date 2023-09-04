@@ -1,6 +1,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -12,7 +13,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class ClientModelerListComponent implements OnInit,OnDestroy {
 
-  constructor(private backEnd: BackendService, private route: ActivatedRoute,private notificationService:NotificationService) {
+  constructor(private backEnd: BackendService, private route: ActivatedRoute,private notificationService:NotificationService,private toastr: ToastrService) {
   }
 
   modelerList: Array<any> = [];
@@ -35,6 +36,8 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
     this.subscription1 = this.backEnd.getModelersProgress(this.clientId).subscribe((res) => {
       if(res.length != 0){
         this.modelerList = [...res]
+        console.log(this.modelerList);
+        
       this.modelerList = this.modelerList.map((obj) => {
         let count = 0;
         obj.models.forEach((model:any)=>{
@@ -55,27 +58,36 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
     })
   }
 
-  getDeadLineOne(event:Event,modRoll:string,index:number){
+  getDeadLineOne(event:Event,modRoll:string,index:number,list:number){
     let i = (this.page - 1) * 50 + index;
     let date = (event.target as HTMLInputElement).value
     this.modelerList[i].deadLineOne = date;
     let dateObj = new Date(date);
-    this.subscription3 = this.backEnd.createModelerDeadLine(dateObj,"deadLineOne",modRoll,this.clientId).subscribe(()=>{});
+    this.subscription3 = this.backEnd.createModelerDeadLine(dateObj,"deadLineOne",modRoll,this.clientId,list).subscribe(()=>{});
   }
 
-  getDeadLineTwo(event:Event,modRoll:string){
+  getDeadLineTwo(event:Event,modRoll:string,list:number){
     let date = (event.target as HTMLInputElement).value
     let dateObj = new Date(date);
-    this.subscription4 = this.backEnd.createModelerDeadLine(dateObj,"deadLineTwo",modRoll,this.clientId).subscribe(()=>{})
+    this.subscription4 = this.backEnd.createModelerDeadLine(dateObj,"deadLineTwo",modRoll,this.clientId,list).subscribe(()=>{})
   }
 
-  addBonus(event:Event,modelerId:string):void{
+  addBonus(event:Event,modRoll:string,list:number,index:number):void{
+    let i = (this.page - 1) * 50 + index;
     let element = event.target as HTMLInputElement;
-    if(element.checked){
-      this.subscription5 = this.backEnd.updateBonus(true,modelerId,this.clientId).subscribe(()=>{})
-    }else{
-      this.subscription6 = this.backEnd.updateBonus(false,modelerId,this.clientId).subscribe(()=>{})
+    if(this.modelerList[i].deadLineOne){
+         if(!element.checked){
+      this.subscription6 = this.backEnd.updateBonus(false,modRoll,this.clientId,list).subscribe((res)=>{
+        if(res){
+          this.modelerList[i].deadLineOne = ""
+        }
+      })  
     }
+    }else{
+      this.toastr.error('Error','Please add the deadLine 1')
+      element.checked = false
+    }
+ 
   }
 
   ngOnDestroy(): void {

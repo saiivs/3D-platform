@@ -297,13 +297,16 @@ uploadModel(){
       this.isLoading = false;
       this.uploadToggle = true;
       this.version = res.version;
-      this.loadglbModel();
-      this.toaster.success('success','model successfully uploaded');
-      
+      this.updateRouteWithNewVersion(this.version);
+      this.toaster.success('success','model successfully uploaded'); 
     }else{
       this.isLoading = false;
       this.toaster.error('Error','Sorry model is under QA.');
     }
   })
-    }
+}
+
+updateRouteWithNewVersion(version:number){
+  this.router.navigate(['modeler/reviews',this.articleId,this.clientId,version])
+}
 }

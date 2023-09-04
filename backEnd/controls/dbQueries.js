@@ -1495,6 +1495,7 @@ module.exports = {
                         obj.totalAmount = totalAmount;
                         obj.deadLineOne = item2.models.deadLineOne || null
                         obj.deadLineTwo = item2.models.deadLineTwo || null;
+                        obj.list = item2.models.list || null
                         obj.models = [...item2.models.models]
 
                         data.push(obj);
@@ -2591,7 +2592,7 @@ module.exports = {
                     "models": {
                         $elemMatch: {
                           clientId: new ObjectId(deadLine.clientId),
-                          list: list
+                          list: deadLine.list
                         }
                       }
                   },
@@ -2607,7 +2608,7 @@ module.exports = {
                     "models": {
                         $elemMatch: {
                           clientId: new ObjectId(deadLine.clientId),
-                          list: list
+                          list: deadLine.list
                         }
                       }
                   },
@@ -2625,16 +2626,20 @@ module.exports = {
         }
     },
 
-    dbUpdateBonusForModeler:async(flag,modelerId,clientId)=>{
+    dbUpdateBonusForModeler:async(flag,modRoll,clientId,list)=>{
         try {
-            if(flag){
-              let updateBonus = await db.modelerList.updateOne({_id:new ObjectId(modelerId),'models.clientId':new ObjectId(clientId)},{$push:{bonus:50}});
-              if(updateBonus.modifiedCount != 0){
-                return true;
-              }else{
-                return false;
-              }
-            } 
+            if(!flag){
+                console.log(modRoll,clientId);
+                let removeFirstDeadLine = await db.modelerList.updateOne({rollNo:modRoll,'models.clientId':new ObjectId(clientId),'models.list':list},{$set:{"models.$.deadLineOne":null}});
+                if(removeFirstDeadLine){
+                 console.log(removeFirstDeadLine);
+                 return true;
+                }else{
+                 return false;
+                }
+            }else{
+               
+            }
         } catch (error) {
             console.log(error);
             return false;
