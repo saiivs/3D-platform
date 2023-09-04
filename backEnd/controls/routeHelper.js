@@ -158,7 +158,7 @@ module.exports = {
             let id = clientInfo.client._id.toString()
             console.log(id);
             let proListInfo = await database.dbcreatePro(proList,id,clientInfo.exist);
-            console.log({proListInfo});
+            
             if(proListInfo){
             res.json(clientInfo)
             }else{

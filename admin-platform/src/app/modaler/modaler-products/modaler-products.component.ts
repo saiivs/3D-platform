@@ -32,6 +32,7 @@ tableData:Boolean = true;
 deadLineOne!:string|null
 deadLineTwo!:string|null;
 isLoading:Boolean = false;
+contentLoading:Boolean = false;
 subscription!:Subscription;
 subscription1!:Subscription;
 subscription2!:Subscription;
@@ -41,8 +42,6 @@ subscription2!:Subscription;
 ngOnInit() {
   this.productId = this.route.snapshot.params['id'];
   this.subscription = this.backEndService.getModalerPro(this.productId,localStorage.getItem('rollNo')).subscribe((data:any)=>{ 
-    console.log({data});
-    
   if(data.proData){
     this.clientId = data.proData[0].clientId
     this.bonus = data.deadLineBonus.bonus;
@@ -51,7 +50,6 @@ ngOnInit() {
     this.deadLineTwo = data.deadLineBonus?.deadLineTwo;
     this.products = [...data.proData[0].assignedPro]; 
     this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
-    console.log(this.products);
     
     this.totalRecords = this.products.length
     if(data.additionalInfo.length > 1){

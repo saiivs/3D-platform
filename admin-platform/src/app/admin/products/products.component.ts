@@ -181,13 +181,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   checkBoxChange() {
     this.pageAllSelectTracker[this.page] = this.masterCheckBox
-    let limit = this.page * 50 - 1
+    let limit = this.page * 50 - 1;
     this.products.forEach((pro, i) => {
       let count = (this.page - 1) * 50 + i
       if (count <= limit) {
         if (!this.products[count]?.assigned) {
           this.products[count].isSelected = !this.products[count].reallocate ? this.masterCheckBox : this.products[count].isSelected;
         }else if(this.products[count]?.reallocate){
+          this.products[count].isSelected = this.masterCheckBox;
+        }else if(this.products[count]?.additionalInfo){
           this.products[count].isSelected = this.masterCheckBox;
         }
         if (this.masterCheckBox) {
@@ -218,7 +220,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   MultiSelectionQA(index: any, rollNo: string) {
-
+    console.log("workinggggggggg");
+    
     let ArrIndex = index;
     this.QARollNo = rollNo
     this.QAName = `${this.QATeamArr[ArrIndex].name}(QA)`
@@ -233,14 +236,16 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   selectModeForRequirements(){
+    let startIndex = (this.page - 1) * 50;
+    let endIndex = startIndex + 50;
     this.addRequirement = true;
     this.requirementSelectFlag = false;
-    this.products.forEach((pro)=>{
-      if(pro.assigned){
-        pro.additionalInfo = true;
-        pro.isSelected = true;
+    for(let i = startIndex;i <= endIndex; i++){
+      if(this.products[i].assigned){
+        this.products[i].additionalInfo = true;
+        this.products[i].isSelected = true;
       }
-    })
+    }
   }
 
   aditionalInfoDilog(info:string){
@@ -261,7 +266,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   aasignProduct() {
     this.isChecked = false;
     let retainBudget = 0
-    this.checkedItems = this.products.filter(pro => pro.isSelected == true);
+    this.checkedItems = this.products.filter(pro => pro.isSelected == true);    
     if(this.reallocation){
       this.checkedItems.forEach((pro)=>{
         retainBudget += Number(pro.price);
@@ -269,6 +274,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       this.remainingBudget += retainBudget;
       this.totalExpense -= retainBudget;
     }
+    console.log(this.checkedItems);
     if (this.checkedItems.length != 0 && this.modelerRollNo != "" && this.QARollNo != "") {
       this.isLoading = true;
       let modeler = this.modelersArr.find(obj => obj.rollNo == this.modelerRollNo);
@@ -286,7 +292,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
             if (res.status) {
               if(res.bonusEligibility){
                 console.log(res);
-                
                    swal.fire({
                       position: 'center',
                       title: `Is ${res.modeler.modelerName} eligible for bonus`,
@@ -363,13 +368,21 @@ export class ProductsComponent implements OnInit, OnDestroy {
       cancelButtonText: 'cancel'
     }).then((result) => {
       if (result.value) {
+        let startIndex = (this.page - 1) * 50;
+        let endIndex = startIndex + 50;
         this.reallocation = true;
-        this.products.forEach((pro)=>{
-          if(pro.assigned){
-            pro.reallocate = true;
-            pro.isSelected = true;
+        for(let i = startIndex;i <= endIndex; i++){
+          if(this.products[i].assigned){
+            this.products[i].reallocate = true;
+            this.products[i].isSelected = true;
           }
-        })
+        }
+        // this.products.forEach((pro)=>{
+        //   if(pro.assigned){
+        //     pro.reallocate = true;
+        //     pro.isSelected = true;
+        //   }
+        // })
       } else if (result.dismiss === swal.DismissReason.cancel) {
 
       }
@@ -515,7 +528,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   @ViewChild('requirement', { static: false }) requirement!: ElementRef;
   getRequirement() {
     let prodcuts = [];
-    prodcuts = this.products.filter(pro => pro.additionalInfo||pro.isSelected);
+    prodcuts = this.products.filter(pro => pro.additionalInfo && pro.isSelected);
     console.log({prodcuts});
     if(prodcuts.length != 0){
     this.requirementData = this.requirement.nativeElement.value;
@@ -525,13 +538,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
         this.toaster.success("success","Additional info added successfully")
         this.addRequirement = false;
         this.requirementSelectFlag = true;
-        this.products.forEach((pro)=>{
-          if(pro.additionalInfo||pro.isSelected){
-            pro.extraInfo = this.requirementData;
-            pro.additionalInfo = false;
-            pro.isSelected = false;
+        let startIndex = (this.page - 1) * 50;
+        let endIndex = startIndex + 50;
+        for(let i = startIndex;i <= endIndex; i++){
+          if(this.products[i].additionalInfo && this.products[i].isSelected){
+            this.products[i].extraInfo = this.requirementData;
           }
-        })
+          if(this.products[i].additionalInfo){
+            this.products[i].additionalInfo = false;
+            this.products[i].isSelected = false;
+          }
+        }
       }else{
         this.toaster.error("Error","Something went wrong!!")
       }
@@ -545,11 +562,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   toggleAdditionalInfo(event:any,index:number){
-    const i = (this.page - 1) * 50 + index;
-    const isChecked = event.target.checked;
-    if(this.addRequirement){
-      this.products[i].additionalInfo = isChecked;
-    }
+    // const i = (this.page - 1) * 50 + index;
+    // const isChecked = event.target.checked;
+    // console.log("chec");
+    // console.log(isChecked);
+    
+    // if(this.addRequirement){
+    //   this.products[i].additionalInfo = isChecked;
+    // }
   }
 
   checkValue(event: any) {

@@ -47,8 +47,6 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       data.productDetails.forEach(() => {
         for (let model of data.productDetails) {
           let clientId = model._id;
-          
-          
           let modelDetailIndex = data.data.findIndex(obj => obj._id == clientId);
           let modelDetail = this.clientTableData[modelDetailIndex];
 
