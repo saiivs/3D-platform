@@ -6,7 +6,7 @@ const validator = require('gltf-validator');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
-const { time } = require("console");
+const { time, log } = require("console");
 
 const polygonCounter = async(articleId,clientId,clientName,version)=>{
     try {
@@ -402,7 +402,7 @@ module.exports = {
         //check if the modeler exist or not.if not create the modeler.
         const findModeler = await db.modelerList.findOne({rollNo:modRoll});
         if(!findModeler){
-            console.log("new modelerrrrrr");
+            console.log("new modeler");
             let modeler  = {
                 modelerName : modelerName ,
                 rollNo:modRoll,
@@ -415,7 +415,7 @@ module.exports = {
 
             //pushing the model to new modeler.
             for(const pro of data.products){
-                console.log("loop running");
+                
                 resultPromise = await db.modelerProducts.findOneAndUpdate({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.assigned':modelerName,'assignedPro.$.QaTeam':QaName,'assignedPro.$.modRollno':modRoll,'assignedPro.$.qaRollNo':QaRoll,'assignedPro.$.price':0}});
 
                 //get the model before updation.
@@ -445,9 +445,8 @@ module.exports = {
                 modelerToCheckeligibility.modelerName = model.assigned;
                 modelerToCheckeligibility.modelerRollNo = model.modRollno;
                 modelerToCheckeligibility.clientId = data.clientId;
+
                   //push the models to modeler
-                  console.log("before updating the modeler");
-                  console.log(pro);
                   updateModeler = await db.modelerList.updateOne({rollNo:modRoll,"models": {
                     $elemMatch: {
                       clientId: new ObjectId(data.clientId),
@@ -460,7 +459,7 @@ module.exports = {
                 await Promise.all(promises);
                 }
         }else{
-            console.log("old modleerrrrrrrrrrr");
+            console.log("exisiting modeler");
             for(const pro of data.products){
                 resultPromise = await db.modelerProducts.findOneAndUpdate({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.assigned':modelerName,'assignedPro.$.QaTeam':QaName,'assignedPro.$.modRollno':modRoll,'assignedPro.$.qaRollNo':QaRoll,'assignedPro.$.price':0}});
 
@@ -468,6 +467,7 @@ module.exports = {
                 let model = resultPromise.assignedPro.find((model)=>{
                     if(model.articleId == pro.articleId) return model;
                 });
+                
                 let modelerBeforeUpdate = model.assigned;
                 if(modelerBeforeUpdate != pro.assigned){
                     //pull the model from old modeler.

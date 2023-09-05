@@ -36,8 +36,7 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
     this.subscription1 = this.backEnd.getModelersProgress(this.clientId).subscribe((res) => {
       if(res.length != 0){
         this.modelerList = [...res]
-        console.log(this.modelerList);
-        
+  
       this.modelerList = this.modelerList.map((obj) => {
         let count = 0;
         obj.models.forEach((model:any)=>{

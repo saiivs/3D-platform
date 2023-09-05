@@ -97,10 +97,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
     this.productId = this.route.snapshot.params['id'];
     this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res) => {
-
-      console.log(res);
-      
-      
       this.clientName = res.Arr[2].clientName
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientName.replace(regex, '_')
@@ -220,8 +216,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   MultiSelectionQA(index: any, rollNo: string) {
-    console.log("workinggggggggg");
-    
     let ArrIndex = index;
     this.QARollNo = rollNo
     this.QAName = `${this.QATeamArr[ArrIndex].name}(QA)`
@@ -266,8 +260,18 @@ export class ProductsComponent implements OnInit, OnDestroy {
   aasignProduct() {
     this.isChecked = false;
     let retainBudget = 0
-    this.checkedItems = this.products.filter(pro => pro.isSelected == true);    
+    
+    this.checkedItems = this.products.filter(pro => pro.isSelected == true);  
+    
+      
     if(this.reallocation){
+      this.checkedItems = this.checkedItems.filter((pro)=>{
+        if (pro.isSelected && !pro.assigned) {
+          pro.isSelected = false;
+        }
+        return pro.isSelected && pro.assigned
+      })
+
       this.checkedItems.forEach((pro)=>{
         retainBudget += Number(pro.price);
       })
