@@ -68,9 +68,8 @@
                       <td *ngIf="pro.productStatus == 'Not Uploaded';else pending" style="color: rgb(252, 11, 51);font-weight: bold;">{{pro.productStatus}}</td>
                       <ng-template #pending ><td  [ngStyle]="{color : pro.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)', 'font-weight': 600}">{{pro.productStatus}}</td></ng-template>
                       <td >
-                        <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" class="btn btn-sm btn-outline-primary myhover">
-                          <a class="myhover" (click)="scrapeImages(pro.productLink,pro.productName,pro.articleId)" [routerLink]="['/modeler/reviews',pro.articleId,client.clientId,pro.version]"
-                            >View Model</a>
+                        <button *ngIf="pro.productStatus != 'Not Uploaded';else NoData" (click)="viewModel(pro.articleId,client.clientId,pro.version)" class="btn btn-sm btn-outline-primary myhover">
+                          View Model
                         </button>
                       </td>
                       <ng-template #NoData>

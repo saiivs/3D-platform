@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { modelerLanding } from 'src/app/models/interface';
 import { BackendService } from 'src/app/services/backend.service';
 import { BankFormComponent } from '../bank-form/bank-form.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog , MatDialogRef} from '@angular/material/dialog';
 import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
@@ -36,8 +36,9 @@ subscription2!:Subscription;
     console.log("asdlkfmasdklfnakdsfl");
     console.log({clientData});
     
-    
     if(clientData.length > 0){
+      console.log("enterrreeddddddddd");
+      
       let flag = true;
       this.clients = [...clientData]
       console.log(this.clients);
@@ -75,8 +76,15 @@ subscription2!:Subscription;
   if(this.modeler.bankDetails.length != 0){
     this.router.navigate(['modeler/Invoice',rollNo]);
  }else{
-  this.dilog.open(BankFormComponent,{
-    data:localStorage.getItem("rollNo")
+  const dilogRef = this.dilog.open(BankFormComponent);
+  dilogRef.afterClosed().subscribe((bankDetails)=>{
+    if(bankDetails.valid){
+      this.subscription = this.backEndService.createBankDetails(bankDetails.bankInfo,localStorage.getItem("rollNo")).subscribe((res)=>{
+      if(res) {
+        this.router.navigate(['modeler/Invoice',localStorage.getItem('rollNo')]);
+      } 
+    })
+    } 
   })
  }
   }else{

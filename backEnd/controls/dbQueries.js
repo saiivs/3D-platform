@@ -1713,7 +1713,7 @@ module.exports = {
         try {
             let created = await db.modelerList.updateOne({rollNo:bankData.rollNo},{$push:{bankDetails:bankData.bankDetials}});
             console.log({created});
-            if(created.modifiedCount != 0){
+            if(created){
                 return {status:true,error:false};
             }else{
                 return {status:false,error:"not updated"};
@@ -1770,8 +1770,10 @@ module.exports = {
             await db.invoice.create(data)
             let budgetData = await db.budget.find({}).sort({_id:-1}).limit(1);
             let remainingBudget = budgetData[0].remainingBudget;
+            let totalExpense = budgetData[0].totalExpense;
+            totalExpense = totalExpense + bonus;
             remainingBudget = remainingBudget - bonus;
-            await db.budget.updateOne({_id:new ObjectId(budgetData[0]._id)},{$set:{remainingBudget:remainingBudget}});
+            await db.budget.updateOne({_id:new ObjectId(budgetData[0]._id)},{$set:{remainingBudget:remainingBudget,totalExpense:totalExpense}});
             return {status:true};
             }else{
                 return {status:false,error:"invoice exist"}

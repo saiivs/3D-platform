@@ -262,7 +262,10 @@ export class BackendService {
     return this.http.get<any>(`${this.url}/generateInvoice/get/${rollNo}`).pipe((catchError(this.erroHandler)))
   }
 
-  getBankDetails(bankDetials:any,rollNo:string):Observable<any>{
+  createBankDetails(bankDetials:any,rollNo:string|null):Observable<any>{
+    console.log("creting bank info");
+    console.log(bankDetials,rollNo);
+    
     return this.http.post<any>(`${this.url}/createBankDetails/post`,{bankDetials,rollNo}).pipe((catchError(this.erroHandler)))
   }
 

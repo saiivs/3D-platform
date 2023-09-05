@@ -43,6 +43,8 @@ export class InvoiceComponent implements OnInit,OnDestroy{
   
 
   ngOnInit() {
+    console.log("incvoivererer");
+    
     if(!this.invoiceNumber){
       console.log("startingggggg");
       

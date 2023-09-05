@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
 
@@ -11,7 +11,7 @@ import { BackendService } from 'src/app/services/backend.service';
 export class ApprovedProductsComponent {
 
 
-  constructor(private backEnd:BackendService,private route:ActivatedRoute){
+  constructor(private backEnd:BackendService,private route:ActivatedRoute,private router:Router){
     
   }
 
@@ -48,6 +48,10 @@ export class ApprovedProductsComponent {
       console.log(res);
       
     })
+  }
+
+  viewModel(articleId:string,clientId:any,version:number){
+    this.router.navigate(['modeler/reviews',articleId,clientId,version])
   }
 
   ngOnDestroy(): void {

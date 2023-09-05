@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BackendService } from 'src/app/services/backend.service';
 import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,13 +13,13 @@ import { Subscription } from 'rxjs';
 })
 export class BankFormComponent implements OnInit,OnDestroy{
 
-  constructor(private backEnd:BackendService,@Inject(MAT_DIALOG_DATA) public data: any,private router:Router){
+  constructor(private backEnd:BackendService,@Inject(MAT_DIALOG_DATA) public data: any,private router:Router,private dialogRef: MatDialogRef<BankFormComponent>){
 
   }
 
   reactiveForm!:FormGroup;
   error:string = "";
-  subscription!:Subscription
+  subscription!:Subscription;
   
   ngOnInit(){   
     this.reactiveForm = new FormGroup({
@@ -29,15 +30,17 @@ export class BankFormComponent implements OnInit,OnDestroy{
     })
   }
 
+  
+
   formSubmit(){
-    console.log("submitttedddddddd");
-    
-    this.subscription = this.backEnd.getBankDetails(this.reactiveForm.value,this.data).subscribe((res)=>{
-      if(res) {
-        this.router.navigate(['modeler/Invoice',localStorage.getItem('rollNo')]);
-      } 
-    })
+    let obj = {
+      valid:this.reactiveForm.valid,
+      bankInfo:this.reactiveForm.value
+    }
+    this.dialogRef.close(obj)
   }
+
+  
 
   ngOnDestroy(): void {
     if(this.subscription)this.subscription.unsubscribe();
