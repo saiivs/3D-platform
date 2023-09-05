@@ -337,7 +337,8 @@ module.exports = {
             console.log('before for loop for productlist pro');
             console.log({listNoForOthers});
             for(let item of data.products){
-                console.log("runnning");
+                console.log("updation of product list");
+                console.log({item});
                 await db.Products.updateOne({clientId:new ObjectId(data.clientId),'productList.articleId':item.articleId},{$set:{
                     "productList.$.assigned" : item.assigned,
                     "productList.$.QaTeam": item.QaTeam,
@@ -453,7 +454,8 @@ module.exports = {
                       list: 1
                     }
                   }},{$push:{'models.$.models':pro},$set:{'models.$.deadLineOne':false,'models.$.deadLineTwo':false}});
-                  console.log({updateModeler});
+                  //update the list value in the assigned list
+                  await db.modelerProducts.updateOne({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.list':1}});
                 let updateProductList = await db.Products.updateOne({clientId:new ObjectId(data.clientId),'productList.articleId':pro.articleId},{$set:{'productList.$.assigned':modelerName,'productList.$.QaTeam':QaName,'productList.$.modRollNo':modRoll,'productList.$.qaRollNo':QaRoll,'productList.$.price':0,'productList.$.list':1}}); 
                 promises.push(updateModeler,resultPromise,updateProductList);
                 await Promise.all(promises);
@@ -467,7 +469,7 @@ module.exports = {
                 let model = resultPromise.assignedPro.find((model)=>{
                     if(model.articleId == pro.articleId) return model;
                 });
-                
+
                 let modelerBeforeUpdate = model.assigned;
                 if(modelerBeforeUpdate != pro.assigned){
                     //pull the model from old modeler.
@@ -512,7 +514,9 @@ module.exports = {
                           clientId: new ObjectId(data.clientId),
                           list: listNo
                         }
-                      }},{$push:{'models.$.models':pro},$set:{'models.$.deadLineOne':false,'models.$.deadLineTwo':false}})
+                      }},{$push:{'models.$.models':pro},$set:{'models.$.deadLineOne':false,'models.$.deadLineTwo':false}});
+                      //update the list value in the assigned list
+                      await db.modelerProducts.updateOne({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.list':listNo}});
                 }else{
                     updateModeler = await db.modelerList.findOneAndUpdate(
                         {
@@ -1708,6 +1712,7 @@ module.exports = {
     dbCreateBankDetails:async(bankData)=>{
         try {
             let created = await db.modelerList.updateOne({rollNo:bankData.rollNo},{$push:{bankDetails:bankData.bankDetials}});
+            console.log({created});
             if(created.modifiedCount != 0){
                 return {status:true,error:false};
             }else{

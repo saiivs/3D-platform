@@ -30,6 +30,8 @@ export class BankFormComponent implements OnInit,OnDestroy{
   }
 
   formSubmit(){
+    console.log("submitttedddddddd");
+    
     this.subscription = this.backEnd.getBankDetails(this.reactiveForm.value,this.data).subscribe((res)=>{
       if(res) {
         this.router.navigate(['modeler/Invoice',localStorage.getItem('rollNo')]);

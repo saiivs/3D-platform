@@ -44,19 +44,25 @@ export class InvoiceComponent implements OnInit,OnDestroy{
 
   ngOnInit() {
     if(!this.invoiceNumber){
+      console.log("startingggggg");
+      
     this.invoiceNumber = `#${this.curDate.getTime()}-${Math.random().toString(36).substring(2, 7)}-${localStorage.getItem('rollNo')}` 
     }else{
-      this.invoiceNumber = localStorage.getItem('invoiceId')
+      this.invoiceNumber = localStorage.getItem('invoiceId') || null
     }
     this.subscription1 = this.backEnd.generateInvoice(localStorage.getItem('rollNo')).subscribe((res)=>{
-      this.modelerObjectId = res[0]._id
+      console.log("crating invoice");
+      console.log(res);
+      
+      
+      this.modelerObjectId = res[0]._id;
       this.modelerName = res[0].modelerName;
       // this.clients = res[0].clientDetails;
       this.approvedModels = res[0].models;
       this.bankDetails = res[0].bankDetails;
-      if(localStorage.getItem('invoiceId')){
-        this.approvedModels
-      }
+      // if(localStorage.getItem('invoiceId')){
+      //   this.approvedModels;
+      // }
       this.approvedModels.forEach((client)=>{
         let totalPrice = 0;
         client.models = client.models.filter((model:any)=>{
@@ -93,10 +99,12 @@ export class InvoiceComponent implements OnInit,OnDestroy{
             let percentageAmount = totalPriceForBonus * (client.bonus/100);
             this.bonus += percentageAmount;
            
-            this.totalPrice += totalPrice
+            this.totalPrice += totalPrice;
+          }else{
+            this.totalPrice += totalPrice;
           }
           }else{
-            this.totalPrice += totalPrice
+            this.totalPrice += totalPrice;
           }
           client.models = client.models.filter((model:any)=>{
             return model.productStatus == 'Approved' && model.invoice == false;
@@ -159,10 +167,10 @@ export class InvoiceComponent implements OnInit,OnDestroy{
 
 ngOnDestroy(): void {
   localStorage.removeItem('invoiceId');
-  this.subscription1.unsubscribe()
-  this.subscription2.unsubscribe()
-  this.subscription3.unsubscribe()
-  this.subscription4.unsubscribe()    
+  if(this.subscription1)this.subscription1.unsubscribe()
+  if(this.subscription2)this.subscription2.unsubscribe()
+  if(this.subscription3)this.subscription3.unsubscribe()
+  if(this.subscription4)this.subscription4.unsubscribe()
 }
   }
 

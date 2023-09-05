@@ -332,7 +332,7 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
 
   downloadFile(articleId:string){
     let link = document.createElement('a');
-    link.download = `file.glb`
+    
     link.href = `${environment.staticUrl}/models/${this.clientName}/${articleId}/version-${this.version}/${articleId}.glb`;
     link.target = '_blank';
     link.click()

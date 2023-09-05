@@ -96,7 +96,7 @@ createCorrection()
     let inputTxt = listItem.querySelector('input[type ="text"]')  as HTMLInputElement;
     let inputImg = listItem.querySelector('input[type="file"]')  as HTMLInputElement;
     if(!inputTxt.value){
-      this.emptyField = "error"
+      this.emptyField = "can not have empty fiels."
     }else{
       this.emptyField = ""
       let findItem = this.hotspotDataCorrection[index]

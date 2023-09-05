@@ -707,6 +707,7 @@ module.exports = {
 
     createBankDetails:async(req,res)=>{
         try {
+            console.log("bankDetails");
             console.log(req.body);
             let bankData = req.body;
             let bankDetailsSaved = await database.dbCreateBankDetails(bankData);

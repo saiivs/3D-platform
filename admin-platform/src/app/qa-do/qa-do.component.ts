@@ -398,13 +398,15 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
     const formData = new FormData();
     let count = 1;
     let index = 0;
+    let emptyDetectionArr = [];
     this.correctionItems.forEach((itemRef:ElementRef<HTMLElement>)=>{
       if(this.hotSpotData){
         const listItem = itemRef.nativeElement;  
         let inputTxt = listItem.querySelector('input[type ="text"]')  as HTMLInputElement;
         let inputImg = listItem.querySelector('input[type="file"]')  as HTMLInputElement;
         if(!inputTxt.value){
-          this.emptyField = "error"
+          this.emptyField = "Can not have empty fields."
+          emptyDetectionArr.push('empty')
         }else{
           this.emptyField = ""
           let findItem = this.hotSpotData[index] ;
