@@ -32,7 +32,6 @@ export class AllModelsComponent implements OnInit, OnDestroy{
     this.searchService.checkUrlForSearchBtn(true);
     this.subscription1 = this.backEndService.getAllModelsOfModeler(this.modelerId).subscribe((res)=>{      
       this.modeler = [...res];
-      console.log(this.modeler);
       
       this.modeler[0].models.forEach((client:any)=>{
         this.models = [...client.models]

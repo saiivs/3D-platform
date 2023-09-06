@@ -130,7 +130,6 @@ export class GalleryComponent implements OnInit,OnDestroy {
               this.onSelectedFiles = [];
               this.isLoading = false;
               this.countConvertedfile = 0;
-              console.log("called the fun gallery again");
               
               this.galleryFn(this.articleId, this.clientId)
             }

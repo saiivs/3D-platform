@@ -36,8 +36,6 @@ export class ModelerProfileComponent implements OnInit,OnDestroy{
       if(res){
         this.userData = res.userData;
         this.bankInfo = res.data ? res.data : false;
-        console.log(this.bankInfo);
-        
         
           this.reactiveForm = new FormGroup({
           bankName: new FormControl(this.bankInfo.bankName,Validators.required),

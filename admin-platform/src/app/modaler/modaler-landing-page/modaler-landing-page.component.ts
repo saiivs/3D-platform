@@ -33,15 +33,11 @@ subscription2!:Subscription;
  ngOnInit() {
   let modRollNo = localStorage.getItem('rollNo')
   this.subscription = this.backEndService.getClientsForModaler(modRollNo).subscribe((clientData)=>{ 
-    console.log("asdlkfmasdklfnakdsfl");
-    console.log({clientData});
     
     if(clientData.length > 0){
-      console.log("enterrreeddddddddd");
       
       let flag = true;
       this.clients = [...clientData]
-      console.log(this.clients);
       
       this.modelersArray = clientData[0].modelerData
       this.totalRecords = clientData.length
@@ -61,8 +57,6 @@ subscription2!:Subscription;
           item.listCompleted = flag ? "Complete" : "Incomplete"
         }) 
       }
-      console.log(this.clients);
-      
     }
   })
     this.subscription2 = this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{

@@ -46,7 +46,6 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
       this.clientDetails = res
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientDetails.clientName.replace(regex,"_")
-      console.log("asdfasdfasdfasdf");
       
       this.subscription2 = this.backEndService.getLatestCorrectionForModeler(this.clientId,this.articleId).subscribe((res)=>{
         if(res){
@@ -72,12 +71,8 @@ export class ModelerCorrectionViewComponent implements OnInit,OnDestroy{
             hotspot.corrImg = `${environment.staticUrl}/corrections/${this.clientName}/${this.articleId}/version-${hotspot.version}/${hotspot.hotspotName}.jpg`
             this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1)
           })
-          console.log(this.hotspots);
           
         }else{
-          console.log(res);
-          
-          console.log("asdfasdfasdf");
           this.noCorrections = true;
         }
           

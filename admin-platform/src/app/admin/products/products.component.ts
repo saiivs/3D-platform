@@ -118,8 +118,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       // this.requirementData = res.requirement[0]
       this.clientId = res.Arr[0].clientId
       this.products = [...res.Arr[0].productList];
-      console.log(this.products);
-
+     
       if(res.requirement.length > 1){
         for(let pro of this.products){
         for (let info of res.requirement){
@@ -278,7 +277,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
       this.remainingBudget += retainBudget;
       this.totalExpense -= retainBudget;
     }
-    console.log(this.checkedItems);
     if (this.checkedItems.length != 0 && this.modelerRollNo != "" && this.QARollNo != "") {
       this.isLoading = true;
       let modeler = this.modelersArr.find(obj => obj.rollNo == this.modelerRollNo);
@@ -295,7 +293,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
          this.subscription5 = this.backEndService.assignedPro(this.checkedItems, this.modelerRollNo, this.clientId, this.QARollNo, this.reallocation).subscribe((res) => {
             if (res.status) {
               if(res.bonusEligibility){
-                console.log(res);
                    swal.fire({
                       position: 'center',
                       title: `Is ${res.modeler.modelerName} eligible for bonus`,
@@ -314,10 +311,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
                       }
                     })
               }
-           
-              console.log("go the response");
-              console.log(res);
-              
+            
               this.products = this.products.filter((item) => {
                 if (item.isSelected == true) {
                   item.price = "";
@@ -455,8 +449,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
               this.products[i].priceAdded = false;
               this.products[i].price = price;
               this.subscription8 = this.backEndService.updateBudgetExceed().subscribe((res) => {
-                console.log(res);
-
+                
               })
             }
           })
@@ -504,8 +497,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       allowOutsideClick: () => !swal.isLoading(),
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("hey");
-
+      
       }
     })
   }
@@ -533,7 +525,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   getRequirement() {
     let prodcuts = [];
     prodcuts = this.products.filter(pro => pro.additionalInfo && pro.isSelected);
-    console.log({prodcuts});
     if(prodcuts.length != 0){
     this.requirementData = this.requirement.nativeElement.value;
     if(this.requirementData != ""){

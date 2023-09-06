@@ -70,7 +70,6 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
               }) 
               return { ...obj,totalModal:this.totalModels,percentage:this.modelerPercentage}
             })
-            console.log(this.allModelers); 
           }
           if (data.models.length == 0) {
             this.noMonthlyStatus = true;

@@ -41,7 +41,6 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
       this.articleId = params['articleId'],
       this.version = params['version']
     })
-    console.log(this.version);
     
     this.subscription1 = this.backEndService.getClientDetailsForQADo(this.clientId).subscribe((res) => {
 
@@ -50,16 +49,13 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
       this.clientName = this.clientDetails.clientName.replace(regex, "_")
 
       this.subscription2 = this.backEndService.getLatestCorrection(this.clientId, this.articleId).subscribe((res) => {
-        console.log({res});
         
         if (res) {
-          console.log({ res });
-
+          
           this.tabPanels = Array(res.data[0].version).fill(1).map((_, index) => `Version ${index + 1}`);
           // this.tabPanels = Array(res[0].version).fill(1).map((_, index) => `version ${index+1}`);
           this.tabPanels.reverse()
           this.hotspots = res.data;
-          console.log(this.hotspots);
           
           this.correctionsWithVersions = this.hotspots.reduce((result, hotspot) => {
             const { version } = hotspot;
@@ -133,7 +129,6 @@ export class AdminModelCorrectionComponent implements OnInit , OnDestroy{
     this.renderer.setStyle(hotspot, 'font-size', '10px');
     this.renderer.appendChild(hotspot, buttonText);
     this.renderer.setAttribute(hotspot, 'data-visibility-attribute', 'visible');
-    console.log(this.modelTest);
     
     this.modelTest.nativeElement.appendChild(hotspot);
   }

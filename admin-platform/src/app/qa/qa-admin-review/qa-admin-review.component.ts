@@ -155,7 +155,6 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
     this.comntRef.nativeElement.value = ""
    
     this.subscription1 = this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
-        console.log(res);
     })
 
   }

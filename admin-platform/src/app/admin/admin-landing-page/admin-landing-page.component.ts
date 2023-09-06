@@ -51,16 +51,11 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
           let modelDetail = this.clientTableData[modelDetailIndex];
 
           if (modelDetail) {
-            console.log("asdfasdfa");
-            
             let proCount = parseInt(modelDetail.productCount);
             let approvedcount = model.count;
             if (approvedcount == 0) {
-              console.log("runnnned");
-              
               this.clientTableData[modelDetailIndex].per = 0;
             } else {
-              console.log("runnnned");
               let percentage = ((approvedcount / proCount) * 100).toFixed(2);
               this.clientTableData[modelDetailIndex].per = Number(percentage);
             }
@@ -109,10 +104,6 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
           let headerLength = 0;
           if (headers) {
             headerLength = headers.length;
-            console.log(headers);
-
-            console.log(headerLength);
-
             if (headerLength == 4) {
               const data = results.data;
               data.forEach((row: any) => {
@@ -210,7 +201,6 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       this.budget = this.budgetPrice.nativeElement.value;
       this.backEndService.createBudget(this.budget).subscribe((res) => {
         this.budgetPrice.nativeElement.value = ''
-      console.log(res);
     }) 
     }
   }

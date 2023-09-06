@@ -137,7 +137,6 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
         this.tabPanels = Array(this.latestVersion).fill(1).map((_, index) => `Version ${index+1}`);
         this.tabPanels.reverse();
       }
-      console.log(this.$latestCorrection);
       
     })
   }
@@ -160,7 +159,6 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
      
       
       this.hotSpotData = [...this.$oldCorrections];
-      console.log(this.hotSpotData);
     }
   }
 
@@ -193,12 +191,8 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
       this.removeAllHotspot();
       this.subscription5 = this.backEndService.getHotspotwithVersion(version,this.clientId,this.articleId).subscribe((res)=>{
         if(this.latestVersion == version){
-          console.log("ggg");
-          
             this.$oldCorrections = [...this.$latestCorrection]
-        }else{
-          console.log("hhh");
-          
+        }else{ 
             this.$oldCorrections = [...res]; 
         }
       this.showHotspotOverModel(version)
@@ -285,11 +279,6 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
 
       this.$tempCorrections.push(obj);
       this.hotSpotData.push(obj);
-      console.log("hotspot data adding");
-      console.log(this.hotSpotData);
-      console.log(hotspot);
-      
-      
       } 
     }
 
@@ -410,8 +399,6 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
         }else{
           this.emptyField = ""
           let findItem = this.hotSpotData[index] ;
-          console.log("each item");
-          console.log(findItem);
           if(findItem){
               const cacheBuster = new Date().getTime();
               let obj = {
@@ -468,8 +455,6 @@ export class QaDoComponent implements OnInit, AfterViewInit, OnDestroy{
         this.hotSpotData.forEach((hotspot:any,index:number)=>{
           this.addHotspotInitially(hotspot.normalValue,hotspot.positionValue,hotspot.hotspotName,index+1)
         })
-        console.log("after deletion ");
-        console.log(this.hotSpotData);
       }else{
         this.toastr.error('Error',"Time Exceeded");
         this.editFlag = false;

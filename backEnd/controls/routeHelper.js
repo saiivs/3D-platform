@@ -1341,7 +1341,6 @@ module.exports = {
 
       createDeadLineForModeler:async(req,res)=>{
         try {
-            console.log("reached");
             let {date,status,modRoll,clientId,list} = req.body;
             const result = await database.dbCreateDeadLineForModeler({date,status,modRoll,clientId,list});
             if(result){
@@ -1463,7 +1462,6 @@ module.exports = {
       rejectBonusEligibility:async(req,res)=>{
         try {
             const {modelerRollNo,list,clientId} = req.body;
-            console.log(req.body);
             let rejectBonus = await database.dbRejectBonus(modelerRollNo,list,clientId);
             if(rejectBonus){
                 res.status(200).json(true);
@@ -1478,10 +1476,8 @@ module.exports = {
 
       updateInvoicedList:async(req,res)=>{
         try {
-            console.log(req.body);
             const invoiceList = req.body.invoiceList;
             for(let list of invoiceList){
-                console.log("loop run");
                 await database.dbUpdateInvoiceList(list);
             }
             console.log("promise completed");

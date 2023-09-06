@@ -62,8 +62,7 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   }
 
   scrapeImages(url:string,name:string,articleId:string){
-    this.subscription2 = this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
-      console.log(res);  
+    this.subscription2 = this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{  
     })
   }
 

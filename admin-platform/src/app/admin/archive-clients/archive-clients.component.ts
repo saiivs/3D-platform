@@ -27,7 +27,6 @@ export class ArchiveClientsComponent implements OnInit{
   ngOnInit(){
     this.titleService.setTitle(this.title)
     this.subscription = this.backEndService.getApprovedClients().subscribe((data)=>{
-      console.log(data);
       
         this.clientTableData = data
         this.totalRecords = this.clientTableData.length; 
@@ -38,8 +37,6 @@ export class ArchiveClientsComponent implements OnInit{
   }
 
   viewProList(clientId:any){
-    console.log(clientId);
-    
     this.router.navigate(['admin/products',clientId]);
   }
 

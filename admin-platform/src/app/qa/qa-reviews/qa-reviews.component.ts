@@ -104,10 +104,8 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       this.version = params['version'];
       this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
-      console.log(this.currentDate);
       
       if(data){
-        console.log(data);
         this.validateGlbFile(data);
         this.clientDetails = data.modelDetails[0].clientDetails;
         this.modelerDetails = data.modelDetails[0].assignedPro.find((obj:any)=>{
@@ -134,7 +132,6 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
           }
           this.groupedMessages[date].push(message);
         });
-        console.log(this.groupedMessages);
         
         setTimeout(()=>{
             this.scrollToBottom()
@@ -277,7 +274,6 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
     this.comntRef.nativeElement.value = ""
    
     this.subscription1 = this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
-        console.log(res);
     })
     }  
   }
@@ -297,8 +293,6 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
       cancelButtonText: 'cancel'
     }).then((result)=>{
       if(result.value){
-        console.log("calleddddddd updtion");
-        
           this.subscription4 = this.backEnd.approveModal(this.clientId,articleId,status,localStorage.getItem('rollNo'),this.modelerDetails.assigned,this.correctionValue,this.modelerDetails.productName,this.modRollNo,this.modelerDetails.list).subscribe((res)=>{
             this.QaCommentArr[0].modalStatus = status
           })

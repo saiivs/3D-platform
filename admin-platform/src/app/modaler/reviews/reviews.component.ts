@@ -21,7 +21,6 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   @ViewChild('comntRef') comntRef:any;
   @ViewChild('chatBody') chatBodyRef!: ElementRef;
   constructor(private backEnd : BackendService,private route:ActivatedRoute,private router:Router,private toaster:ToastrService,private cdRef: ChangeDetectorRef,private notificatinService:NotificationService,private renderer:Renderer2){
-    console.log("loaded");
     
   }
 
@@ -72,7 +71,6 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     let extnsWrng;
     let imgHieghtWrng;
     let invalidModel;
-    console.log(modelData?.info?.totalTriangleCount);
     
     if(modelData?.info?.totalTriangleCount > 150000){
        polygonWarng = `Polygon count exceeded`
@@ -116,8 +114,6 @@ export class ReviewsComponent implements OnInit,OnDestroy{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         if(data.pngExist){
-          console.log("checking png");
-          console.log(data.pngExist);
           this.pngExist = true;
         } 
         this.validateGlbFile(data);
@@ -163,7 +159,6 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   @ViewChild('modelElement', { static: true }) modelViewerRef!: ElementRef;
   onModelLoad(){
     if(!this.pngExist){
-      console.log("creating png");
       
       const model = this.modelViewerRef.nativeElement;
       try {
@@ -223,7 +218,6 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     this.flag = true;
     this.comntRef.nativeElement.value = ""
    this.subscription3 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
-        console.log(res);
     })   
     } 
   }

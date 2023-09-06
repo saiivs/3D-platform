@@ -147,14 +147,10 @@ export class BackendService {
   }
 
   setProductLink(link:string){
-    console.log(link);
-    
     this.productLink = link;
   }
 
   getProductLink():string{
-    console.log("calld ");
-    
     return this.productLink;
   }
 
@@ -263,9 +259,6 @@ export class BackendService {
   }
 
   createBankDetails(bankDetials:any,rollNo:string|null):Observable<any>{
-    console.log("creting bank info");
-    console.log(bankDetials,rollNo);
-    
     return this.http.post<any>(`${this.url}/createBankDetails/post`,{bankDetials,rollNo}).pipe((catchError(this.erroHandler)))
   }
 
@@ -380,8 +373,6 @@ export class BackendService {
   }
 
   getAllModelListForModeler(modelerId:string):Observable<any>{
-    console.log("callleeeeee");
-    
     return this.http.get<any>(`${this.url}/getAllModelListForModeler/${modelerId}`).pipe((catchError(this.erroHandler)));
   }
 

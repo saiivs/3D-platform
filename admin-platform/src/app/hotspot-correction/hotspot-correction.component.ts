@@ -89,7 +89,6 @@ checkImgFile(event:Event,index:number){
 
 createCorrection()
 {
-  console.log(this.hotspotDataCorrection);
   const formData = new FormData();
   this.correctionItems.forEach((itemRef:ElementRef<HTMLElement>,index:number)=>{
     const listItem = itemRef.nativeElement;  
@@ -100,7 +99,6 @@ createCorrection()
     }else{
       this.emptyField = ""
       let findItem = this.hotspotDataCorrection[index]
-      console.log({findItem});
       
      let obj = {
       correction : inputTxt.value,
@@ -123,7 +121,6 @@ createCorrection()
     }
   })
   this.setTabPanelInvokeEvent.emit(this.latest)
-  console.log("hotsPot submit");
   
   this.noCorrectionForm = !this.noCorrectionForm
   this.subscription2 = this.backEndService.updateHotspotCorrectionImg(formData).subscribe((res)=>{

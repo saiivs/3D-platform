@@ -43,19 +43,14 @@ export class InvoiceComponent implements OnInit,OnDestroy{
   
 
   ngOnInit() {
-    console.log("incvoivererer");
     
     if(!this.invoiceNumber){
-      console.log("startingggggg");
       
     this.invoiceNumber = `#${this.curDate.getTime()}-${Math.random().toString(36).substring(2, 7)}-${localStorage.getItem('rollNo')}` 
     }else{
       this.invoiceNumber = localStorage.getItem('invoiceId') || null
     }
     this.subscription1 = this.backEnd.generateInvoice(localStorage.getItem('rollNo')).subscribe((res)=>{
-      console.log("crating invoice");
-      console.log(res);
-      
       
       this.modelerObjectId = res[0]._id;
       this.modelerName = res[0].modelerName;

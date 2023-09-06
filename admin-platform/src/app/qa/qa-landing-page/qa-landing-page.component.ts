@@ -34,8 +34,7 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
     let qaRollNo = localStorage.getItem("rollNo")
    this.subscription =  this.backEnd.getClientsForQa(qaRollNo).subscribe((data)=>{
       if(data){ 
-        console.log(data);
-        
+
         this.clientsArr = [...data];
        
         for(let item of this.clientsArr){

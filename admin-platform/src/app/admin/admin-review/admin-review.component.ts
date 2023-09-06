@@ -91,7 +91,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.modelDetails = [...data.modelDetails];
-        console.log(this.modelDetails);
         this.product = data.modelDetails[0].assignedPro.find((obj:any)=>{
           if(obj.articleId == this.articleId) return obj
         })
@@ -101,7 +100,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
         this.gltfData = data.gltfData.info;
         this.polygonCount = data.gltfData.info.totalTriangleCount;
         this.QaCommentArr = [...data.Arr];
-        console.log(this.QaCommentArr);
         
         this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.articleId}/version-${this.version}/${this.articleId}.glb`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
@@ -125,9 +123,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   }
   
   scrollBottomForIn(){
-    const chatBody = this.chatBodyRefIn.nativeElement;
-    console.log(chatBody);
-    
+    const chatBody = this.chatBodyRefIn.nativeElement; 
     chatBody.scrollTop = chatBody.scrollHeight;
   }
 
@@ -148,12 +144,10 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     if (!this.groupedMessages[this.currentDate]) {
       this.groupedMessages[this.currentDate] = [];
     }
-    this.groupedMessages[this.currentDate].push(pushObj);
-    console.log(this.groupedMessages);    
+    this.groupedMessages[this.currentDate].push(pushObj);  
     this.comntRef.nativeElement.value = ""
    
     this.subscription1 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
-        console.log(res);
     })
 
     }else{
@@ -168,7 +162,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
       });
       this.comntRef.nativeElement.value = ""
       this.subscription2 = this.backEnd.pushAdminComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
-        console.log(res);
     })
     }
     }
@@ -275,7 +268,6 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.QaCommentArr = [...data.Arr];
-        console.log(this.QaCommentArr);
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');

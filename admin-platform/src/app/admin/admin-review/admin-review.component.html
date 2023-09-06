@@ -51,7 +51,7 @@
       <h5 class="mb-8">{{product.productName}}</h5>
       <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
         By
-        <span class="ms-4 text-black-80 hp-text-color-dark-30">{{modelDetails[0]?.clientDetails[0].clientName}}</span>
+        <span class="ms-4 text-black-80 hp-text-color-dark-30">{{modelDetails[0].clientDetails[0].clientName}}</span>
       </span>
       <ul class="proDetails" *ngIf="QaCommentArr.length != 0">
         <li>Product Status: <span
@@ -59,11 +59,11 @@
             *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span>
         </li>
-        <li>Polygon Count : <span>{{gltfData?.totalTriangleCount}}</span></li>
-        <li>Material Count : <span>{{gltfData?.materialCount}}</span></li>
-        <li>Draw Calls : <span>{{gltfData?.drawCallCount}}</span></li>
-        <li>Vertices : <span>{{gltfData?.totalVertexCount}}</span></li>
-        <li>Animations : <span>{{gltfData?.animationCount}}</span></li>
+        <li>Polygon Count : <span>{{gltfData.totalTriangleCount}}</span></li>
+        <li>Material Count : <span>{{gltfData.materialCount}}</span></li>
+        <li>Draw Calls : <span>{{gltfData.drawCallCount}}</span></li>
+        <li>Vertices : <span>{{gltfData.totalVertexCount}}</span></li>
+        <li>Animations : <span>{{gltfData.animationCount}}</span></li>
         <!-- <li>Admin Status: <span
             [ngStyle]="{color : QaCommentArr[0].adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0].adminStatus}}</span><span
             *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
@@ -114,11 +114,11 @@
         <ng-template #adminHead>
           <h2>Interactive Chat</h2>
         </ng-template>
-        <button *ngIf="!toggleChatBtn;else adminChat" data-bs-toggle="tooltip" title="click for interactive chat" (click)="viewInteractivechat(QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Interactive Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+        <button *ngIf="!toggleChatBtn;else adminChat" data-bs-toggle="tooltip" title="click for interactive chat" (click)="viewInteractivechat(QaCommentArr[0].articleId,QaCommentArr[0].clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Interactive Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
           font-size: 1em;
       "></i></span></button>
       <ng-template #adminChat>
-        <button data-bs-toggle="tooltip" title="click for admin chat" (click)="viewAdminchat(QaCommentArr[0]?.articleId,QaCommentArr[0]?.clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+        <button data-bs-toggle="tooltip" title="click for admin chat" (click)="viewAdminchat(QaCommentArr[0].articleId,QaCommentArr[0].clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
           font-size: 1em;
       "></i></span></button>
       </ng-template>
@@ -139,7 +139,7 @@
                             <i></i>
                           </a>
                         </div> -->
-                  <ng-container *ngIf="QaCommentArr[0]?.comments?.length != 0;else noChat">
+                  <ng-container *ngIf="QaCommentArr[0].comments.length != 0;else noChat">
                     <div class="chat-body" *ngFor="let date of getGroupedMessageKeys()">
                       <!-- <div style="text-align: center;padding: 0.5rem;">
                             <p>Today</p>
@@ -204,7 +204,7 @@
                               <i></i>
                             </a>
                           </div> -->
-                    <ng-container *ngIf="QaCommentArr[0]?.comments?.length != 0;else noChat">
+                    <ng-container *ngIf="QaCommentArr[0].comments.length != 0;else noChat">
                       <div class="chat-body" *ngFor="let date of getGroupedMessageKeys()">
                         <!-- <div style="text-align: center;padding: 0.5rem;">
                               <p>Today</p>

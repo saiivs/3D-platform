@@ -6,7 +6,7 @@ const validator = require('gltf-validator');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
-const { time, log } = require("console");
+
 
 const polygonCounter = async(articleId,clientId,clientName,version)=>{
     try {
@@ -34,8 +34,6 @@ const polygonCounter = async(articleId,clientId,clientName,version)=>{
                     });
                 })
         })
-        console.log({result});
-        console.log(result.issues.messages.length);
         return result 
     } catch (error) {
         console.log(error);
@@ -76,7 +74,6 @@ module.exports = {
                 let data = new db.clients(client);
                 let res = await data.save()
                 if(res){
-                    console.log({res});
                     return {exist:false,client:res}
                 }else{
                     return false
@@ -90,7 +87,6 @@ module.exports = {
     },
 
     dbcreatePro:async(proData,Id,clientExist)=>{
-        console.log("pro database");
         try{
             let res;
             proData = proData.map((pro)=>{
@@ -116,7 +112,6 @@ module.exports = {
                 throw new Error
             }
         }catch(error){
-            console.log("db");
             console.log(error);
             return false
         }
@@ -147,7 +142,6 @@ module.exports = {
         ]);
         monthlyBudget = monthlyBudget.reverse();
         let budgetData = monthlyBudget.length != 0 ? monthlyBudget[0].budget : 0;
-        console.log({productDetails});
         if(data){
             if(Array.isArray(data)){
                 return {data,budgetData,productDetails};
@@ -192,9 +186,7 @@ module.exports = {
 
     dbGetPro:async(id)=>{
         try {
-            console.log(id);
             let proData = await db.Products.findOne({clientId:new ObjectId(id)});
-            console.log({proData});
             let clientData = await db.clients.findOne({_id:new ObjectId(id)});
             let budget = await db.budget.find().sort({ _id: -1 }).limit(1);
             let requirement = await db.requirement.find({clientId:new ObjectId(id)});
@@ -225,7 +217,6 @@ module.exports = {
             let proListforModeler  =  data.products.map(obj => {
                 return {...obj,QaTeam:QaName,qaRollNo:QaRoll,modRollno:modRoll,assigned:name,clientId:new ObjectId(data.clientId),date:date,price:0,invoice:false,tag:"",QAView:false,list:1}
             })
-            console.log(proListforModeler);
             let obj = {
                 clientId:new ObjectId(data.clientId),
                 list:1,
@@ -246,7 +237,6 @@ module.exports = {
             }
             modeler.models.push(obj)
             let modelerExist = await db.modelerList.findOne({rollNo:modRoll});
-            console.log({modelerExist});
             if(modelerExist){
                 let clientListExist = modelerExist.models.find(obj => obj.clientId == data.clientId);
                 if(clientListExist){
@@ -276,7 +266,6 @@ module.exports = {
                   if(!checkDeadLine.deadLineTwo){
                     console.log("deadline is false");
                     listNoForOthers = listNo;
-                    console.log({listNoForOthers});
                     proListforModeler.forEach(obj => {
                         obj.list = listNoForOthers
                     })
@@ -304,8 +293,6 @@ module.exports = {
                 listNoForOthers = 1;
                 await db.modelerList.create(modeler)
             }
-            console.log('before for loop for assigned pro');
-            console.log({listNoForOthers});
             for(let item of data.products){
                 item.assigned = name;
                 item.QaTeam = QaName;
@@ -334,11 +321,7 @@ module.exports = {
         await prod.save();
         
             }
-            console.log('before for loop for productlist pro');
-            console.log({listNoForOthers});
             for(let item of data.products){
-                console.log("updation of product list");
-                console.log({item});
                 await db.Products.updateOne({clientId:new ObjectId(data.clientId),'productList.articleId':item.articleId},{$set:{
                     "productList.$.assigned" : item.assigned,
                     "productList.$.QaTeam": item.QaTeam,
@@ -461,7 +444,6 @@ module.exports = {
                 await Promise.all(promises);
                 }
         }else{
-            console.log("exisiting modeler");
             for(const pro of data.products){
                 resultPromise = await db.modelerProducts.findOneAndUpdate({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.assigned':modelerName,'assignedPro.$.QaTeam':QaName,'assignedPro.$.modRollno':modRoll,'assignedPro.$.qaRollNo':QaRoll,'assignedPro.$.price':0}});
 
@@ -590,7 +572,6 @@ module.exports = {
                 }
             }
         ])
-        console.log(clientData);
         if(clientData){
             return clientData
         }else{
@@ -660,7 +641,6 @@ module.exports = {
                     return obj
                 }
             });
-            console.log({deadLineBonus});
            }
             if(proData){
                 return {proData,deadLineBonus,additionalInfo}
@@ -719,10 +699,7 @@ module.exports = {
             let clientDetails = await db.clients.findOne({_id:new ObjectId(clientId)});
 
             let modeler = await db.modelerList.findOne({rollNo:modRollNo});
-            console.log({modeler});
-            console.log({list});
             let modelList = modeler.models.find(model => model.list == list&&model.clientId.equals(clientId));
-            console.log({modelList});
             let checkAllUploaded = modelList.models.find(model => model.productStatus != 'Uploaded');
             if(!checkAllUploaded){
                 await db.modelerList.updateOne({rollNo:modRollNo,"models": {
@@ -800,7 +777,6 @@ module.exports = {
 
     dbGetClientsForQa:async(qaRollNo)=>{
         try {
-            console.log({qaRollNo});
             let clients = await db.modelerProducts.aggregate([
                 {
                     $unwind:"$assignedPro"
@@ -829,7 +805,6 @@ module.exports = {
                    } 
                 }
             ])
-            console.log({clients});
             if(clients){
                 return clients
             }else{
@@ -843,8 +818,6 @@ module.exports = {
 
     dbGetQaPro:async(id,qaRollNo)=>{
         try {
-            console.log({qaRollNo});
-            console.log({id});
             let requirement = false;
             let proList = await db.modelerProducts.aggregate([
                 {
@@ -874,7 +847,6 @@ module.exports = {
                     }
                 }
             ])
-            console.log({proList});
             if(proList.length > 0){
              let clientRequirement = await db.requirement.find({clientId: new ObjectId(proList[0].clientId)});
                 if(clientRequirement) requirement = clientRequirement
@@ -912,7 +884,6 @@ module.exports = {
             }
         let updateCmnt = await db.QaReviews.updateOne({clientId:new ObjectId(data.clientId),articleId:data.articleId},{$push:{comments:obj}});
         if(updateCmnt){
-            console.log({updateCmnt});
             return true
         }else{
             throw new Error
@@ -945,11 +916,8 @@ module.exports = {
                 }
             ])
             let pngExist = fs.existsSync(`./public/pngFiles/${clientId}/${articleId}.png`);
-            console.log({modelDetails});
-        console.log({commentData});
         if(commentData){
             let result = await polygonCounter(articleId,clientId,modelDetails[0].clientDetails[0].clientName,version);
-            console.log({result});
             if(result){
               let gltfData = result; 
               let Arr = [];
@@ -970,8 +938,6 @@ module.exports = {
 
     dbAprroveModal:async(clientId,articleId,status,QaName,modelerName,correction,modelName,modRollNo,QaRollNo,productName,list)=>{
         try {
-            console.log("updation");
-            console.log({clientId,articleId,modRollNo});
             await db.QaReviews.updateOne({clientId:new ObjectId(clientId),articleId:articleId},{$set:{modalStatus:status}});
             await db.AdminReviews.updateOne({clientId:new ObjectId(clientId),articleId:articleId},{$set:{modalStatus:status}});
             let modeler = await db.modelerList.findOne({rollNo:modRollNo});
@@ -1042,7 +1008,6 @@ module.exports = {
 
     dbCreateComntAdmin:async(data)=>{
         try {
-            console.log({data});
             let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
             let curDate = new Date().toISOString().slice(0,10)
             let obj = {
@@ -1091,7 +1056,6 @@ module.exports = {
                 let gltfData = result;
                 let Arr = [];
                 Arr.push(commentData)
-                console.log(Arr);
                 return {Arr,gltfData,modelDetails}
             }else{
                 throw new Error
@@ -1108,16 +1072,13 @@ module.exports = {
 
     dbRejectModal:async(clientId,articleId)=>{
         try {
-            console.log({clientId,articleId});
             await db.AdminReviews.updateOne({clientId:new ObjectId(clientId),articleId:articleId},{$set:{modalStatus:"Need Updates",adminStatus:"Rejected"}});
             await db.QaReviews.updateOne({clientId:new ObjectId(clientId),articleId:articleId},{$set:{modalStatus:"Need Updates",adminStatus:"Rejected"}});
             let approve = await db.modelerProducts.updateOne({clientId:new ObjectId(clientId),"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": "Need Updates","assignedPro.$.adminStatus":"Rejected"}});
 
-            console.log({approve});
             if(approve){
                 let pro = await db.Products.updateOne({clientId:new ObjectId(clientId),"productList.articleId":articleId},{$set:{"productList.$.productStatus":"Need Updates","productList.$.adminStatus":"Rejected"}});
 
-                console.log({pro});
                 if(pro){
                     return true;
                 }else{
@@ -1135,11 +1096,10 @@ module.exports = {
 
     dbAdminAprroveModal:async(clientId,articleId)=>{
         try {
-            console.log({clientId,articleId});
             await db.AdminReviews.updateOne({clientId:new ObjectId(clientId),articleId:articleId},{$set:{adminStatus:'Approved',modalStatus:'Approved'}});
             await db.QaReviews.updateOne({clientId:new ObjectId(clientId),articleId:articleId},{$set:{adminStatus:'Approved',modalStatus:'Approved'}});
             let approve = await db.modelerProducts.updateOne({clientId:new ObjectId(clientId),"assignedPro.articleId": articleId},{$set:{"assignedPro.$.productStatus": "Approved","assignedPro.$.adminStatus":"Approved"}});
-            console.log({approve});
+
             if(approve){
                 let pro = await db.Products.updateOne({clientId:new ObjectId(clientId),"productList.articleId":articleId},{$set:{"productList.$.productStatus":"Approved","productList.$.adminStatus":"Approved"}});
                 
@@ -1149,7 +1109,6 @@ module.exports = {
                 if(clientApproved == undefined){
                     await db.clients.updateOne({_id:new ObjectId(clientId)},{$set:{status:"Approved"}})
                 }
-                console.log({pro});
                 if(pro){
                     return true;
                 }else{
@@ -1229,7 +1188,6 @@ module.exports = {
     },
 
     dbGetStatusDate:async(month,year)=>{
-        console.log({month,year});
         let dateModel = await db.modelerList.aggregate([
             {
                 $unwind:"$models"
@@ -1258,7 +1216,6 @@ module.exports = {
               }  
             }
         ])
-        console.log({dateModel});
         return  dateModel
     },
 
@@ -1334,7 +1291,6 @@ module.exports = {
           {
             arrayFilters: [{ "inner.articleId": articleId }]
           });
-           console.log({a});
             await db.modelerProducts.updateOne({clientId:new ObjectId(clientId),'assignedPro.articleId':articleId},{$set:{'assignedPro.$.price':price}});
             return true;
         } catch (error) {
@@ -1344,7 +1300,6 @@ module.exports = {
     },
 
     dbCreateBudget:async(budget)=>{
-        console.log(budget);
         let date = new Date();
         date.setHours(0, 0, 0, 0);
         try {
@@ -1390,10 +1345,8 @@ module.exports = {
     dbUpdateReff:async(url,articleId,clientId)=>{
         try {
             let updateReff = await db.Products.updateOne({clientId:new ObjectId(clientId),'productList.articleId':articleId},{$set:{'productList.$.Reff':url}});
-            console.log({updateReff});
             if(updateReff.acknowledged){
                 let ack = await db.modelerProducts.updateOne({clientId:new ObjectId(clientId),'assignedPro.articleId':articleId},{$set:{'assignedPro.$.Reff':url}});
-                console.log({ack});
                 if(ack.acknowledged){
                     return true;
                 }else{
@@ -1408,7 +1361,6 @@ module.exports = {
 
     dbGetNotifications:async(rollNo,flag)=>{
         try {
-            console.log("sdfasdf");
             if(flag == "seeLess"){
             let data = await db.hotspot.aggregate([
                 {
@@ -1448,7 +1400,6 @@ module.exports = {
                 }
             ]);
             
-            console.log({data});
             let helpData = [];
             if(rollNo == "1"){
                 helpData = await db.helpLine.find({});
@@ -1475,7 +1426,6 @@ module.exports = {
                         }
                     }
                 ])
-                console.log({data});
                 let helpData = [];
             if(rollNo == "1"){
                 helpData = await db.helpLine.find({});
@@ -1490,7 +1440,6 @@ module.exports = {
 
     dbGetProgress:async(clientId)=>{
         try {
-            console.log(clientId);
             let maxList = await db.modelerList.aggregate([
                 {
                     $unwind:"$models"
@@ -1514,7 +1463,6 @@ module.exports = {
                     $match:{"models.clientId":new ObjectId(clientId)}
                 },
             ])
-            console.log(maxList,modelerList);
             let data = [];
             
             for(let item1 of maxList){
@@ -1522,7 +1470,6 @@ module.exports = {
                     let obj = {}
                     if(item1.maxList == item2.models.list&&item1.modelerId.equals(item2._id)){
                         let totalAmount = 0;
-                        console.log(item2.modelerName);
                         obj.modelerName = item2.modelerName;
                         obj.modelerRollNo = item2.rollNo;
                         obj.totalProducts = item2.models.models.length;
@@ -1579,7 +1526,7 @@ module.exports = {
         //         }
         //     }
         // ])
-        console.log({data});
+
         if(data.length != 0) return {status:true,response:data};
         else return {status:false,error:"No data found",response:data}
         } catch (error) {
@@ -1593,7 +1540,6 @@ module.exports = {
            let clientDetails = await db.clients.findOne({_id:new ObjectId(clientId)});
            let clientName = clientDetails.clientName;
            let resultNew = await polygonCounter(articleId,clientId,clientName,version);
-           console.log({resultNew});
            if(resultNew) return resultNew; 
            else throw new Error;
         } catch (error) {
@@ -1637,7 +1583,6 @@ module.exports = {
                     }
                 }
             ]);
-            console.log({modelers});
             if(modelers){
                 return modelers
             }else{
@@ -1697,7 +1642,6 @@ module.exports = {
                       }
                 }
             ])
-            console.log(getModerlerModels[0].models);
             if(getModerlerModels){
                 return {status:true,data:getModerlerModels}
             }else{
@@ -1712,7 +1656,6 @@ module.exports = {
     dbCreateBankDetails:async(bankData)=>{
         try {
             let created = await db.modelerList.updateOne({rollNo:bankData.rollNo},{$push:{bankDetails:bankData.bankDetials}});
-            console.log({created});
             if(created){
                 return {status:true,error:false};
             }else{
@@ -1726,7 +1669,6 @@ module.exports = {
 
     dbCreateInvoice:async(invoiceId,modelerId,bonus)=>{
         try {
-            console.log({invoiceId,modelerId});
             let invoiceExist = await db.invoice.find({modelerId:modelerId,invoiceId:invoiceId});
             if(invoiceExist.length == 0){
                 let a=await db.modelerList.updateMany(
@@ -1762,7 +1704,7 @@ module.exports = {
                         ]
                       }
                 )
-             console.log({a,b});   
+  
             let data = {
                 modelerId:modelerId,
                 invoiceId:invoiceId
@@ -1786,12 +1728,9 @@ module.exports = {
 
     dbUpdateBudgetExceed:async()=>{
         try {
-            console.log("db reached");
             let updateItem = await db.budget.find({}).sort({_id:-1}).limit(1);
-            console.log(updateItem);
-           
+            
                 let result = await db.budget.updateOne({_id:updateItem[0]._id},{$set:{exceeded:true}});
-                console.log({result});
                 if(result.acknowledged){
                     return true;
                 }else{
@@ -1799,7 +1738,6 @@ module.exports = {
                 }
      
         } catch (error) {
-            console.log("this one");
             console.log(error);
             return false
         }  
@@ -1912,9 +1850,7 @@ module.exports = {
 
     dbGetallModelsForModeler:async(modelerId)=>{
         try {
-            console.log({modelerId});
             let modelers = await db.modelerList.find({_id:modelerId});
-            console.log(modelers);
             if(modelers.length != 0){
                 return modelers;
             } 
@@ -1953,31 +1889,27 @@ module.exports = {
     },
 
     dbScrapeImg:async(link,productName,articleId,clientName)=>{
-        try {console.log("started");
+        try {
             const folderPath = `./public/images/${clientName}/${articleId}`;
             if(!fs.existsSync(folderPath)){
             const response = await axios.get(link);
             const $ = cheerio.load(response.data);
             let hasMatchingWord = (altText,searchText)=>{
-                console.log("hasMAtch called");
                 const altWords = altText.toLowerCase().split(' ');
                 const searchWords = searchText.toLowerCase().split(' ');
                 return searchWords.some(word => altWords.includes(word));
             }
     
             let images = $('img').filter(function() {
-                console.log(`image tag: ${this}`);
                 const altText = $(this).attr('alt');
                 return altText && hasMatchingWord(altText,productName)
             })
-            console.log("reached");
-           
+            
             const scrapedImages = images.map(function() {
-                console.log("called");
                 let src = $(this).attr('src');
                 let dataZoomImage = $(this).attr('data-zoom-image');
                 const srcset = $(this).attr('srcset');
-                console.log({src,dataZoomImage,srcset});
+                
     
                 const baseUrl = new URL(link);
                 if (src && !src.startsWith('http')) {
@@ -1991,8 +1923,7 @@ module.exports = {
                 }
                 return { src, dataZoomImage, srcset };
               });
-              console.log({scrapedImages});
-
+              
               if(scrapedImages.length != 0 ){
                 const imageUrls = Object.values(scrapedImages).map((image) => {
                     if(image.dataZoomImage) return image.dataZoomImage
@@ -2038,10 +1969,9 @@ module.exports = {
                 let clientName = client.clientName.replace(regex,"_");
                 let fileCount = 0;
                 if(fs.existsSync(`./public/images/${clientName}/${articleId}`)){
-                    console.log("got it",fileCount);
                    let files = fs.readdirSync(`./public/images/${clientName}/${articleId}`);
                    fileCount = files.length;
-                   console.log(fileCount);
+
                 }else{
                     console.log("not found");
                 }
@@ -2064,10 +1994,8 @@ module.exports = {
                 let clientName = client.clientName.replace(regex,"_");
                 let fileCount = 0;
                 if(fs.existsSync(`./public/images/${clientName}/${articleId}`)){
-                    console.log("got it",fileCount);
                    let files = fs.readdirSync(`./public/images/${clientName}/${articleId}`);
                    fileCount = files.length;
-                   console.log(fileCount);
                 }else{
                     console.log("not found");
                 }
@@ -2102,7 +2030,7 @@ module.exports = {
         try {
             let clientDetails = await db.clients.findOne({_id:new ObjectId(clientId)});
             const regex =  /[^a-zA-Z0-9]/g;
-            console.log(clientDetails);
+
             let clientName = clientDetails.clientName.replace(regex,"_");
            let hotspots = await db.hotspot.aggregate([
             {
@@ -2115,7 +2043,7 @@ module.exports = {
                 }
             }
            ])
-           console.log(hotspots);
+
            if(hotspots.length != 0){
             if(!fs.existsSync(`./public/models/${clientName}/${articleId}/version-${hotspots[0].maxOne + 1}/${articleId}.glb`)){
                 return {status:true,version:hotspots.maxOne,msg:"no updates"}
@@ -2147,7 +2075,7 @@ module.exports = {
 
     createCorrection:async(data)=>{
         try {
-            console.log({data});
+
             let clientDetails = await db.clients.findOne({_id:new ObjectId(data.clientId)});
             let modelTeam = await db.modelerProducts.findOneAndUpdate({clientId:new ObjectId(data.clientId),'assignedPro.articleId':data.articleId},{$set:{"assignedPro.$.productStatus":"Correction"}});
             const regex = /[^a-zA-Z0-9]/g;
@@ -2170,7 +2098,7 @@ module.exports = {
                     arrayFilters: [{ "inner.articleId": data.articleId }]
                   });
                 let modeler = await db.modelerList.findOne({rollNo:modelTeam.modRollno,"models.clientId":new ObjectId(data.clientId)});
-                console.log({modeler});
+        
                 let client = modeler.models.find((client)=>{
                     if(client.clientId==data.clientId && client.list==list){
                         return client
@@ -2197,7 +2125,7 @@ module.exports = {
             } 
         if(clientDetails){
             if(data.version == 1){
-                console.log("first time");
+
                 data.version = 1
                 data.QA = modelTeam.QaTeam;
                 data.modeler = modelTeam.assigned;
@@ -2206,10 +2134,10 @@ module.exports = {
                 data.modelerView = false;
                 data.date = new Date()
                 let correction = await db.hotspot.create(data);
-                console.log({correction});
+
                 return {status:true,version:1,correction:correction._id,client:clientDetails}
             }else{
-                console.log("else case run");
+                
                 data.QA = modelTeam.QaTeam;
                 data.modeler = modelTeam.assigned;
                 data.QA_rollNo = modelTeam.qaRollNo;
@@ -2245,21 +2173,20 @@ module.exports = {
                 }
             }
         ])
-        console.log({maxVersion});
+        
         if(maxVersion.length != 0){
           if(fs.existsSync(`./public/models/${clientName}/${articleId}/version-${maxVersion[0].maxOne + 1}/${articleId}.glb`)){
-            console.log("Asdfdf");
+            
             updateAvailable = true;
           }
           let latest = await db.hotspot.find({clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne});
         if(latest.length != 0){
-            console.log({updateAvailable});
+            
             return {status:true,data:latest,update:updateAvailable}
         }else{
             console.log("not corrections");
         } 
         }else{
-            console.log("aggragation no");
             return {status:false,data:false}
         }
         
@@ -2282,7 +2209,6 @@ module.exports = {
                     }
                 }
             ])
-           console.log({maxVersion});
             if(maxVersion.length != 0){
                 // let hotspots = await db.hotspot.find({clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne});
                 // if(hotspots.length != 0){
@@ -2309,7 +2235,7 @@ module.exports = {
                         $match:{clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne,date:{$lte:new Date(new Date() - 5 * 60 * 1000)}}
                     },
                 ])
-                console.log({testhotspot});
+        
                 if(testhotspot.length != 0){
                             console.log("correction is found");
                             return {status:true,data:testhotspot,msg:"data found"}
@@ -2331,9 +2257,9 @@ module.exports = {
 
     dbGetHotspotById:async(hotspotInfo)=>{
         try {
-            console.log(hotspotInfo);
+            
             let hotspot = await db.hotspot.find({articleId:hotspotInfo.articleId,clientId:new ObjectId(hotspotInfo.clientId),version:hotspotInfo.version});
-            console.log({hotspot});
+            
             if(hotspot.length != 0) return hotspot;
             else throw new Error(`unable to find the hotspot of ${hotspotInfo.version}!!`)
         } catch (error) {
@@ -2355,7 +2281,6 @@ module.exports = {
     dbGetUserBankDetails:async(userInfo)=>{
         try {
             const user = await db.modelerList.findOne({rollNo:userInfo.rollNo});
-            console.log({user});
             if(user){
                 const bankInfo = user.bankDetails.length != 0 ? user.bankDetails[0] : false;
                 return {status:true,data:bankInfo,modeler:user}
@@ -2370,9 +2295,8 @@ module.exports = {
 
     dbUpdateBankInfo:async(bankInfo,rollNo)=>{
         try {
-            console.log(bankInfo,rollNo);
           let result = await db.modelerList.updateOne({rollNo:rollNo},{$set:{bankDetails:bankInfo}});
-          console.log(result);
+          
           if(result.modifiedCount === 1) return true ;
           else return false;  
         } catch (error) {
@@ -2397,8 +2321,7 @@ module.exports = {
     
     dbGetAllModelListForModeler:async(modelerId)=>{
         try {
-            console.log("modeler list ");
-            console.log(modelerId);
+            
             const list = await db.modelerList.aggregate([
                 {
                     $match: {
@@ -2452,8 +2375,7 @@ module.exports = {
                     }
                   }
             ])
-            console.log({list});
-            console.log("sdfasdfasdfasdfas");
+            
             if(list.length != 0){
                 return list;
             }else{
@@ -2482,7 +2404,7 @@ module.exports = {
     AdbGetClientById:async(clientId)=>{
         try {
             let client = await db.clients.findOne({_id:new ObjectId(clientId)});
-            console.log({client});
+            
             if(client) return client;
             else return false;
         } catch (error) {
@@ -2496,12 +2418,12 @@ module.exports = {
             let target = await db.hotspot.findOne({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId});
             if(target){
                 let targetTime = new Date(target.date);
-                console.log({targetTime});
+                
                 let currTime = new Date();
                 let timeDifferenceInMinutes = currTime - targetTime;
                 timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
                 timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 60);
-                console.log({timeDifferenceInMinutes});
+                
                 if(timeDifferenceInMinutes <= 5){
                     let updateHotspot = await db.hotspot.findOneAndUpdate({clientId:new ObjectId(corrData.clientId),articleId:corrData.articleId,version:corrData.version,hotspotId:corrData.hotspotId},{$set:{correction:corrData.text}});
                     if(updateHotspot){
@@ -2532,10 +2454,10 @@ module.exports = {
                 let target = await db.hotspot.findOne({clientId:new ObjectId(element.clientId),articleId:element.articleId,version:element.version,hotspotId:element.hotspotId});
                 team = target
             }
-            console.log({target});
+            
             if(target){
                 let targetTime = new Date(target.date);
-                console.log({targetTime});
+               
                 let currTime = new Date();
                 let timeDifferenceInMinutes = currTime - targetTime;
                 timeDifferenceInMinutes = Math.floor(timeDifferenceInMinutes / 1000);
@@ -2555,8 +2477,8 @@ module.exports = {
                     return {status:false,msg:"time exceeded"}
                 }
             }else{
-                console.log("newly added hotspot!!!11");
-                console.log(team);
+                
+               
                 corrData.date = team.date;
                 corrData.modeler = team.modeler;
                 corrData.QA = team.QA;
@@ -2587,9 +2509,7 @@ module.exports = {
             console.log("timing differences");
             console.log({timeDifferenceInMinutes});
             if(timeDifferenceInMinutes <= 5){
-                console.log(hotspotName);
                 let deleteRes = await db.hotspot.deleteOne({hotspotName:hotspotName,articleId:articleId,clientId:new ObjectId(clientId)});
-                console.log(deleteRes);
                 if(deleteRes.deletedCount != 0){
                     return {status:true,msg:"Deleted"};
                 }
@@ -2604,7 +2524,7 @@ module.exports = {
 
     dbCreateDeadLineForModeler:async(deadLine)=>{
         try {
-            console.log(deadLine);
+            
             let maxListNo = await db.modelerList.aggregate([
                 {
                     $match:{rollNo:deadLine.modRoll}
@@ -2623,9 +2543,9 @@ module.exports = {
                 }
               ])
             const list = maxListNo[0].maxList
-            console.log(list);
+            
             if(deadLine.status == 'deadLineOne'){
-                console.log("run");
+                
                 
               let a =  await db.modelerList.updateOne({
                     rollNo: deadLine.modRoll,
@@ -2641,7 +2561,7 @@ module.exports = {
                       "models.$.deadLineOne": deadLine.date,
                     }
                   })
-                  console.log({a});
+                  
             }else{
               let b =  await db.modelerList.updateOne({
                     rollNo: deadLine.modRoll,
@@ -2657,7 +2577,7 @@ module.exports = {
                       "models.$.deadLineTwo": deadLine.date,
                     }
                   })
-                  console.log({b});
+                  
             }
             return true;
         } catch (error) {
@@ -2669,10 +2589,10 @@ module.exports = {
     dbUpdateBonusForModeler:async(flag,modRoll,clientId,list)=>{
         try {
             if(!flag){
-                console.log(modRoll,clientId);
+                
                 let removeFirstDeadLine = await db.modelerList.updateOne({rollNo:modRoll,'models.clientId':new ObjectId(clientId),'models.list':list},{$set:{"models.$.deadLineOne":null}});
                 if(removeFirstDeadLine){
-                 console.log(removeFirstDeadLine);
+                 
                  return true;
                 }else{
                  return false;
@@ -2735,7 +2655,7 @@ module.exports = {
 
     dbGetApprovedModelsForModeler:async(modRollNo)=>{
         try {
-            console.log(modRollNo);
+           
             let clients = await db.modelerProducts.aggregate([
                 {
                   $match: {
@@ -2783,14 +2703,14 @@ module.exports = {
 
     dbUpdateNotificationStatus:async(hotspotInfo)=>{
         try {
-            console.log(hotspotInfo);
+            
             let updatedRes = await db.hotspot.updateMany({
                 mod_rollNo:hotspotInfo.modelerRollNo,
                 clientId:new ObjectId(hotspotInfo.clientId),
                 articleId:hotspotInfo.articleId,
                 version:hotspotInfo.version
             },{$set:{modelerView:true}});
-            console.log({updatedRes});
+            
             if(updatedRes){
                 return true;
             }else{
@@ -2828,7 +2748,7 @@ module.exports = {
                     }
                 }
             ])
-            console.log({notifications});
+            
             if(notifications){
                 
                 return notifications

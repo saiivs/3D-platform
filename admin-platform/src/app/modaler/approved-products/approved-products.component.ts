@@ -32,7 +32,6 @@ export class ApprovedProductsComponent {
   ngOnInit(){
     
     let modRollNo = localStorage.getItem('rollNo');
-    console.log(modRollNo);
     this.subscription = this.backEnd.getApprovedModelsForModeler(modRollNo).subscribe((data)=>{
       this.clients = data.clients;  
       let count = 0;
@@ -45,7 +44,6 @@ export class ApprovedProductsComponent {
 
   scrapeImages(url:string,name:string,articleId:string){
     this.subscription1 = this.backEnd.scrapeImages(url,name,articleId,this.clientDetails[0].clientName).subscribe((res)=>{
-      console.log(res);
       
     })
   }
