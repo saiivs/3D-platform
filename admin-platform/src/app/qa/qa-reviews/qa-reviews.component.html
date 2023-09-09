@@ -177,13 +177,13 @@
                         <ng-container *ngFor="let message of groupedMessages[date]">
                           <div class="chat-content" *ngIf="message.user == userEmail" style="margin-bottom: 8px;background-color: #0010f78c;" >
                               <p *ngIf="message.user == userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
-                              <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>
+                              <time class="chat-time" >{{message.time}}</time>
                           </div>
                           
                           <div *ngIf="message.user != userEmail" class="chat-content" style="margin-bottom: 8px;float: left;" [ngStyle]="{background : message.roll == '3D' ?  '#62a8ea' : '#526D82'}">
                               <p *ngIf="message.user != userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
                               <div class="timeRoll">
-                                <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}  </time>
+                                <time class="chat-time" >{{message.time}}</time>
                                 <small class="roll" *ngIf="message.roll != '3D'">{{message.roll}}</small>
                             </div>   
                           </div> 

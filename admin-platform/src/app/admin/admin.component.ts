@@ -80,6 +80,7 @@ export class AdminComponent implements OnInit,OnDestroy{
 
   logOut(){
     localStorage.clear();
+    window.sessionStorage.removeItem('userToken');
     this.route.navigate(['/'])
   }
 

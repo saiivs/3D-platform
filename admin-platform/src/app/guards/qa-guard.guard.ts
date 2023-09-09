@@ -13,7 +13,7 @@ export class QAGuardGuard implements CanActivate {
   }
 
   canActivate():any{
-    if(localStorage.getItem("userToken")&&localStorage.getItem("userRole") == "QA"){
+    if(window.sessionStorage.getItem('userToken')&&localStorage.getItem("userRole") == "QA"){
       this.backEndService.checkUser().subscribe((response)=>{
         if(response.prevent){
           return false;
@@ -25,8 +25,5 @@ export class QAGuardGuard implements CanActivate {
       this.router.navigate(['pageNotFound'])
       return false;
     }
-
   }
-
-
 }

@@ -4,6 +4,7 @@ import { BackendService } from '../services/backend.service';
 import { userRes } from '../models/interface';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -37,7 +38,8 @@ export class LoginComponent implements OnInit,OnDestroy {
     this.subscription = this.backEndService.userLogin(this.reactiveForm.value).subscribe((response)=>{
         if(response.token){
          this.resData = response;
-         localStorage.setItem("userToken",this.resData.token)
+        //  localStorage.setItem("userToken",this.resData.token);
+         window.sessionStorage.setItem('userToken', this.resData.token);
          localStorage.setItem("userEmail",this.resData.userEmail)
          localStorage.setItem("userRole",this.resData.userRole)
          localStorage.setItem("rollNo",this.resData.rollNo);

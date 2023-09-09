@@ -13,7 +13,7 @@ constructor(private backEndService:BackendService,private router:Router){
 }
 
   canActivate():any{
-    if(localStorage.getItem("userToken")&&localStorage.getItem("userRole") == "3D"){
+    if(window.sessionStorage.getItem('userToken')&&localStorage.getItem("userRole") == "3D"){
       this.backEndService.checkUser().subscribe((response)=>{
         if(response.prevent){
           return false;

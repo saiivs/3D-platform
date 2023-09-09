@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
   }
 
   canActivate():any{
-    if(localStorage.getItem("userToken")&&localStorage.getItem("userRole") == "admin"){
+    if(window.sessionStorage.getItem('userToken')&&localStorage.getItem("userRole") == "admin"){
       this.backEndService.checkUser().subscribe((response)=>{
         if(response.prevent){
           return false;

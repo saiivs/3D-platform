@@ -146,7 +146,7 @@
                             
                             <div *ngIf="message.user != userEmail" class="chat-content" style="float: left;margin-bottom: 8px;" [ngStyle]="{background : message.roll == 'QA' ?  '#62a8ea' : '#526D82'}">
                                 <p *ngIf="message.user != userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
-                                <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>    
+                                <time class="chat-time" >{{message.time}}</time>    
                             </div> 
                           </ng-container>
                           <!-- <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" ><time >Today</time></p> -->
