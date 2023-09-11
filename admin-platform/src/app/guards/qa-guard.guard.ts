@@ -13,7 +13,7 @@ export class QAGuardGuard implements CanActivate {
   }
 
   canActivate():any{
-    if(window.sessionStorage.getItem('userToken')&&localStorage.getItem("userRole") == "QA"){
+    if(localStorage.getItem("userToken")&&localStorage.getItem("userRole") == "QA"){
       this.backEndService.checkUser().subscribe((response)=>{
         if(response.prevent){
           return false;

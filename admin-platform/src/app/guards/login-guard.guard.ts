@@ -26,7 +26,7 @@ export class LoginGuardGuard implements CanActivate {
   }
 
   canActivate():any{
-    if(window.sessionStorage.getItem('userToken')){
+    if(localStorage.getItem("userToken")){
       let url = this.checkUrl();
       this.router.navigate([url])
     }else{

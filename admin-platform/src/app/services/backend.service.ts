@@ -81,7 +81,7 @@ export class BackendService {
   }
 
   getToken(){
-    return window.sessionStorage.getItem('userToken')||" "
+    return localStorage.getItem("userToken")||" "
   }
 
   createProduct(proList:any,client:any):Observable<any>{
