@@ -2232,7 +2232,7 @@ module.exports = {
 
                 let testhotspot = await db.hotspot.aggregate([
                     {
-                        $match:{clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne,date:{$lte:new Date(new Date() - 5 * 60 * 1000)}}
+                        $match:{clientId:new ObjectId(clientId),articleId:articleId,version:maxVersion[0].maxOne,date:{$lte:new Date(new Date() - 1 * 60 * 1000)}}
                     },
                 ])
         
