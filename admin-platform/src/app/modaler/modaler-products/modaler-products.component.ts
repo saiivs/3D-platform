@@ -33,9 +33,12 @@ deadLineOne!:string|null
 deadLineTwo!:string|null;
 isLoading:Boolean = false;
 contentLoading:Boolean = false;
+totalCorrectionModels:number = 0;
+totalApprovedModels:number = 0;
 subscription!:Subscription;
 subscription1!:Subscription;
 subscription2!:Subscription;
+requirement:any
  
 
 
@@ -45,21 +48,21 @@ ngOnInit() {
   if(data.proData){
     this.clientId = data.proData[0].clientId
     this.bonus = data.deadLineBonus.bonus;
+    this.requirement = data.requirement;
     this.deadLineOne = data.deadLineBonus?.deadLineOne;
     this.deadLineTwo = data.deadLineBonus?.deadLineTwo;
     this.products = [...data.proData[0].assignedPro]; 
-    this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false);
+    this.products.forEach((pro)=>{
+      if(pro.productStatus == 'Approved'){
+        this.totalApprovedModels ++;
+      }
+      if(pro.productStatus == 'Correction'){
+        this.totalCorrectionModels ++;
+      }
+    })
+    this.products = this.products.filter(obj => obj.modRollno == localStorage.getItem("rollNo")&&obj.invoice == false&&obj.productStatus != 'Approved');
     
     this.totalRecords = this.products.length
-    if(data.additionalInfo.length > 1){
-      for(let pro of this.products){
-      for (let info of data.additionalInfo){
-        if(this.clientId == info.clientId&&pro.articleId==info.articleId){
-          pro.extraInfo = info.additionalInfo
-        }
-      }
-    }
-    }
   }else{
     this.tableData = false;
   } 

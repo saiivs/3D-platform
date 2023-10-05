@@ -1,13 +1,13 @@
-<div *ngIf="tableData" class="col-12 col-xl-4 bonus">
+<div *ngIf="tableData" class="col-12 col-xl-8 bonus">
   <div class="card bonusBorder">
       <div class="card-body">
           
           <div class="row g-24">
-              <div class="col-12">
+              <div class="col-12 col-xl-6">
                   <div class="row align-items-center justify-content-between bonus" *ngIf="deadLineOne">
                       <div class="col hp-flex-none w-auto">
                           <div class="d-flex align-items-center">
-                            <i class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" style="font-size: 24px;"></i>
+                            <i class="hp-text-color-dark-0 ri-2x ri-medal-fill text-primary me-16" style="font-size: 24px;"></i>
                               
 
                               <div>
@@ -26,9 +26,9 @@
                   <div class="row align-items-center justify-content-between" >
                       <div class="col hp-flex-none w-auto">
                           <div class="d-flex align-items-center">
-                            <i *ngIf="deadLineTwo;else deadlineIcon" class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" style="font-size: 24px;"></i>
+                            <i *ngIf="deadLineTwo;else deadlineIcon" class="hp-text-color-dark-0 ri-2x ri-medal-fill text-primary me-16" style="font-size: 24px;"></i>
                             <ng-template #deadlineIcon>
-                              <i class="hp-text-color-dark-0 ri-1x ri-timer-line" style="margin-right: 4px;font-size: 1.5em;"></i>
+                              <i class="hp-text-color-dark-0 ri-1x ri-timer-fill" style="margin-right: 4px;font-size: 1.5em;"></i>
                             </ng-template>
 
                               <div >
@@ -47,13 +47,73 @@
                           </div>
                       </div>
                   </div>
+              </div>
+              <!-- total correction & approved models -->
+              <div class="col-12 col-xl-6">
+                <div class="row align-items-center justify-content-between bonus">
+                  <div class="col hp-flex-none w-auto">
+                      <div class="d-flex align-items-center">
+                        <i class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill text-success me-16" style="font-size: 24px;"></i>
+                        <!-- <i class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" style="font-size: 24px;"></i> -->
+                          
+
+                          <div>
+                              <h5 class="mb-0">Total Approved</h5>
+                              <p class="mb-0 hp-badge-text fw-normal">Models</p>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col hp-flex-none w-auto">
+                      <div class="form-check form-switch">
+                          {{totalApprovedModels}}
+                      </div>
+                  </div>
+              </div>
+              <div class="row align-items-center justify-content-between bonus">
+                <div class="col hp-flex-none w-auto">
+                    <div class="d-flex align-items-center">
+                      <i class="hp-text-color-dark-0 ri-2x ri-close-circle-fill text-warning me-16" style="font-size: 24px;"></i>
+                      <!-- <i class="hp-text-color-dark-0 ri-2x ri-medal-line text-primary me-16" ></i> -->
+                        
+
+                        <div>
+                            <h5 class="mb-0">Total Correction</h5>
+                            <p class="mb-0 hp-badge-text fw-normal">Models</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col hp-flex-none w-auto">
+                    <div class="form-check form-switch">
+                        {{totalCorrectionModels}}
+                    </div>
+                </div>
+            </div>
               </div>        
           </div>
       </div>
   </div>
 </div>
+
 <div class="hp-main-layout-content" style="width: 100%;max-width: 100%;">
   <div class="row mb-32 gy-32">
+    <div class="col-12 col-xl-12" *ngIf="requirement">
+      <div class="card hp-card-1 hp-upgradePlanCardOne">
+          <div class="card-body d-flex align-items-center">
+              <div class="row flex-grow-1 align-items-center justify-content-between">
+                  <div class="col-12">
+                      <h5 class="mb-8">Requirements for this list.</h5>
+                      <p class="hp-p1-body mb-0">{{requirement.additionalInfo}}</p>
+                  </div>
+              </div>
+    
+              <div class="hp-dot-1 bg-black-20 hp-bg-color-dark-90"></div>
+              <div class="hp-dot-2 bg-black-20 hp-bg-color-dark-90"></div>
+              <div class="hp-dot-3 bg-success-4 hp-bg-color-dark-success"></div>
+          </div>
+      </div>
+    </div>
     <div class="col-12">
       <div class="card">
         <div class="card-body">

@@ -25,15 +25,16 @@ export class TestComponent implements OnChanges {
   imgType(originalHeight:number,originalWidth:number,horizontal:number,potrait:number,maximum:number){
     let thumbnailWidth: number;
     let thumbnailHeight: number;
-
+    console.log(originalHeight,originalWidth);
+    
   if (originalWidth > originalHeight) {
    
-    thumbnailWidth = 500;
+    thumbnailWidth = horizontal == 600 ? 600 : 500;
     thumbnailHeight = Math.round((originalHeight / originalWidth) * horizontal);
   } else if (originalHeight > originalWidth) {
     // Portrait image
     thumbnailWidth = Math.round((originalWidth / originalHeight) * potrait);
-    thumbnailHeight = 400;
+    thumbnailHeight = potrait == 600 ? 600 : 400;
   } else {
     // Square image
     thumbnailWidth = thumbnailHeight = maximum;

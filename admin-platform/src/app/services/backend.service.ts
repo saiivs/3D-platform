@@ -226,8 +226,8 @@ export class BackendService {
     return this.http.post<boolean>(`${this.url}/setDeadLine/post`,{date,clientId,type}).pipe((catchError(this.erroHandler)))
   }
 
-  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,totalExpense:number,remainingBudget:number,budgetExceed:string,list:any):Observable<boolean>{
-    return this.http.post<boolean>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list}).pipe((catchError(this.erroHandler)))
+  updatePrice(price:number,clientId:Types.ObjectId,articleId:string,modelerRollNo:string,totalExpense:number,remainingBudget:number,budgetExceed:string,list:any,budget:number):Observable<any>{
+    return this.http.post<any>(`${this.url}/updatePrice/post`,{price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list,budget}).pipe((catchError(this.erroHandler)))
   }
 
   createBudget(budgetPrice:number):Observable<boolean>{
@@ -426,6 +426,26 @@ export class BackendService {
 
   updateInvoicedList(invoiceList:Array<any>):Observable<any>{
     return this.http.post<any>(`${this.url}/updateInvoicedList/post`,{invoiceList}).pipe((catchError(this.erroHandler)));
+  }
+
+  addRequirement(info:string,articleId:string,clientId:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/addRequirement/post`,{info,articleId,clientId})
+  }
+
+  addGlobalRequirementForList(info:string,clientId:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/createListRequirement/post`,{info,clientId})
+  }
+
+  editGlobalRequirement(info:string,clientId:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/editGlobalRequirement/post`,{info,clientId})
+  }
+
+  deleteClient(clientId:any):Observable<any>{
+    return this.http.delete<any>(`${this.url}/deleteClientList/delete/${clientId}`)
+  }
+
+  updateListInfo(info:string,clientId:any,field:string,uniquefieldValue:any):Observable<any>{
+    return this.http.post<any>(`${this.url}/updateListInfo/post`,{info,clientId,field,uniquefieldValue})
   }
 
   cacheModelForReview(url:string){

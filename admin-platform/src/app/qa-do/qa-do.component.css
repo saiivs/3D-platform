@@ -2,7 +2,7 @@ model-viewer {
     position: relative;
     float: left;
     height: 100vh;
-    width: 80%;
+    width: 100%;
   }
 
   .gallery{

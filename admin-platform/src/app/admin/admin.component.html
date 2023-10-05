@@ -170,7 +170,7 @@
                                                 d="M15.33 18.82c0 1.83-1.5 3.33-3.33 3.33-.91 0-1.75-.38-2.35-.98-.6-.6-.98-1.44-.98-2.35"
                                                 stroke="currentColor" stroke-width="1.5" stroke-miterlimit="10"></path>
                                         </svg>
-                                        <span *ngIf="notifyData.length != 0"
+                                        <span *ngIf="notifyData.length != 0 || notifyDeadLine.length != 0"
                                             class="position-absolute translate-middle p-1 rounded-circle bg-primary hp-notification-circle"
                                             style="width: 6px; height: 6px; top: 12px;"></span>
                                     </button>
@@ -192,7 +192,7 @@
                                             
                                             <div class="hp-overflow-y-auto px-10 myScroll"
                                                 style="max-height: 400px; margin-right: -10px; margin-left: -10px;">
-                                                <ng-container *ngIf="notifyData.length != 0;else noNotify">
+                                                <ng-container *ngIf="notifyData.length != 0 || notifyDeadLine.length != 0;else noNotify">
                                                     <ng-container *ngFor="let modelers of notifyData">
                                                        <div (click)="viewModelersList(modelers._id,notify.clientId)" *ngFor="let notify of modelers.completedList;let i = index"
                                                         class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10"
@@ -216,6 +216,37 @@
                                                         </div>
                                                     </div> 
                                                     </ng-container>
+                                                    <ng-container *ngIf="notifyDeadLine.length != 0;">
+                                                        <div *ngFor="let client of notifyDeadLine"
+                                                    class="row hp-cursor-pointer rounded hp-transition hp-hover-bg-primary-4 hp-hover-bg-dark-80 py-12 px-10"
+                                                    style="margin-left: -10px; margin-right: -10px;">
+                                                    <div class="w-auto px-0 me-12">
+                                                        <div class="avatar-item d-flex align-items-center justify-content-center rounded-circle"
+                                                            style="width: 48px; height: 48px;">
+                                                            <i class="hp-text-color-dark-0 ri-2x ri-todo-line"></i>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-auto px-0 col">
+                                                        <span class="hp-text-color-black-60"></span>
+                                                        Exceeded Dead line
+                                                        <p
+                                                            class="d-block fw-medium hp-p1-body hp-text-color-black-100 hp-text-color-dark-0 mb-4">
+                                                            <ng-container *ngIf="client.project_deadline == 'exceeded' && client.internal_deadline == 'exceeded'">
+                                                                <span class="hp-text-color-black-60">{{client.clientName}}- has exceeded internal & project dead line.</span>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="client.project_deadline == 'exceeded' && client.internal_deadline != 'exceeded'">
+                                                                <span class="hp-text-color-black-60">{{client.clientName}}- has exceeded project dead line.</span>
+                                                            </ng-container>
+                                                            <ng-container *ngIf="client.project_deadline != 'exceeded' && client.internal_deadline == 'exceeded'">
+                                                                <span class="hp-text-color-black-60">{{client.clientName}}- has exceeded internal dead line.</span>
+                                                            </ng-container>
+                                                        </p>
+                                                        <!-- <span class="d-block hp-badge-text fw-medium hp-text-color-black-60 hp-text-color-dark-40">1m ago</span> -->
+                                                    </div>
+                                                </div>  
+                                                    </ng-container>
+                                                   
                                                     
                                                 </ng-container>
                                                 <ng-template #noNotify>

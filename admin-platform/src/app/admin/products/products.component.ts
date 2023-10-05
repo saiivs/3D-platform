@@ -81,6 +81,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
   requirementSelectFlag:Boolean = true;
   clientOverallRequirement:string = "";
   isLoading:Boolean = false;
+  requirementIndex!:number;
+  requirementTxt:any = "";
+  globalRequirement:any = "";
+  globalReqFlag:Boolean = false;
+  globalBeforeEditedTxt:any = "";
+  editRequirementMode:Boolean = false;
+  missingInfoTitle:string = "";
+  missingInfoUpdateValue = "";
+  uniquefieldValue:any = "";
+  missingFieldIndex:number = 0;
+  clientNameForTemp:string = "";
   
   ngOnInit() {
     this.titleService.setTitle("Products");
@@ -97,7 +108,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
     this.productId = this.route.snapshot.params['id'];
     this.subscription1 = this.backEndService.getProlist(this.productId).subscribe((res) => {
-      this.clientName = res.Arr[2].clientName
+      this.clientName = res.Arr[2].clientName;
+      this.clientNameForTemp = res.Arr[2].clientName;
+      this.globalRequirement = res.Arr[1].requirement ? res.Arr[1].requirement.additionalInfo : "";
+      this.globalReqFlag = this.globalRequirement ? true : false;
       const regex = /[^a-zA-Z0-9]/g;
       this.clientName = this.clientName.replace(regex, '_')
       this.remainingBudget = res.Arr[1].budgetValue;
@@ -105,29 +119,29 @@ export class ProductsComponent implements OnInit, OnDestroy {
       this.updatedBudget = res.Arr[1].budgetValue;
       this.exactBudget = res.Arr[1].exactBudget;
       this.totalExpense = res.Arr[1].totalExpense
-      if(this.budget == 0){
+      if(this.remainingBudget == 0){
         this.budgetExceeded = "Monthly budget has been exceeded"
         this.updatedBudget = res.Arr[1].totalExpense
       } 
 
-      if (res.requirement.length != 1) { 
-        this.clientOverallRequirement = ""
-      } else {
-        this.clientOverallRequirement = res.requirement[0].requirement
-      }
+      // if (res.requirement.length != 1) { 
+      //   this.clientOverallRequirement = ""
+      // } else {
+      //   this.clientOverallRequirement = res.requirement[0].requirement
+      // }
       // this.requirementData = res.requirement[0]
       this.clientId = res.Arr[0].clientId
       this.products = [...res.Arr[0].productList];
      
-      if(res.requirement.length > 1){
-        for(let pro of this.products){
-        for (let info of res.requirement){
-          if(this.clientId == info.clientId&&pro.articleId==info.articleId){
-            pro.extraInfo = info.additionalInfo
-          }
-        }
-      }
-      }
+      // if(res.requirement.length > 1){
+      //   for(let pro of this.products){
+      //   for (let info of res.requirement){
+      //     if(this.clientId == info.clientId&&pro.articleId==info.articleId){
+      //       pro.extraInfo = info.additionalInfo
+      //     }
+      //   }
+      // }
+      // }
       
       this.subscription3 = this.backEndService.getTagCollections().subscribe((res) => {
         if (res) {
@@ -314,7 +328,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
             
               this.products = this.products.filter((item) => {
                 if (item.isSelected == true) {
-                  item.price = "";
                   item.assigned = modeler.name
                   item.QaTeam = Qa.name
                   item.modRollno = modeler.rollNo;
@@ -375,12 +388,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
             this.products[i].isSelected = true;
           }
         }
-        // this.products.forEach((pro)=>{
-        //   if(pro.assigned){
-        //     pro.reallocate = true;
-        //     pro.isSelected = true;
-        //   }
-        // })
       } else if (result.dismiss === swal.DismissReason.cancel) {
 
       }
@@ -430,8 +437,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
     let i = (this.page - 1) * 50 + index;
     let priceValue = Number(price);
     let list:any = this.products[i].list;
-    this.totalExpense += priceValue;
-     if (this.exactBudget < this.totalExpense) {
+    if(this.exactBudget != null)this.totalExpense += priceValue;
+     if (this.exactBudget < this.totalExpense && this.exactBudget != null) {
       swal.fire({
         title: 'Are you sure?',
         text: "Monthly budget has been exeeded.",
@@ -444,7 +451,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
         if (result.isConfirmed) {
           this.remainingBudget = 0;
           this.budgetExceeded = 'Monthly budget has been exceeded';
-          this.subscription7 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.totalExpense,this.remainingBudget, this.budgetExceeded,list).subscribe((res) => {
+          this.subscription7 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.totalExpense,this.remainingBudget, this.budgetExceeded,list,this.exactBudget).subscribe((res) => {
             if (res) {
               this.products[i].priceAdded = false;
               this.products[i].price = price;
@@ -458,14 +465,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
         }
       })
     } else {
-     this.remainingBudget -= priceValue;
-     this.subscription9 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.totalExpense,this.remainingBudget,this.budgetExceeded,list).subscribe((res) => {
+     if(this.exactBudget != null ){
+      this.remainingBudget -= priceValue;
+     this.subscription9 = this.backEndService.updatePrice(priceValue, this.clientId, articleId, modelerRollno,this.totalExpense,this.remainingBudget,this.budgetExceeded,list,this.exactBudget).subscribe((res) => {
         if (res) {
           this.tempPrice = 0;
           this.products[i].priceAdded = false;
           this.products[i].price = price
         }
       })
+     }else{
+      swal.fire('Please add the budget before adding the model price.')
+     }
+     
     }
     }else{
       console.log("invalid price value");
@@ -565,6 +577,78 @@ export class ProductsComponent implements OnInit, OnDestroy {
     // if(this.addRequirement){
     //   this.products[i].additionalInfo = isChecked;
     // }
+  }
+
+  addAdditionalInfo(index:number,articleId:string){
+    this.requirementTxt = ""
+    this.requirementIndex = (this.page - 1) * 50 + index;
+  }
+
+  viewRequirement(index:number){
+    let i = (this.page - 1) * 50 + index;
+    this.requirementIndex = i;
+    this.requirementTxt = this.products[i].extraInfo;
+  }
+
+  submitAdditionalInfo(){
+    if(this.requirementTxt){
+      this.products[this.requirementIndex].extraInfo = this.requirementTxt;
+      let articleId = this.products[this.requirementIndex].articleId;
+      this.backEndService.addRequirement(this.requirementTxt,articleId,this.clientId).subscribe((res)=>{
+    }) 
+    }  
+  }
+
+  AddGlobalRequirement(){
+    if(this.globalRequirement){
+      this.backEndService.addGlobalRequirementForList(this.globalRequirement,this.clientId).subscribe((res)=>{
+        if(res){
+          this.globalReqFlag = true;
+        }
+      })
+    }
+  }
+
+  enableEditmode(){
+    this.editRequirementMode = true;
+    this.globalBeforeEditedTxt = this.globalRequirement;
+  }
+
+  disableEdit(){
+    this.globalRequirement = this.globalBeforeEditedTxt;
+    this.editRequirementMode = false;
+  }
+
+  editRequirement(){
+    this.editRequirementMode = false;
+    if(this.globalRequirement){
+      this.backEndService.editGlobalRequirement(this.globalRequirement,this.clientId).subscribe((res)=>{
+        if(res){
+          
+        }
+      })
+    }else{
+      this.globalRequirement = this.globalBeforeEditedTxt
+    }
+  }
+
+  addMissingInfo(title:string,matchString:any,index:number){
+    let i = (this.page - 1) * 50 + index;
+    this.missingFieldIndex = i;
+    this.missingInfoTitle = title;
+    this.uniquefieldValue = matchString;
+  }
+
+  updateMissingInfo(){
+    if(this.missingInfoUpdateValue){
+      if(this.missingInfoTitle == 'ArticleId'){
+       this.products[this.missingFieldIndex].articleId = this.missingInfoUpdateValue; 
+      }else{
+        this.products[this.missingFieldIndex].productLink = this.missingInfoUpdateValue; 
+      }
+      this.backEndService.updateListInfo(this.missingInfoUpdateValue,this.clientId,this.missingInfoTitle,this.uniquefieldValue).subscribe((res)=>{
+      })
+    }
   }
 
   checkValue(event: any) {

@@ -570,10 +570,12 @@ module.exports = {
 
     updateModelPrice:async(req,res)=>{
         try {
-            let {price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list} =  req.body;
-            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list);
-            if(priceUpdated){
+            let {price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list,budget} =  req.body;
+            let priceUpdated =  await database.dbUpdateModelPrice(price,clientId,articleId,modelerRollNo,budgetExceed,totalExpense,remainingBudget,list,budget);
+            if(priceUpdated.status){
                 res.status(200).json(true);
+            }else if(priceUpdated.err == 'budget not updated'){
+                res.status(200).json(priceUpdated.err);
             }else{
                 throw new Error
             }
@@ -1482,6 +1484,81 @@ module.exports = {
             }
             console.log("promise completed");
             res.status(200).json(true);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      addRequirement:async(req,res) =>{
+        try {
+            let {info,articleId,clientId} = req.body;
+            let createInfo = await database.dbAddRequirement(info,articleId,clientId);
+            if(createInfo){
+                res.status(200).json(true);
+            }else{
+                throw new Error("something went wrong while updating aditional info");
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      createListRequirement:async(req,res) =>{
+        try {
+            let {info,clientId} = req.body;
+            let createInfo = await database.dbCreateListRequirement(info,clientId);
+            if(createInfo) {
+                res.status(200).json(true);
+            }else{
+                throw new Error("something went wrong with the global requirement creation!!")
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false)
+        }
+      },
+
+      editGlobalRequirement:async(req,res)=>{
+        try {
+            let {info,clientId} = req.body;
+            let updateInfo = await database.dbEditGlobalRequirement(info,clientId);
+            if(updateInfo){
+                res.status(200).json(true);
+            }else{
+                throw new Error;
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      deleteClient:async(req,res) =>{
+        try {
+            let clientId = req.params.clientId;
+            let deleteClient = await database.dbDeleteClient(clientId);
+            if(deleteClient){
+                res.status(200).json(true);
+            }else{
+                throw new Error('Something went wrong with deleting the client!!')
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json(false);
+        }
+      },
+
+      updateClientListInfo:async(req,res) =>{
+        try {
+            let {info,clientId,field,uniquefieldValue} = req.body;
+            let updateList = await database.dbUpdateClientListInfo(info,clientId,field,uniquefieldValue);
+            if(updateList){
+                res.status(200).json(true);
+            }else{
+                throw new Error("something went wrong with missing info updation!!");
+            }
         } catch (error) {
             console.log(error);
             res.status(500).json(false);

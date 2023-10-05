@@ -50,14 +50,30 @@
         </div>
       </div>
     </div> -->
-
+    <div class="col-12 col-xl-12" *ngIf="requirement">
+      <div class="card hp-card-1 hp-upgradePlanCardOne">
+          <div class="card-body d-flex align-items-center">
+              <div class="row flex-grow-1 align-items-center justify-content-between">
+                  <div class="col-12">
+                      <h5 class="mb-8">Requirements for this list.</h5>
+                      <p class="hp-p1-body mb-0">{{requirement.additionalInfo}}</p>
+                  </div>
+              </div>
+    
+              <div class="hp-dot-1 bg-black-20 hp-bg-color-dark-90"></div>
+              <div class="hp-dot-2 bg-black-20 hp-bg-color-dark-90"></div>
+              <div class="hp-dot-3 bg-success-4 hp-bg-color-dark-success"></div>
+          </div>
+      </div>
+    </div>
 
     <div class="col-12">
+      
       <div class="card">
         <div class="card-body">
           <div class="row justify-content-between">
             <div class="col pe-md-32 pe-md-120" >
-              <h4>Products</h4>
+              <h4>{{clientNameForTemp}} - Products</h4>
 
               
             </div>

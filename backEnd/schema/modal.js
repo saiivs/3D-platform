@@ -218,10 +218,6 @@ let clientRequirement = new Schema({
         type:ObjectId,
         required:true
     },
-    articleId:{
-        type:String,
-        required:false
-    },
     additionalInfo:{
         type:String,
         required:true

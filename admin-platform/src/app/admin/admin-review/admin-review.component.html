@@ -7,8 +7,14 @@
         <div class="swiper-wrapper">
           <div class="swiper-slide">
             <div class="d-flex align-items-center justify-content-center">
-              <model-viewer camera-controls camera-orbit="45deg 55deg 115%" [src]="srcFile"
-                alt="A 3D model of an astronaut" data-js-focus-visible="" ar-status="not-presenting">
+              <model-viewer
+               camera-controls 
+               camera-orbit="45deg 55deg 115%" 
+               [src]="srcFile"
+               environment-image = 'https://demosetc.b-cdn.net/HDR/HDRI-Default.hdr'
+                alt="" 
+                data-js-focus-visible="" 
+                ar-status="not-presenting">
               </model-viewer>
               <div class="mywarning" *ngIf="warningMsg != ''">
                 <div class="col-12 col-md-6 col-xl-6" style="margin-left: auto;">
@@ -59,11 +65,9 @@
             *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span>
         </li>
-        <li>Polygon Count : <span>{{gltfData.totalTriangleCount}}</span></li>
-        <li>Material Count : <span>{{gltfData.materialCount}}</span></li>
-        <li>Draw Calls : <span>{{gltfData.drawCallCount}}</span></li>
-        <li>Vertices : <span>{{gltfData.totalVertexCount}}</span></li>
-        <li>Animations : <span>{{gltfData.animationCount}}</span></li>
+        <li>Polygon Count : <span>{{gltfData?.totalTriangleCount}}</span></li>
+        <li>Material Count : <span>{{gltfData?.materialCount}}</span></li>
+        <li>Mesh Count : <span>{{gltfData?.drawCallCount}}</span></li>
         <!-- <li>Admin Status: <span
             [ngStyle]="{color : QaCommentArr[0].adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0].adminStatus}}</span><span
             *ngIf="QaCommentArr[0]?.modalStatus == 'Approved'"><i style="font-size: 0.9rem;
@@ -112,15 +116,15 @@
        
         <h2 *ngIf="!toggleChatBtn;else adminHead">QA-Admin Exchange</h2>
         <ng-template #adminHead>
-          <h2>Interactive Chat</h2>
+          <h4>Chat</h4>
         </ng-template>
         <button *ngIf="!toggleChatBtn;else adminChat" data-bs-toggle="tooltip" title="click for interactive chat" (click)="viewInteractivechat(QaCommentArr[0].articleId,QaCommentArr[0].clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Interactive Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
           font-size: 1em;
       "></i></span></button>
       <ng-template #adminChat>
-        <button data-bs-toggle="tooltip" title="click for admin chat" (click)="viewAdminchat(QaCommentArr[0].articleId,QaCommentArr[0].clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
+        <!-- <button data-bs-toggle="tooltip" title="click for admin chat" (click)="viewAdminchat(QaCommentArr[0].articleId,QaCommentArr[0].clientId,version)"  class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary">Admin Chat <span><i class="hp-text-color-dark-0 ri-2x ri-chat-4-fill" style="margin-left: 3px;
           font-size: 1em;
-      "></i></span></button>
+      "></i></span></button> -->
       </ng-template>
 
       </div>
@@ -227,7 +231,7 @@
                             <p *ngIf="message.user != userEmail" style="margin-bottom: 0em;">{{message.cmnt}}</p>
                             <div class="timeRoll">
                               <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}} </time>
-                              <small class="roll">{{message.roll}}</small>
+                              <small class="roll">{{message.roll == 'QA' ? 'QA' : 'Modeler'}}</small>
                             </div>
                           </div>
                         </ng-container>

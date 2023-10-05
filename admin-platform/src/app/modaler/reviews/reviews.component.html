@@ -13,6 +13,7 @@
                           camera-controls
                           camera-orbit="45deg 55deg 115%"
                           [src]="srcFile"
+                          environment-image = 'https://demosetc.b-cdn.net/HDR/HDRI-Default.hdr'
                           (load)="onModelLoad()"
                           alt="A 3D model of an astronaut"
                           data-js-focus-visible=""
@@ -69,9 +70,7 @@
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li>
               <li>Polygon Count : <span>{{gltfData?.totalTriangleCount}}</span></li>
               <li>Material Count : <span>{{gltfData?.materialCount}}</span></li>
-              <li>Draw Calls : <span>{{gltfData?.drawCallCount}}</span></li>
-              <li>Vertices : <span>{{gltfData?.totalVertexCount}}</span></li>
-              <li>Animations : <span>{{gltfData?.animationCount}}</span></li>
+              <li>Mesh Count : <span>{{gltfData?.drawCallCount}}</span></li>
               <!-- <li>Admin Status: <span [ngStyle]="{color : QaCommentArr[0]?.adminStatus == 'Approved' ? 'green' : 'red'}">{{QaCommentArr[0]?.adminStatus}}</span><span *ngIf="QaCommentArr[0]?.adminStatus == 'Approved'"><i style="font-size: 0.9rem;
                 margin-left: 3px;color: green;" class="hp-text-color-dark-0 ri-2x ri-checkbox-circle-fill"></i></span></li> -->
             </ul>
@@ -112,7 +111,7 @@
             </div>
             <div class="divider"></div>
             <div>
-              <h2 >Modeler-QA Exchange</h2>
+              <h4 >Chat</h4>
             </div>
             <div class="container bootstrap snippets bootdeys mybg">
               <div class="col-md-12 col-xs-12 col-md-offset-2">
@@ -146,7 +145,11 @@
                             
                             <div *ngIf="message.user != userEmail" class="chat-content" style="float: left;margin-bottom: 8px;" [ngStyle]="{background : message.roll == 'QA' ?  '#62a8ea' : '#526D82'}">
                                 <p *ngIf="message.user != userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
-                                <time class="chat-time" >{{message.time}}</time>    
+                                <div class="timeRoll">
+                                  <time class="chat-time" >{{message.time}}</time>
+                                  <small class="roll">{{message.roll == 'QA' ? 'QA' : 'Admin'}}</small>
+                                </div>
+                               
                             </div> 
                           </ng-container>
                           <!-- <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" ><time >Today</time></p> -->

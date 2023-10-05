@@ -25,6 +25,7 @@ export class InvoiceComponent implements OnInit,OnDestroy{
   bankDetails:Array<any> = [];
   invoiceNumber:any = localStorage.getItem('invoiceId')|| false;
   modelerRollNo:any = localStorage.getItem('userRoll')
+  modelerEmail:any = localStorage.getItem('userEmail')
   modelerName:string = '';
   modelerObjectId:string = ''
   totalPrice:number = 0;
@@ -67,6 +68,8 @@ export class InvoiceComponent implements OnInit,OnDestroy{
           return model.productStatus == 'Approved'
         })
         // sdfasf
+        console.log(client);
+        
         if(client.complete && client.eligibleForBonus && client.invoicedList == false){
           let obj = {
             clientId:client.clientId,
@@ -79,9 +82,9 @@ export class InvoiceComponent implements OnInit,OnDestroy{
             let completeDate = new Date(client.completeDate);
             let deadLineOne = new Date(client.deadLineOne);
             let deadLineTwo = new Date(client.deadLineTwo);
-            if(deadLineOne && completeDate.getDate()<=deadLineOne.getDate() && completeDate.getMonth()<=deadLineOne.getMonth() && completeDate.getFullYear()<=deadLineOne.getFullYear()){
+            if(deadLineOne && this.getDatePart(completeDate) <= this.getDatePart(deadLineOne)){
               client.bonus = 50;
-            }else if(completeDate.getDate()<=deadLineTwo.getDate( )&& completeDate.getMonth()<=deadLineTwo.getMonth() && completeDate.getFullYear()<=deadLineTwo.getFullYear()){
+            }else if(this.getDatePart(completeDate) <= this.getDatePart(deadLineTwo)){
               client.bonus = 30;
             }else{
               client.bonus = 0;
@@ -89,13 +92,15 @@ export class InvoiceComponent implements OnInit,OnDestroy{
           }else{
             client.bonus = 0;
           }
+          console.log(client.bonus);
+          
           if(client.bonus != 0){
             client.models.forEach((model:any)=>{
               totalPriceForBonus += model.price; 
             })
             let percentageAmount = totalPriceForBonus * (client.bonus/100);
             this.bonus += percentageAmount;
-           
+            console.log(this.bonus);
             this.totalPrice += totalPrice;
           }else{
             this.totalPrice += totalPrice;
@@ -114,6 +119,10 @@ export class InvoiceComponent implements OnInit,OnDestroy{
     this.subscription2 = this.notificatinService.getNotificationData(localStorage.getItem("rollNo"),"seeLess").subscribe((data)=>{
       this.notificatinService.setNotificationDAta(data);
     })
+  }
+
+  getDatePart(date:any){
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
   getSubTotalWithBonus(){

@@ -164,11 +164,12 @@ export class QaAdminReviewComponent implements OnInit,OnDestroy{
   }
 
   updateModalStatus(articleId:string,status:string){
+    let txt = status == 'Approved' ? 'Are you sure to approve this model?' : 'Are you certain about correcting this model?'
     if(status != 'Correction'){
       swal.fire({
      position: 'center',
      title: 'Confirm',
-     text:  `Are your sure to ${status} this model?`,
+     text:  txt,
      showCancelButton: true,
      confirmButtonText: 'Yes',
      cancelButtonText: 'cancel'

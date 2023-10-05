@@ -199,6 +199,8 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   getGroupedMessageKeys(){
+    console.log(this.groupedMessages);
+    
     return Object.keys(this.groupedMessages);
   }
 
@@ -218,6 +220,7 @@ export class ReviewsComponent implements OnInit,OnDestroy{
     this.flag = true;
     this.comntRef.nativeElement.value = ""
    this.subscription3 = this.backEnd.pushComment(this.QaComment,this.clientId,this.articleId,localStorage.getItem('userEmail')).subscribe((res)=>{
+    this.QaComment = ""
     })   
     } 
   }
@@ -239,12 +242,15 @@ export class ReviewsComponent implements OnInit,OnDestroy{
 
 
   helpCall(){
-    this.subscription4 = this.backEnd.helpLine(localStorage.getItem('rollNo'),this.articleId,this.clientId).subscribe((res)=>{
+    if(localStorage.getItem('rollNo') != "1"){
+      this.subscription4 = this.backEnd.helpLine(localStorage.getItem('rollNo'),this.articleId,this.clientId).subscribe((res)=>{
       if(res.status){
-        if(res.data == 'New') this.toaster.success('success','Lead 3D artist will contact you soon!');
-        else this.toaster.success('success','Lead 3D artist will contact you soon!');  
+        if(res.data == 'New') this.toaster.success('Lead 3D Artist will contact you soon');
+        else this.toaster.success('Lead 3D Artist will contact you soon');  
       }   
     })
+    }
+    
   }
 
   ngOnDestroy(): void {
@@ -295,7 +301,7 @@ uploadModel(){
       this.toaster.success('success','model successfully uploaded'); 
     }else{
       this.isLoading = false;
-      this.toaster.error('Error','Sorry model is under QA.');
+      this.toaster.error('Error','Sorry the model is under QA.');
     }
   })
 }

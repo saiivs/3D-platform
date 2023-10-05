@@ -25,7 +25,9 @@ export class QaProductsComponent implements OnInit,OnDestroy{
   page:number = 1;
   proList:Boolean = true;
   clientName:string = "";
+  clientNameForTemp:string = "";
   serachForModel:string = "";
+  requirement:any;
   clientRequirement!:string|boolean
   subscription!:Subscription;
   subscription1!:Subscription;
@@ -37,21 +39,13 @@ export class QaProductsComponent implements OnInit,OnDestroy{
     this.subscription = this.backEnd.getQaPro(this.Id,qaRollNo).subscribe((data)=>{
      if(data.proList.length > 0){
       this.clientId = data.proList[0].clientId
+      this.requirement = data.requirement
       this.clientDetails = data.proList[0].clientData; 
       const regex = /[^a-zA-Z0-9]/g;
+      this.clientNameForTemp = this.clientDetails[0].clientName;
       this.clientName = this.clientDetails[0].clientName.replace(regex,"_")
       this.products = [...data.proList[0].assignedPro];
       this.totalRecords = this.products.length;    
-      if(data.requirement.length > 1){
-        for(let pro of this.products){
-        for (let info of data.requirement){
-          if(this.clientId == info.clientId&&pro.articleId==info.articleId){
-            pro.extraInfo = info.additionalInfo
-          }
-        }
-      }
-      }
-      
      }else{
       this.proList = false;
      }

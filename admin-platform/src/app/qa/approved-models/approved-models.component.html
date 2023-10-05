@@ -34,7 +34,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <ng-container *ngFor="let client of clients">
+                    <ng-container *ngFor="let client of clients;let clientIndex = index">
                        <tr *ngFor="let pro of client.assignedPro| paginate
                     : {
                         id: 'listing_pagination',
@@ -42,9 +42,10 @@
                         currentPage: page,
                         totalItems: totalRecords
                       };let i = index">
+                      
                       <ng-container >
                         <ng-container *ngIf="serachForModel === ''||(pro.tag.toLowerCase().includes(serachForModel))||(pro.articleId.toLowerCase().includes(serachForModel))||(pro.productName.toLowerCase().includes(serachForModel))">
-                        <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
+                        <td scope="row">{{(page - 1) * 50 + clientIndex + 1}}</td>
                         <td>{{client.clientName}}</td>
                       <td>{{pro.articleId}}</td>
                       <td>

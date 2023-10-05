@@ -182,9 +182,20 @@ p.meta{
 color: white;
 }
 
+.timeRoll{
+  display: flex;
+  justify-content: space-between;
+}
+
+.roll{
+  margin-top: auto;
+  margin-left: 0.5rem;
+}
+
+
 model-viewer {
   position: relative;
   float: left;
-  height: 44vw;
+  height: 41vw;
   width: 100%;
 }

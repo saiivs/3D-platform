@@ -26,6 +26,7 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
   totalApprovedModels:number = 0;
   totalCorruptionModels:number = 0;
   totalApprovedClients:number = 0;
+  totalYetToStartModels:number = 0;
   subscription!:Subscription;
   subscription1!:Subscription;
 
@@ -46,6 +47,7 @@ export class QaLandingPageComponent implements OnInit,OnDestroy{
               item.approvedClient = false;
               if(obj.productStatus == 'Correction') this.totalCorruptionModels = this.totalCorruptionModels + 1;
               if(obj.productStatus == 'Uploaded') this.totalQaModels ++
+              if(obj.productStatus == 'Not Uploaded') this.totalYetToStartModels ++
               
             }else{
               this.totalApprovedModels = this.totalApprovedModels + 1;

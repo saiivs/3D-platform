@@ -174,9 +174,18 @@ p.meta{
   width: 100%;
 }
 
+.roll{
+  margin-top: auto;
+  margin-left: 0.5rem;
+}
+
+.timeRoll{
+  display: flex;
+  justify-content: space-between;
+}
 model-viewer {
   position: relative;
   float: left;
-  height: 44vw;
+  height: 41vw;
   width: 100%;
 }

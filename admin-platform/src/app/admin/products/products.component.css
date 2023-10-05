@@ -11,7 +11,7 @@
 }
 
 .text-with-dots {
-  width: 265px; /* Set the desired width */
+  width: 240px; /* Set the desired width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

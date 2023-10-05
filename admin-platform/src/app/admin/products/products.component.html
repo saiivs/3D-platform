@@ -123,7 +123,7 @@
                             </div>
 
                             <div class="col hp-flex-none w-auto">
-                                <p class="mb-4 hp-p1-body">€ {{exactBudget}}</p>
+                                <p class="mb-4 hp-p1-body">{{exactBudget !== null ? '€ ' + exactBudget : '€ 0'}}</p>
                             </div>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                             </div>
 
                             <div class="col hp-flex-none w-auto">
-                                <p class="mb-4 hp-p1-body">€ {{remainingBudget | number:'.2-2'}}</p>
+                                <p class="mb-4 hp-p1-body">€ {{(remainingBudget !== null ? remainingBudget : 0) | number:'.2-2'}}</p>
                             </div>
                         </div>
                     </div>
@@ -162,7 +162,7 @@
                             </div>
 
                             <div class="col hp-flex-none w-auto">
-                                <p class="mb-4 hp-p1-body">€ {{totalExpense | number:'.2-2'}}</p>
+                                <p class="mb-4 hp-p1-body">€ {{(totalExpense !== null ? totalExpense : 0) | number:'.2-2'}}</p>
                             </div>
                         </div>
                     </div>
@@ -252,10 +252,7 @@
       </div>
 
       <div class="ReqReaBtn">
-        <button *ngIf="requirementSelectFlag" (click)="selectModeForRequirements()" class="btn btn-dark deadlineBtn" ><i class="hp-text-color-dark-0 ri-1x ri-information-line"></i>
-          <span>Add Requirements</span></button>
-        <button *ngIf="addRequirement" type="button" class="btn btn-primary" data-bs-toggle="modal"
-        data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add</button>
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#varyingModal3" data-bs-whatever="@mdo">Add Requirement</button>
         <button class="btn btn-dark deadlineBtn" (click)="reallocateModel()"><i class="hp-text-color-dark-0 ri-1x ri-repeat-line"></i>
           <span>Reallocate</span></button>
         <button (click)="modelerDeadLine()" class="btn btn-primary deadlineBtn">
@@ -265,49 +262,38 @@
       </div>
       
 
-      <a class="btn btn-primary" *ngIf="clientOverallRequirement != ''" data-bs-toggle="collapse" href="#multiCollapseExample1"
-        role="button" aria-expanded="false" aria-controls="multiCollapseExample1">View Requirement</a>
+     
     </div>
-    <div class="modal fade" id="varyingModal" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="varyingModalLabel">Add Requirements</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="message-text" class="col-form-label">Requirement:</label>
-                <textarea class="form-control" (input)="checkValue($event)" #requirement id="message-text"></textarea>
+   
+    <div class="col-12 col-xl-12" *ngIf="globalReqFlag">
+      <div class="card hp-card-1 hp-upgradePlanCardOne">
+          <div class="card-body d-flex align-items-center">
+              <div class="row flex-grow-1 align-items-center justify-content-between">
+                  <div class="col-12">
+                      <h5 class="mb-8">Requirements for this list can be edited by simply clicking on the text.</h5>
+                      <p class="hp-p1-body mb-0" *ngIf="!editRequirementMode" (click)="enableEditmode()" contenteditable="true">{{globalRequirement}}</p>
+                      <textarea name="requirement" class="form-control" *ngIf="editRequirementMode" [(ngModel)]="globalRequirement" [value]="globalRequirement" id=""></textarea>
+                  </div>
+
+                  <div class="col hp-flex-none w-auto mt-5" *ngIf="editRequirementMode">
+                    <button class="btn btn-sm btn-dark" (click)="editRequirement()">Submit</button>
+                    <button class="btn btn-sm btn-dark m-16" (click)="disableEdit()">Canel</button>
+                  </div>
               </div>
-            </form>
+
+              <div class="hp-dot-1 bg-black-20 hp-bg-color-dark-90"></div>
+              <div class="hp-dot-2 bg-black-20 hp-bg-color-dark-90"></div>
+              <div class="hp-dot-3 bg-success-4 hp-bg-color-dark-success"></div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
-            <button type="button" (click)="getRequirement()" [attr.data-bs-dismiss]="canClose ? 'modal' : null"
-              class="btn btn-primary">Submit</button>
-          </div>
-        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="collapse multi-collapse" id="multiCollapseExample1">
-          <div class="card card-body mt-16">
-            <p class="hp-p1-body mb-0">
-              {{requirementData}}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
     <div class="col-12">
       <div class="card">
         <div class="card-body">
           <div class="row justify-content-between">
             <div class="col pe-md-9 pe-md-9 tableHead">
-              <h4>Products</h4>
+              <h4>{{clientNameForTemp}} - Products</h4>
+              <p class="hp-p1-body">*If there are any missing pieces of information in the list, kindly ensure they are added before assigning the products to the QA and modelers.</p>
             </div>
             <ng-template #emptyTable>
               <p class="hp-p1-body emptyTable">
@@ -365,9 +351,14 @@
                       <td scope="row">{{(page - 1) * 50 + i + 1}}</td>
                       <td>
                         <div>
-                          <div>
+                          <div *ngIf="pro.articleId != ('No data-' +(i+1));else missingID">
                             {{pro.articleId}}
                           </div>
+                          <ng-template #missingID>
+                            <div>
+                              <button type="button" (click)="addMissingInfo('ArticleId',pro.articleId,i)" class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary" data-bs-toggle="modal" data-bs-target="#varyingModal4" data-bs-whatever="@mdo">Add</button>
+                            </div>
+                          </ng-template>
                           <div class="dropdown">
                             <a class="dropdown-toggle" href="javascript:;" role="button" id="dropdownMenuLink"
                               data-bs-toggle="dropdown" aria-expanded="false">
@@ -385,11 +376,10 @@
                           </div>
                         </div>
                       </td>
-                      <td ><i *ngIf="pro.extraInfo;else noInfo" class="hp-text-color-dark-0 ri-2x ri-information-line" (click)="aditionalInfoDilog(pro.extraInfo)" style="font-size: 1.5em;color: blue;cursor: pointer;"></i>
-                        <ng-template #noInfo>
-                          --
-                        </ng-template>
+                      <td ><button *ngIf="!pro.extraInfo" type="button" class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary" (click)="addAdditionalInfo(i,pro.articleId)" data-bs-toggle="modal" data-bs-target="#varyingModal" data-bs-whatever="@mdo">Add</button>
+                        <button *ngIf="pro.extraInfo" type="button" class="btn btn-sm btn-primary" (click)="viewRequirement(i)" data-bs-toggle="modal" data-bs-target="#varyingModal2" data-bs-whatever="@mdo">View</button>
                        </td>
+                       
                       <td>
                         <div>
                           <div class="text-with-dots" matTooltip="{{pro.productName}}" matTooltipPosition="above">
@@ -404,11 +394,11 @@
                           </ng-template>
                         </div>
                       </td>
-                      <td *ngIf="pro.productLink;else noLink"><a target="_blank" href="{{pro.productLink}}"
+                      <td *ngIf="pro.productLink != ('No data-' + (i+1));else noLink"><a target="_blank" href="{{pro.productLink}}"
                           style="cursor: pointer;">Click</a>
                       </td>
                       <ng-template #noLink>
-                        <td class="text-danger">NO LINK</td>
+                        <td><button type="button" (click)="addMissingInfo('Product Link',pro.productLink,i)" class="btn btn-text text-primary hp-hover-bg-primary-4 hp-hover-bg-dark-primary" data-bs-toggle="modal" data-bs-target="#varyingModal4" data-bs-whatever="@mdo">Add</button></td>
                       </ng-template>
                       <td *ngIf="pro.assigned;else notAssigned" style="color: rgb(39, 146, 55);font-weight: bold;">
                         <span *ngIf="pro.price == '';else price">
@@ -459,6 +449,98 @@
                   (pageChange)="onPageChange($event)"></pagination-controls>
               </div>
             </div>
+            <!-- modal for adding additional info -->
+            <div class="modal fade" id="varyingModal" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="varyingModalLabel">Add Requirements</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <form>
+                              <div class="mb-3">
+                                  <label for="message-text" class="col-form-label">Type here:</label>
+                                  <textarea class="form-control" [(ngModel)]="requirementTxt" name="b" id="message-text"></textarea>
+                              </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
+                          <button type="button" (click)="submitAdditionalInfo()" data-bs-dismiss="modal" class="btn btn-primary">Add</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- view the requirement -->
+            <div class="modal fade" id="varyingModal2" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="varyingModalLabel">View and edit</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <form>
+                              <div class="mb-3">
+                                  <label for="message-text" class="col-form-label">Type here:</label>
+                                  <textarea class="form-control" [(ngModel)]="requirementTxt" name="a" [value]="requirementTxt" id="message-text"></textarea>
+                              </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
+                          <button type="button" (click)="submitAdditionalInfo()" data-bs-dismiss="modal" class="btn btn-primary">Edit</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- global requirement section -->
+            <div class="modal fade" id="varyingModal3" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="varyingModalLabel">Please add the specified requirements to this list.</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <form>
+                              <div class="mb-3">
+                                  <label for="message-text" class="col-form-label">Type here:</label>
+                                  <textarea class="form-control" [(ngModel)]="globalRequirement" name="c" id="message-text"></textarea>
+                              </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
+                          <button type="button" (click)="AddGlobalRequirement()" data-bs-dismiss="modal" class="btn btn-primary">Add</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- adding missing information to the list -->
+            <div class="modal fade" id="varyingModal4" tabindex="-1" aria-labelledby="varyingModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="varyingModalLabel">Complete Your List: Add Missing Information.</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                          <form>
+                            <div class="mb-3">
+                              <label for="recipient-name" class="col-form-label">{{missingInfoTitle}}:</label>
+                              <input type="text" class="form-control" [(ngModel)]="missingInfoUpdateValue" name="d" id="recipient-name">
+                          </div>
+                          </form>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-text" data-bs-dismiss="modal">Close</button>
+                          <button type="button" (click)="updateMissingInfo()" data-bs-dismiss="modal" class="btn btn-primary">Add</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
             <div class="col-12 mt-24 hljs-container">
               <pre>
                 <code class="html" data-component='table' data-code='overview'></code>

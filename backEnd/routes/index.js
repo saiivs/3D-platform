@@ -229,7 +229,22 @@ router.post('/updateNotificationViewForAdmin/post',auth.authentication,routeHelp
 router.post('/rejectBonusEligibility/post',auth.authentication,routeHelper.rejectBonusEligibility);
 
 // update the invoice list in modelers list.
-router.post('/updateInvoicedList/post',auth.authentication,routeHelper.updateInvoicedList)
+router.post('/updateInvoicedList/post',auth.authentication,routeHelper.updateInvoicedList);
+
+//adding additional info for product
+router.post('/addRequirement/post',auth.authentication,routeHelper.addRequirement);
+
+//create the global requirement for list
+router.post('/createListRequirement/post',auth.authentication,routeHelper.createListRequirement);
+
+//edit the global requirement of the list
+router.post('/editGlobalRequirement/post',auth.authentication,routeHelper.editGlobalRequirement);
+
+//delete the client list
+router.delete('/deleteClientList/delete/:clientId',auth.authentication,routeHelper.deleteClient);
+
+//updating the list with missing information
+router.post('/updateListInfo/post',auth.authentication,routeHelper.updateClientListInfo)
 
 
 

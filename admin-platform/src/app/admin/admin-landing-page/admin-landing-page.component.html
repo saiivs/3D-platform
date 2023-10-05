@@ -81,6 +81,7 @@
                     <th scope="col">Product List</th>
                     <th scope="col">Project Dead Line</th>
                     <th scope="col">Internal Dead Line</th>
+                    <th scope="col">Delete List</th>
 
                   </tr>
                 </thead>
@@ -137,6 +138,7 @@
                         {{client.internal_deadline}}
                       </ng-template>
                     </td>
+                    <td><button class="btn btn-text text-danger hp-hover-bg-danger-4 hp-hover-bg-dark-danger" (click)="deleteClientList(client._id)">Delete</button></td>
                     </ng-container>
              
                   </tr>

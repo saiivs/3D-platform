@@ -284,10 +284,11 @@ export class QaReviewsComponent implements OnInit,OnDestroy{
 
   updateModalStatus(articleId:string,status:string){
     if(status){
+      let txt = status == 'Correction'? 'Are you certain about correcting this model?' : 'Are you sure to approve this model?'
        swal.fire({
       position: 'center',
       title: 'Confirm',
-      text:  `Are your sure to ${status} this model?`,
+      text:  txt,
       showCancelButton: true,
       confirmButtonText: 'Yes',
       cancelButtonText: 'cancel'

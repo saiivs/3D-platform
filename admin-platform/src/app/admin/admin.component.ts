@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit,OnDestroy{
 
   title = 'Admin';
   notifyData:Array<any> = [];
+  notifyDeadLine:Array<any> = [];
   checkUrl:any;
   closeBtn:boolean = false;
   searchBtn!:boolean;
@@ -49,8 +50,10 @@ export class AdminComponent implements OnInit,OnDestroy{
       this.notificationService.setNotificationForAdmin(data);
       this.subscription3 = this.notificationService.notification_admin.subscribe((data)=>{
       console.log({data});
-      this.notifyData = [...data];
-      this.notificationLen = this.notifyData.length;
+      this.notifyData = [...data.modelers];
+      this.notifyDeadLine = [...data.clients];
+      this.notifyDeadLine = this.notifyDeadLine.filter(obj => obj.project_deadline == 'exceeded' || obj.internal_deadline == 'exceeded')
+      this.notificationLen = this.notifyData.length + this.notifyDeadLine.length;
       })
       
     })

@@ -65,14 +65,14 @@
                         <td class="text-danger">NO LINK</td>
                       </ng-template>
                       <td>{{modelObj.QaTeam}}</td>
-                      <td *ngIf="modelObj.productStatus == 'Not uploaded' ;else pending"
+                      <td *ngIf="modelObj.productStatus == 'Not Uploaded' ;else pending"
                         style="color: rgb(252, 11, 51);font-weight: 600;">{{modelObj.productStatus}}</td>
                       <ng-template #pending>
                         <td style="font-weight: bold;"
                           [ngStyle]="{color : modelObj.productStatus == 'Approved' ? 'green' : 'rgb(255, 157, 0)' }">
                           {{modelObj.productStatus}}</td>
                       </ng-template>
-                      <td *ngIf="modelObj.productStatus != 'Not uploaded';else NoData">
+                      <td *ngIf="modelObj.productStatus != 'Not Uploaded';else NoData">
                         <button class="btn btn-sm btn-outline-primary" (click)="viewModel(modelObj.articleId,modelObj.clientId,modelObj.version)">
                           View Model
                         </button>

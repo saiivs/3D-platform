@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import swal from "sweetalert2/dist/sweetalert2.js"
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { client } from 'src/app/models/interface';
@@ -42,7 +43,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
     this.titleService.setTitle(this.title)
     this.searchService.checkUrlForSearchBtn(false);
     this.subscription = this.backEndService.getClient().subscribe((data) => {
-      this.clientTableData = data.data
+      this.clientTableData = data.data      
       this.clientTableData = this.clientTableData.filter(client => client.status != 'Approved')
       data.productDetails.forEach(() => {
         for (let model of data.productDetails) {
@@ -105,11 +106,17 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
           if (headers) {
             headerLength = headers.length;
             if (headerLength == 4) {
-              const data = results.data;
-              data.forEach((row: any) => {
+              const data = results.data;  
+              data.forEach((row: any,index:number) => {
+               for(let key in row){
+                if(row.hasOwnProperty(key) && row[key] === ""){
+                  row[key] = `No data-${index + 1}`
+                }
+               }
                 let isEmptyRow = Object.values(row).every((value) => {
                   return value === undefined || value === '';
                 });
+               
                 if (!isEmptyRow) {
                   let csvFileData: csvData = new csvData();
                   headers.forEach((header) => {
@@ -203,6 +210,29 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
         this.budgetPrice.nativeElement.value = ''
     }) 
     }
+  }
+
+  deleteClientList(clientId:any){
+    swal.fire({
+      position: 'center',
+      title: 'Are you sure?',
+      text: `delete this client`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'cancel'
+    }).then((result) => {
+      if (result.value) {
+        this.backEndService.deleteClient(clientId).subscribe((res)=>{
+      if(res){
+        this.clientTableData = this.clientTableData.filter(client => client._id != clientId);
+        this.toastr.success('success', 'client list deleted')
+      }
+    })
+      } else if (result.dismiss === swal.DismissReason.cancel) {
+
+      }
+    })
+   
   }
 
   ngOnDestroy() {

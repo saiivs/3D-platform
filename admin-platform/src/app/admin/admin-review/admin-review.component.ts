@@ -38,7 +38,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   modelerName :string = "";
   groupedMessages: { [date: string]: any[] } = {};
   currentDate: any ="";
-  toggleChatBtn:Boolean = false;
+  toggleChatBtn:Boolean = true;
   clientName:string = "";
   gltfData:any = {};
   warningShow:Boolean = true;
@@ -64,9 +64,8 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     let invalidModel;
     if(modelData.info.totalTriangleCount > 150000){
        polygonWarng = `Polygon count exceeded`
-    }else{
-      invalidModel = `Invalid model detected`
     }
+    if(!modelData?.info?.totalTriangleCount) invalidModel =`Invalid model detected`
     modelData.info.resources.forEach((obj:any) =>{
       if(obj.image){
         let format = getFileExtension(obj.mimeType);
@@ -87,7 +86,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
     this.clientId = this.route.snapshot.params['clientId'];
     this.articleId = this.route.snapshot.params['articleId'];
     this.version = this.route.snapshot.params['version'];
-    this.subscription = this.backEnd.getAdminComment(this.clientId,this.articleId).subscribe((data)=>{
+    this.subscription = this.backEnd.getQaComments(this.clientId,this.articleId,this.version).subscribe((data)=>{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.modelDetails = [...data.modelDetails];
@@ -209,10 +208,11 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
   }
 
   updateModalStatus(articleId:string|undefined,status:string){
+    let txt = status == 'Approved' ? 'Are you sure to approve this model?' : 'Are you sure to reject this model?'
     swal.fire({
       position: 'center',
       title: 'Confirm',
-      text:  `Are your sure to ${status} this modal?`,
+      text:  txt,
       showCancelButton: true,
       confirmButtonText: 'Yes',
       cancelButtonText: 'cancel'

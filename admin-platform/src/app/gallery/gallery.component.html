@@ -1,5 +1,5 @@
 <h6 class="mb-8" *ngIf="noImgForGallery == ''" [hidden]="display">{{product.productName}}.. <span><a target="_blank" matTooltip="product link"
-    matTooltipPosition="below" href="{{product.productLink}}"><small>click here</small></a></span></h6>
+    matTooltipPosition="below" href="{{product.productLink}}"><small>Product Link</small></a></span></h6>
 <div class="row pe-32 g-16" [hidden]="display">
     <ng-container *ngIf="noImgForGallery == '';">
         <div class="col-6 col-md-2" *ngFor="let img of imgSrc| paginate

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, OnIn
 import '@google/model-viewer'
 import { BackendService } from '../services/backend.service';
 import { environment } from '../../environments/environment';
+import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import { TestComponent } from '../test/test.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -14,7 +15,7 @@ import { Subscription } from 'rxjs';
 })
 export class GalleryComponent implements OnInit,OnDestroy {
 
-  constructor(private backEndService: BackendService, private route: ActivatedRoute, private renderer: Renderer2, private changeDetectorRef: ChangeDetectorRef, private sanitizer: DomSanitizer) {
+  constructor(private backEndService: BackendService, private route: ActivatedRoute, private renderer: Renderer2, private changeDetectorRef: ChangeDetectorRef, private sanitizer: DomSanitizer,private toastr: ToastrService) {
 
   }
 
@@ -50,11 +51,12 @@ export class GalleryComponent implements OnInit,OnDestroy {
       this.subscription1 = this.backEndService.getCountOfReferenceImages(clientId, articleId).subscribe((res) => {
         if (res != 0) {
           if(this.imgSrc.length != 0){
-            for(let i= 0;i<this.onFileSelected.length;i++){
+            for(let i= 0;i<this.onSelectedFiles.length;i++){
               let imgCount = this.imgSrc.length
               this.imgSrc.push(`${environment.staticUrl}/images/${this.clientName}/${this.articleId}/${imgCount + 1}.jpg?cache=${cacheBuster}`);
               this.totalRecords = this.imgSrc.length;
             }
+            this.onSelectedFiles = [];
           }else{
            for (let i = 0; i < res; i++) {
             let imgCount = this.imgSrc.length
@@ -115,19 +117,20 @@ export class GalleryComponent implements OnInit,OnDestroy {
 
   onSubmit() {  
     let formData = new FormData();
-    if(this.onSelectedFiles){
+    if(this.onSelectedFiles.length !=0 ){
     this.isLoading = true;
     this.onSelectedFiles.forEach((file, index) => {
       this.convertToJpg(file).then((convertedFile: any) => {
         let fileName = `${index + 1}.jpg`
         formData.append('images', convertedFile, fileName);
         this.countConvertedfile = this.countConvertedfile + 1;
-
+        console.log(this.countConvertedfile);
+        
         if (this.countConvertedfile === this.onSelectedFiles.length) {
           this.subscription2 = this.backEndService.uploadReferenceManually(formData, this.articleId, this.clientDetails.clientName).subscribe((res) => {
 
             if (res) {
-              this.onSelectedFiles = [];
+             
               this.isLoading = false;
               this.countConvertedfile = 0;
               
@@ -138,7 +141,7 @@ export class GalleryComponent implements OnInit,OnDestroy {
       })
         })
     } else{
-      console.log("no images selected");
+      this.toastr.error('Error', 'Please select the image')
       
     }
   }
