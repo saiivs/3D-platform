@@ -72,6 +72,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
   subscription11!:Subscription;
   subscription12!:Subscription;
   subscription13!:Subscription;
+  subscription14!:Subscription;
+  subscription15!:Subscription;
+  subscription16!:Subscription;
+  subscription17!:Subscription;
+  subscription18!:Subscription;
+  subscription19!:Subscription;
   recieved: string = "";
   exactBudget:number = 0;
   countForMasterCheckBox: number = 50;
@@ -99,10 +105,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
     if (this.checkUrl.includes('/admin/products/')) {
       this.searchService.checkUrlForSearchBtn(true);
     }
-    this.backEndService.currentData.subscribe((name) => {
+    this.subscription14 = this.backEndService.currentData.subscribe((name) => {
       this.clientName = name
     })
-    this.searchService.searchValue.subscribe((data) => {
+    this.subscription15 = this.searchService.searchValue.subscribe((data) => {
       this.recieved = data;
     })
 
@@ -594,14 +600,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
     if(this.requirementTxt){
       this.products[this.requirementIndex].extraInfo = this.requirementTxt;
       let articleId = this.products[this.requirementIndex].articleId;
-      this.backEndService.addRequirement(this.requirementTxt,articleId,this.clientId).subscribe((res)=>{
+      this.subscription16 = this.backEndService.addRequirement(this.requirementTxt,articleId,this.clientId).subscribe((res)=>{
     }) 
     }  
   }
 
   AddGlobalRequirement(){
     if(this.globalRequirement){
-      this.backEndService.addGlobalRequirementForList(this.globalRequirement,this.clientId).subscribe((res)=>{
+      this.subscription17 = this.backEndService.addGlobalRequirementForList(this.globalRequirement,this.clientId).subscribe((res)=>{
         if(res){
           this.globalReqFlag = true;
         }
@@ -622,7 +628,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   editRequirement(){
     this.editRequirementMode = false;
     if(this.globalRequirement){
-      this.backEndService.editGlobalRequirement(this.globalRequirement,this.clientId).subscribe((res)=>{
+      this.subscription18 = this.backEndService.editGlobalRequirement(this.globalRequirement,this.clientId).subscribe((res)=>{
         if(res){
           
         }
@@ -646,7 +652,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       }else{
         this.products[this.missingFieldIndex].productLink = this.missingInfoUpdateValue; 
       }
-      this.backEndService.updateListInfo(this.missingInfoUpdateValue,this.clientId,this.missingInfoTitle,this.uniquefieldValue).subscribe((res)=>{
+      this.subscription19 = this.backEndService.updateListInfo(this.missingInfoUpdateValue,this.clientId,this.missingInfoTitle,this.uniquefieldValue).subscribe((res)=>{
       })
     }
   }
@@ -672,5 +678,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
     if(this.subscription10)this.subscription10.unsubscribe()
     if(this.subscription11)this.subscription11.unsubscribe()
     if(this.subscription12)this.subscription12.unsubscribe()
+    if(this.subscription13)this.subscription13.unsubscribe()
+    if(this.subscription14)this.subscription14.unsubscribe()
+    if(this.subscription15)this.subscription15.unsubscribe()
+    if(this.subscription16)this.subscription16.unsubscribe()
+    if(this.subscription17)this.subscription17.unsubscribe()
+    if(this.subscription18)this.subscription18.unsubscribe()
+    if(this.subscription19)this.subscription19.unsubscribe()
   }
 }

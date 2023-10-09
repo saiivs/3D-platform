@@ -42,6 +42,8 @@ export class GalleryComponent implements OnInit,OnDestroy {
   isLoading:Boolean = false;
   subscription1!:Subscription;
   subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
  
 
   galleryFn(articleId: string, clientId: string) {
@@ -76,7 +78,7 @@ export class GalleryComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.articleId = this.route.snapshot.params['articleId'];
     this.clientId = this.route.snapshot.params['clientId'];
-    this.backEndService.getClientDetailsById(this.clientId, this.articleId).subscribe((res)=>{
+    this.subscription3 = this.backEndService.getClientDetailsById(this.clientId, this.articleId).subscribe((res)=>{
       this.clientDetails = res.client;
       this.product = res.clientPro
       this.backEndService.setProductLink(this.product.productLink);
@@ -179,8 +181,9 @@ export class GalleryComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if(this.subscription1)this.subscription1.unsubscribe()
-    if(this.subscription2)this.subscription2.unsubscribe()
+    if(this.subscription1)this.subscription1.unsubscribe();
+    if(this.subscription2)this.subscription2.unsubscribe();
+    if(this.subscription3)this.subscription3.unsubscribe();
   }
   
 }

@@ -21,6 +21,7 @@ export class AdminModelerProfileComponent implements OnInit,OnDestroy{
   modelerEmail: string = ""
   subscription1!:Subscription;
   subscription2!:Subscription;
+  subscription3!:Subscription;
 
   ngOnInit(): void {
     this.modelerEmail = this.route.snapshot.params["email"]
@@ -47,12 +48,13 @@ export class AdminModelerProfileComponent implements OnInit,OnDestroy{
     if (this.aboutTxt != "") {
       this.userData.about = this.aboutTxt;
       this.userData.aboutStatus = false;
-      this.backEndService.createAboutforModeler(this.modelerEmail, this.aboutTxt).subscribe(() => { })
+      this.subscription3 = this.backEndService.createAboutforModeler(this.modelerEmail, this.aboutTxt).subscribe(() => { })
     }
   }
 
  ngOnDestroy(): void {
   if(this.subscription1)this.subscription1.unsubscribe()
   if(this.subscription2)this.subscription2.unsubscribe()
+  if(this.subscription3)this.subscription3.unsubscribe()
  }
 }

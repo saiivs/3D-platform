@@ -38,6 +38,13 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
   isLoading:Boolean = false;
   bonus:number = 0;
   subscription!: Subscription;
+  subscription1!:Subscription;
+  subscription2!:Subscription;
+  subscription3!:Subscription;
+  subscription4!:Subscription;
+  subscription5!:Subscription;
+  subscription6!:Subscription;
+  subscription7!:Subscription;
 
   ngOnInit() {
     this.titleService.setTitle(this.title)
@@ -66,7 +73,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       this.budget += data.budgetData
       this.totalRecords = this.clientTableData.length;
     })
-    this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
+    this.subscription1 = this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
       this.searchService.setNotificationForAdmin(data);
     })
   }
@@ -151,7 +158,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       clientInfo.productCount = this.csvArr.length;
       clientInfo.status = "Not Approved"
       this.newClientTableData.push(clientInfo);
-      this.backEndService.createProduct(this.csvArr, this.newClientTableData).subscribe((response) => {
+      this.subscription2 = this.backEndService.createProduct(this.csvArr, this.newClientTableData).subscribe((response) => {
         this.isLoading = false;
         if(response.exist){
           let existingClient = this.clientTableData.find(client => client.clientName == response.client.clientName)
@@ -176,7 +183,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
 
   AddManager(name: string, clientId: any, index: number) {
     let i = (this.page - 1) * 6 + index;
-    this.backEndService.addClientManager(name, clientId).subscribe((res) => {
+    this.subscription3 = this.backEndService.addClientManager(name, clientId).subscribe((res) => {
       if (res) {
         this.AddBtn = false;
         this.clientTableData[i].account_Manager = name;
@@ -186,14 +193,14 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
 
   setInternalDeadline(event: any, clientId: any) {
     let date = event.target.value;
-    this.backEndService.setDeadLine(date, clientId, 'Internal').subscribe((res) => {
+    this.subscription4 = this.backEndService.setDeadLine(date, clientId, 'Internal').subscribe((res) => {
 
     })
   }
 
   setProjectDeadline(event: any, clientId: any) {
     let date = event.target.value;
-    this.backEndService.setDeadLine(date, clientId, 'Project').subscribe((res) => {
+    this.subscription5 = this.backEndService.setDeadLine(date, clientId, 'Project').subscribe((res) => {
 
     })
   }
@@ -206,7 +213,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
   addBudget() {
     if(this.budgetPrice.nativeElement.value){
       this.budget = this.budgetPrice.nativeElement.value;
-      this.backEndService.createBudget(this.budget).subscribe((res) => {
+      this.subscription6 = this.backEndService.createBudget(this.budget).subscribe((res) => {
         this.budgetPrice.nativeElement.value = ''
     }) 
     }
@@ -222,7 +229,7 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
       cancelButtonText: 'cancel'
     }).then((result) => {
       if (result.value) {
-        this.backEndService.deleteClient(clientId).subscribe((res)=>{
+        this.subscription7 = this.backEndService.deleteClient(clientId).subscribe((res)=>{
       if(res){
         this.clientTableData = this.clientTableData.filter(client => client._id != clientId);
         this.toastr.success('success', 'client list deleted')
@@ -237,6 +244,13 @@ export class AdminLandingPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if(this.subscription)this.subscription.unsubscribe() 
+    if(this.subscription1)this.subscription1.unsubscribe() 
+    if(this.subscription2)this.subscription2.unsubscribe() 
+    if(this.subscription3)this.subscription3.unsubscribe() 
+    if(this.subscription4)this.subscription4.unsubscribe() 
+    if(this.subscription5)this.subscription5.unsubscribe() 
+    if(this.subscription6)this.subscription6.unsubscribe() 
+    if(this.subscription7)this.subscription7.unsubscribe() 
   }
 
 }

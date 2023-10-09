@@ -26,6 +26,7 @@ export class AllModelsComponent implements OnInit, OnDestroy{
   staticUrl:string = environment.staticUrl;
   subscription1!:Subscription;
   subscription2!:Subscription;
+  subscription3!:Subscription;
 
   ngOnInit(){
     this.modelerId = this.route.snapshot.params[('modelerId')];
@@ -39,7 +40,7 @@ export class AllModelsComponent implements OnInit, OnDestroy{
       this.models = this.models.filter(model => model.productStatus != 'Not Uploaded')
       
     }) 
-    this.searchService.searchValue.subscribe((data)=>{
+    this.subscription3 = this.searchService.searchValue.subscribe((data)=>{
       this.recieved = data;
     })
     this.subscription2 = this.searchService.getNotificationForAdmin("seeLess").subscribe((data)=>{
@@ -54,5 +55,6 @@ export class AllModelsComponent implements OnInit, OnDestroy{
     ngOnDestroy(): void {
       if(this.subscription1)this.subscription1.unsubscribe()
       if(this.subscription2)this.subscription2.unsubscribe()
+      if(this.subscription3)this.subscription3.unsubscribe()
     }
 }
