@@ -133,6 +133,20 @@ export class ReviewsComponent implements OnInit,OnDestroy{
         const cacheBuster = new Date().getTime();
         this.srcFile = `${environment.staticUrl}/models/${this.clientName}/${this.QaCommentArr[0]?.articleId}/version-${this.version}/${this.QaCommentArr[0]?.articleId}.glb?cache=${cacheBuster}`
         this.QaCommentArr[0]?.comments.forEach((message: any) => {
+          const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const utcDate = new Date(message.time); 
+          const userLocalDate = new Intl.DateTimeFormat('en-US', {
+            timeZone: userTimeZone,
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true,
+          }).format(utcDate);
+          message.time = userLocalDate
+          
           const conDate = new Date(message.date)
           const date = new Date(conDate).toLocaleDateString('en-GB');
           if (!this.groupedMessages[date]) {
@@ -199,14 +213,13 @@ export class ReviewsComponent implements OnInit,OnDestroy{
   }
 
   getGroupedMessageKeys(){
-    console.log(this.groupedMessages);
     
     return Object.keys(this.groupedMessages);
   }
 
   pushComnts(){
     if(this.QaComment != ""){
-     let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+     let time = new Date().toISOString();
     let pushObj = {
         date:this.currentDate,
         time:time,

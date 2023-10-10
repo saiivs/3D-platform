@@ -388,7 +388,7 @@ export class BackendService {
     return this.http.post<any>(`${this.url}/editExistingCorrection/post`,formData).pipe((catchError(this.erroHandler)));
   }
 
-  createModelerDeadLine(date:Date,status:String,modRoll:string,clientId:string,list:number):Observable<any>{
+  createModelerDeadLine(date:string,status:String,modRoll:string,clientId:string,list:number):Observable<any>{
     return this.http.post<any>(`${this.url}/createModelerDeadLine/post`,{date,status,modRoll,clientId,list}).pipe((catchError(this.erroHandler)));
   }
 

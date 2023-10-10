@@ -50,7 +50,38 @@ ngOnInit() {
     this.bonus = data.deadLineBonus.bonus;
     this.requirement = data.requirement;
     this.deadLineOne = data.deadLineBonus?.deadLineOne;
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if(this.deadLineOne){
+      const utcDate = new Date(this.deadLineOne); 
+      const userLocalDate = new Intl.DateTimeFormat('en-US', {
+        timeZone: userTimeZone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      }).format(utcDate);
+      this.deadLineOne = userLocalDate
+    }  
     this.deadLineTwo = data.deadLineBonus?.deadLineTwo;
+    if(this.deadLineTwo){
+      const utcDate = new Date(this.deadLineTwo); 
+      const userLocalDate = new Intl.DateTimeFormat('en-US', {
+        timeZone: userTimeZone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      }).format(utcDate);
+      this.deadLineTwo = userLocalDate
+      console.log(this.deadLineTwo);
+      
+    }  
     this.products = [...data.proData[0].assignedPro]; 
     this.products.forEach((pro)=>{
       if(pro.productStatus == 'Approved'){

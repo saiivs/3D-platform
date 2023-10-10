@@ -649,9 +649,9 @@ module.exports = {
             let {clientId} = req.params;
             let modelerProgress = await database.dbGetProgress(clientId);
             if(modelerProgress.status){
-                res.status(200).json(modelerProgress.response);
+                res.status(200).json(modelerProgress);
             }else if(modelerProgress.error == 'No data found'){
-                res.status(200).json(modelerProgress.response)
+                res.status(200).json(modelerProgress)
             }else{
                 throw new Error
             }

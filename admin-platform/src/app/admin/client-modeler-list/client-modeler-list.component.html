@@ -71,7 +71,8 @@
           <div class="card-body">
             <div class="row justify-content-between">
               <div class="col pe-md-32 pe-md-120" *ngIf="modelerList.length != 0;else emptyTable">
-                <h4>Modelers with their product status.</h4>
+                <h3>{{clientName}}</h3>
+                <h5>Modelers with their product status.</h5>
               </div>
               <ng-template #emptyTable>
                 <p class="hp-p1-body emptyTable">

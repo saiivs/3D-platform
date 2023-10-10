@@ -90,6 +90,8 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
       this.currentDate = new Date().toLocaleDateString('en-GB');
       if(data){
         this.modelDetails = [...data.modelDetails];
+        console.log(this.modelDetails);
+        
         this.product = data.modelDetails[0].assignedPro.find((obj:any)=>{
           if(obj.articleId == this.articleId) return obj
         })
@@ -110,20 +112,21 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
           this.groupedMessages[date].push(message);
         }); 
         setTimeout(()=>{
-          this.scrollToBottom()
+          this.scrollBottomForIn()
         },10)
       }
     })
   }
 
   scrollToBottom() {
-    const chatBody = this.chatBodyRef.nativeElement;
-    chatBody.scrollTop = chatBody.scrollHeight;
+    const chatBody = this.chatBodyRef?.nativeElement;
+    if(chatBody)chatBody.scrollTop = chatBody?.scrollHeight;
+    
   }
   
   scrollBottomForIn(){
-    const chatBody = this.chatBodyRefIn.nativeElement; 
-    chatBody.scrollTop = chatBody.scrollHeight;
+    const chatBody = this.chatBodyRefIn?.nativeElement; 
+    if(chatBody)chatBody.scrollTop = chatBody?.scrollHeight;
   }
 
   getComment(event:any){
@@ -132,13 +135,15 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
 
   pushComnts(){
     if(this.QaComment != ""){
-      let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+      let time = new Date().toISOString();
     let pushObj = {
       date:this.currentDate,
       time:time,
       user:localStorage.getItem('userEmail'),
       cmnt:this.QaComment
     }
+    console.log(pushObj);
+    
     if(this.QaCommentArr[0].comments.length != 0){
     if (!this.groupedMessages[this.currentDate]) {
       this.groupedMessages[this.currentDate] = [];
@@ -168,7 +173,7 @@ export class AdminReviewComponent implements OnInit,OnDestroy{
 
   pushInteractiveComnts(){
     if(this.QaComment != ""){
-    let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true, hourCycle: 'h12' })
+    let time = new Date().toISOString();
     let pushObj = {
       date: this.currentDate,
       time: time,

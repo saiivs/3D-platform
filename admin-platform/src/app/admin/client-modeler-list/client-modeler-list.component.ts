@@ -18,6 +18,7 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
 
   modelerList: Array<any> = [];
   clientId: any = "";
+  clientName:string = "";
   page:number = 1;
   totalRecords!:number;
   models:Array<any> = [];
@@ -34,9 +35,9 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.clientId = this.route.snapshot.params['clientId']
     this.subscription1 = this.backEnd.getModelersProgress(this.clientId).subscribe((res) => {
-      if(res.length != 0){
-        this.modelerList = [...res]
-  
+      if(res.response.length != 0){
+        this.modelerList = [...res.response]
+        this.clientName = res.client.clientName
       this.modelerList = this.modelerList.map((obj) => {
         let count = 0;
         obj.models.forEach((model:any)=>{
@@ -61,13 +62,13 @@ export class ClientModelerListComponent implements OnInit,OnDestroy {
     let i = (this.page - 1) * 50 + index;
     let date = (event.target as HTMLInputElement).value
     this.modelerList[i].deadLineOne = date;
-    let dateObj = new Date(date);
+    let dateObj = date;
     this.subscription3 = this.backEnd.createModelerDeadLine(dateObj,"deadLineOne",modRoll,this.clientId,list).subscribe(()=>{});
   }
 
   getDeadLineTwo(event:Event,modRoll:string,list:number){
     let date = (event.target as HTMLInputElement).value
-    let dateObj = new Date(date);
+    let dateObj = date
     this.subscription4 = this.backEnd.createModelerDeadLine(dateObj,"deadLineTwo",modRoll,this.clientId,list).subscribe(()=>{})
   }
 

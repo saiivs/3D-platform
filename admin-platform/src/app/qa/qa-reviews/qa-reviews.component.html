@@ -171,18 +171,18 @@
                         </div>  -->
                         <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" *ngIf="date == currentDate;else today"><time >Today</time></p>
                         <ng-template #today>
-                          <p class="meta" style="margin-bottom: 1.5rem;text-align: center;"><time >{{date}}</time></p>
+                          <p class="meta" style="margin-bottom: 1.5rem;text-align: center;"><time >{{date | date:'shortDate'}}</time></p>
                         </ng-template>
                         <ng-container *ngFor="let message of groupedMessages[date]">
                           <div class="chat-content" *ngIf="message.user == userEmail" style="margin-bottom: 8px;background-color: #0010f78c;" >
                               <p *ngIf="message.user == userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
-                              <time class="chat-time" >{{message.time}}</time>
+                              <time class="chat-time" >{{message.time | date:'shortTime'}}</time>
                           </div>
                           
                           <div *ngIf="message.user != userEmail" class="chat-content" style="margin-bottom: 8px;float: left;" [ngStyle]="{background : message.roll == '3D' ?  '#62a8ea' : '#526D82'}">
                               <p *ngIf="message.user != userEmail" style="margin-bottom: 0rem;">{{message.cmnt}}</p>
                               <div class="timeRoll">
-                                <time class="chat-time" >{{message.time}}</time>
+                                <time class="chat-time" >{{message.time | date:'shortTime'}}</time>
                                 <small class="roll">{{message.roll == '3D' ? 'Modeler' : 'Admin'}}</small>
                             </div>   
                           </div> 

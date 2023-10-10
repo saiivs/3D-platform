@@ -490,17 +490,23 @@ module.exports = {
                             }
                         }
                       ])
-                      let listNo = maxListNo[0].maxList;
-                      pro.list = listNo
-                      list = listNo;
-                      updateModeler = await db.modelerList.updateOne({rollNo:modRoll,"models": {
-                        $elemMatch: {
-                          clientId: new ObjectId(data.clientId),
-                          list: listNo
-                        }
-                      }},{$push:{'models.$.models':pro},$set:{'models.$.deadLineOne':false,'models.$.deadLineTwo':false}});
-                      //update the list value in the assigned list
-                      await db.modelerProducts.updateOne({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.list':listNo}});
+                      if(maxListNo.length == 0){
+                        obj.models.push(pro);
+                        updateModeler = await db.modelerList.updateOne({rollNo:modRoll},{$push:{models:obj}});
+                      }else{
+                        let listNo = maxListNo[0].maxList;
+                        pro.list = listNo
+                        list = listNo;
+                        updateModeler = await db.modelerList.updateOne({rollNo:modRoll,"models": {
+                            $elemMatch: {
+                            clientId: new ObjectId(data.clientId),
+                            list: listNo
+                            }
+                        }},{$push:{'models.$.models':pro},$set:{'models.$.deadLineOne':false,'models.$.deadLineTwo':false}});
+                        //update the list value in the assigned list
+                        await db.modelerProducts.updateOne({clientId:new ObjectId(data.clientId),'assignedPro.articleId':pro.articleId},{$set:{'assignedPro.$.list':listNo}});
+                      }
+                     
                 }else{
                     updateModeler = await db.modelerList.findOneAndUpdate(
                         {
@@ -621,8 +627,9 @@ module.exports = {
             }
            ])
            if(proData.length > 0){
+           let client = await db.modelerProducts.findOne({_id:new ObjectId(id)});
            let modeler = await db.modelerList.findOne({rollNo:modRollNo})
-           let requirement = await db.requirement.findOne({clientId:new ObjectId(proData[0].clientId)})
+           let requirement = await db.requirement.findOne({clientId:new ObjectId(client.clientId)})
            let deadLineBonus;
            if(modeler){
             let maxListNo = await db.modelerList.aggregate([
@@ -717,7 +724,7 @@ module.exports = {
                       clientId: new ObjectId(clientId),
                       list: list
                     }
-                  }},{$set:{'models.$.completeDate':new Date()}});
+                  }},{$set:{'models.$.completeDate':new Date().toUTCString()}});
             }
             if(updateRes){
                 return {status:true,data:clientDetails,preModalStatus:checkModelUnderQA.modalStatus};
@@ -833,7 +840,9 @@ module.exports = {
 
     dbGetQaPro:async(id,qaRollNo)=>{
         try {
-            
+
+            let client = await db.modelerProducts.findOne({_id:new ObjectId(id)});
+
             let proList = await db.modelerProducts.aggregate([
                 {
                     $match:{_id:new ObjectId(id)}
@@ -862,7 +871,7 @@ module.exports = {
                     }
                 }
             ])
-            let requirement = await db.requirement.findOne({clientId:new ObjectId(proList[0].clientId)});
+            let requirement = await db.requirement.findOne({clientId:new ObjectId(client.clientId)});
             if(proList.length > 0){
                 if(proList){
                     if(Array.isArray(proList)){
@@ -886,7 +895,7 @@ module.exports = {
     dbCreateComntQa:async(data,user)=>{
         try {
             console.log({data});
-            let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute:'2-digit', hour12: true, hourCycle: 'h12' })
+            let time = new Date().toISOString();
             let curDate = new Date().toISOString().slice(0,10)
             let obj = {
                 date: curDate,
@@ -1250,6 +1259,7 @@ module.exports = {
 
     dbSetDeadline:async(date,clientId,type)=>{
         try {
+            date = new Date(date).toUTCString()
             if(type == 'Project'){
                 let setProjectDeadLine = await db.clients.updateOne({_id:new ObjectId(clientId)},{$set:{project_deadline:date}});
                 if(setProjectDeadLine.acknowledged){
@@ -1459,6 +1469,7 @@ module.exports = {
 
     dbGetProgress:async(clientId)=>{
         try {
+            let client = await db.clients.findOne({_id:new ObjectId(clientId)});
             let maxList = await db.modelerList.aggregate([
                 {
                     $unwind:"$models"
@@ -1553,9 +1564,9 @@ module.exports = {
         // ])
         
         if(data.length != 0){
-         return {status:true,response:data};   
+         return {status:true,response:data,client:client};   
         } 
-        else return {status:false,error:"No data found",response:data}
+        else return {status:false,error:"No data found",response:data,client:client}
         } catch (error) {
             console.log(error);
             return {status:false,error:"Server error"};
@@ -2566,7 +2577,7 @@ module.exports = {
 
     dbCreateDeadLineForModeler:async(deadLine)=>{
         try {
-            
+            deadLine.date = new Date(deadLine.date).toISOString().slice(0,10)
             let maxListNo = await db.modelerList.aggregate([
                 {
                     $match:{rollNo:deadLine.modRoll}

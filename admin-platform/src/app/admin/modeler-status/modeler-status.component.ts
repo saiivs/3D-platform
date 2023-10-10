@@ -59,6 +59,7 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
           if (this.allModelers.length != 0) {
             this.totalRecords = this.allModelers.length;
             this.allModelers = this.allModelers.map((obj) => {
+              this.totalModels = 0;
               let approvedCnt = 0;
               obj.models.forEach((client:any)=>{
                 this.totalModels = this.totalModels + client.models.length;
@@ -70,6 +71,8 @@ export class ModelerStatusComponent implements OnInit , OnDestroy{
               }) 
               return { ...obj,totalModal:this.totalModels,percentage:this.modelerPercentage}
             })
+            console.log(this.allModelers);
+            
           }
           if (data.models.length == 0) {
             this.noMonthlyStatus = true;

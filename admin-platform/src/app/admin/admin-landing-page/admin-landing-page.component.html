@@ -129,13 +129,13 @@
                     <td><input *ngIf="client.project_deadline ==  '';else proDeadline" type="date" name=""
                         class="calenderClass" id="project" (input)="setProjectDeadline($event,client._id)">
                       <ng-template #proDeadline>
-                        {{client.project_deadline}}
+                        {{client.project_deadline | date:'yyyy-MM-dd'}}
                       </ng-template>
                     </td>
                     <td><input *ngIf="client.internal_deadline == '';else internalDeadline" type="date" name=""
                         class="calenderClass" id="internal" (input)="setInternalDeadline($event,client._id)">
                       <ng-template #internalDeadline>
-                        {{client.internal_deadline}}
+                        {{client.internal_deadline | date:'yyyy-MM-dd'}}
                       </ng-template>
                     </td>
                     <td><button class="btn btn-text text-danger hp-hover-bg-danger-4 hp-hover-bg-dark-danger" (click)="deleteClientList(client._id)">Delete</button></td>

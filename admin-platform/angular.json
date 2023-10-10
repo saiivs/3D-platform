@@ -22,7 +22,7 @@
               "raf",
               "core-js"
            ],
-           "baseHref": "https://charpstar.co/app2/",
+            "baseHref": "https://charpstar.co/app2/",
             "outputPath": "dist/admin-platform",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -51,7 +51,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
+                  "maximumWarning": "3kb",
                   "maximumError": "4kb"
                 }
               ],

@@ -57,7 +57,7 @@
       <h5 class="mb-8">{{product.productName}}</h5>
       <span class="hp-caption d-block text-black-60" style="margin-bottom: 0.5rem;">
         By
-        <span class="ms-4 text-black-80 hp-text-color-dark-30">{{modelDetails[0].clientDetails[0].clientName}}</span>
+        <span class="ms-4 text-black-80 hp-text-color-dark-30">{{modelDetails[0]?.clientDetails[0]?.clientName}}</span>
       </span>
       <ul class="proDetails" *ngIf="QaCommentArr.length != 0">
         <li>Product Status: <span
@@ -143,7 +143,7 @@
                             <i></i>
                           </a>
                         </div> -->
-                  <ng-container *ngIf="QaCommentArr[0].comments.length != 0;else noChat">
+                  <ng-container *ngIf="QaCommentArr.length != 0&&QaCommentArr[0].comments.length != 0;else noChat">
                     <div class="chat-body" *ngFor="let date of getGroupedMessageKeys()">
                       <!-- <div style="text-align: center;padding: 0.5rem;">
                             <p>Today</p>
@@ -157,13 +157,13 @@
                         <div class="chat-content" *ngIf="message.user == userEmail"
                           style="margin-bottom: 8px;background-color: #0010f78c;">
                           <p *ngIf="message.user == userEmail">{{message.cmnt}}</p>
-                          <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>
+                          <time class="chat-time" datetime="2015-07-01T11:37">{{message.time | date:'shortTime'}}</time>
                         </div>
 
                         <div *ngIf="message.user != userEmail" class="chat-content"
                           style="float: left;background-color: #62a8ea;">
                           <p *ngIf="message.user != userEmail">{{message.cmnt}}</p>
-                          <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>
+                          <time class="chat-time" datetime="2015-07-01T11:37">{{message.time | date:'shortTime'}}</time>
                         </div>
                       </ng-container>
                       <!-- <p class="meta" style="margin-bottom: 1.5rem;text-align: center;" ><time >Today</time></p> -->
@@ -199,8 +199,8 @@
           <!-- interactive chat Panel Chat -->
           <ng-template #interactiveChat>
             <div class="panel" id="chat">
-              <div class="panel-body" #chatBodyIn>
-                <div class="chats myChatbody">
+              <div class="panel-body" >
+                <div class="chats myChatbody" #chatBodyIn>
                   <div class="chat">
                     <!-- <div class="chat-avatar">
                             <a class="avatar avatar-online" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="June Lane">
@@ -208,7 +208,7 @@
                               <i></i>
                             </a>
                           </div> -->
-                    <ng-container *ngIf="QaCommentArr[0].comments.length != 0;else noChat">
+                    <ng-container *ngIf="QaCommentArr.length != 0&&QaCommentArr[0].comments.length != 0;else noChat">
                       <div class="chat-body" *ngFor="let date of getGroupedMessageKeys()">
                         <!-- <div style="text-align: center;padding: 0.5rem;">
                               <p>Today</p>
@@ -222,7 +222,7 @@
                           <div class="chat-content" *ngIf="message.user == userEmail"
                             style="margin-bottom: 8px;background-color: #0010f78c;">
                             <p *ngIf="message.user == userEmail" style="margin-bottom: 0em;">{{message.cmnt}}</p>
-                            <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}}</time>
+                            <time class="chat-time" >{{message.time | date:'shortTime'}}</time>
                           </div>
   
                           <div *ngIf="message.user != userEmail" class="chat-content"
@@ -230,7 +230,7 @@
                             [ngStyle]="{background : message.roll == 'QA' ?  '#62a8ea' : '#526D82'}">
                             <p *ngIf="message.user != userEmail" style="margin-bottom: 0em;">{{message.cmnt}}</p>
                             <div class="timeRoll">
-                              <time class="chat-time" datetime="2015-07-01T11:37">{{message.time}} </time>
+                              <time class="chat-time" >{{message.time | date:'shortTime'}} </time>
                               <small class="roll">{{message.roll == 'QA' ? 'QA' : 'Modeler'}}</small>
                             </div>
                           </div>

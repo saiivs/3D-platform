@@ -122,7 +122,11 @@ export class InvoiceComponent implements OnInit,OnDestroy{
   }
 
   getDatePart(date:any){
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const utcDate = new Date(date); 
+    const userLocalDate = new Date(utcDate.toLocaleString('en-US', { timeZone: userTimeZone }));
+    const datePart = new Date(userLocalDate.getFullYear(), userLocalDate.getMonth(), userLocalDate.getDate());
+    return datePart
   }
 
   getSubTotalWithBonus(){
